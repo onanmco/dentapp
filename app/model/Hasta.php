@@ -1,0 +1,66 @@
+<?php
+
+namespace app\model;
+
+use core\Model;
+use PDO;
+
+class Hasta extends Model
+
+{
+    private $id = '';
+    private $isim = '';
+    private $soyisim = '';
+    private $telefon = '';
+    private $tckn = '';
+
+    public function __construct($args = [])
+    {
+        $class_vars = get_class_vars(get_called_class());
+        foreach ($args as $key => $value) {
+            if (isset($class_vars[$key])) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+    public static function findById($id)
+    {
+        $sql = 'SELECT * FROM hasta WHERE id = :id';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public static function findByTckn($tckn)
+    {
+        $sql = 'SELECT * FROM hasta WHERE tckn = :tckn';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':tckn', $tckn, PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public static function isHastaAvailable($tckn)
+    {
+        return self::findByTckn($tckn) === false;
+    }
+
+    public function save()
+    {
+        $sql = 'INSERT INTO hasta(isim, soyisim, telefon, tckn) VALUES(:isim, :soyisim, :telefon, :tckn)';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);
+        $stmt->bindValue(':soyisim', $this->soyisim, PDO::PARAM_STR);
+        $stmt->bindValue(':telefon', $this->telefon, PDO::PARAM_STR);
+        $stmt->bindValue(':tckn', $this->tckn, PDO::PARAM_STR);
+    }
+
+
+}

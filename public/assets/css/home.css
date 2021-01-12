@@ -1,0 +1,49 @@
+body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+}
+
+body {
+    /* background-color: #800040; */
+    background-color: whitesmoke;
+}
+
+#help_drawer_icon {
+    font-size: 1.3em;
+    cursor: pointer;
+}
+
+#help_drawer_icon:hover {
+    opacity: 0.7;
+}
+
+#help_drawer_close_icon {
+    font-size: 1.3em;
+    cursor: pointer;
+}
+
+#help_drawer_close_icon:hover {
+    opacity: 0.7;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
+
+.w-80 {
+    width: 80%;
+}
+
+ul a {
+    display: block;
+    text-decoration: none;
+    color: dimgray;
+}
+
+ul a:hover {
+    background-color: rgb(228, 228, 228);
+    text-decoration: none;
+    color: crimson;
+    opacity: 0.7;
+}
