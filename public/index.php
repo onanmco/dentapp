@@ -1,10 +1,7 @@
 <?php
 
-use app\model\Randevu;
 use core\Request;
 use core\Router;
-
-use function PHPSTORM_META\type;
 
 date_default_timezone_set('Europe/Istanbul');
 require('../core/AutoLoader.php');

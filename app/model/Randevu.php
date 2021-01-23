@@ -53,8 +53,8 @@ class Randevu extends Model
 
     public static function getBetween($start_timestamp, $end_timestamp)
     {
-        $start_datetime = date('Y-m-d H:i:S', $start_timestamp);
-        $end_datetime = date('Y-m-d H:i:S', $end_timestamp);
+        $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
+        $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
         $sql = 'SELECT * FROM randevu WHERE baslangic > :start_datetime AND baslangic < :end_datetime ORDER BY baslangic ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
@@ -65,30 +65,25 @@ class Randevu extends Model
         return $stmt->fetchAll();
     }
 
-    public static function getOverlappedRows($start_timestamp, $end_timestamp)
+    public static function getOverlappingCount($start_timestamp, $end_timestamp)
     {
-        $start_datetime = date('Y-m-d H:i:S', $start_timestamp);
-        $end_datetime = date('Y-m-d H:i:S', $end_timestamp);
-        $sql = 'SELECT * 
+        $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
+        $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
+        $sql = 'SELECT COUNT(*) 
                 FROM randevu 
-                WHERE (:start_datetime > baslangic AND :start_datetime < bitis) 
+                WHERE (baslangic >= :start_datetime AND baslangic < :end_datetime) 
                       OR 
-                      (:end_datetime > baslangic AND :end_datetime < bitis)';
+                      (bitis > :start_datetime AND bitis <= :end_datetime)
+                      OR
+                      (:start_datetime >= baslangic AND :start_datetime < bitis)
+                      OR
+                      (:end_datetime > baslangic AND :end_datetime <= bitis)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
         $stmt->bindValue(':end_datetime', $end_datetime, PDO::PARAM_STR);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->setFetchMode(PDO::FETCH_NUM);
         $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
-    public static function isOverlap($start_timestamp, $end_timestamp)
-    {
-        $overlapped_records = self::getOverlappedRows($start_timestamp, $end_timestamp);
-        if ($overlapped_records === false) {
-            $overlapped_records = [];
-        }
-        return count($overlapped_records) > 0;
+        return $stmt->fetch()[0];
     }
 }

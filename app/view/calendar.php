@@ -341,10 +341,16 @@ $personel = Auth::getAuthPersonel();
             for (var i = 0; i < all_events.length; ++i) {
                 var i_start_timestamp = all_events[i].start.getTime();
                 var i_end_timestamp = all_events[i].end.getTime();
-                if (start_timestamp > i_start_timestamp && start_timestamp < i_end_timestamp) {
+                if (start_timestamp >= i_start_timestamp && start_timestamp < i_end_timestamp) {
                     return false;
                 }
-                if (end_timestamp > i_start_timestamp && end_timestamp < i_end_timestamp) {
+                if (end_timestamp > i_start_timestamp && end_timestamp <= i_end_timestamp) {
+                    return false;
+                }
+                if (i_start_timestamp >= start_timestamp && i_start_timestamp < end_timestamp) {
+                    return false;
+                }
+                if (i_end_timestamp > start_timestamp && i_end_timestamp <= end_timestamp) {
                     return false;
                 }
             }
