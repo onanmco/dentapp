@@ -88,15 +88,16 @@ class PersonelController extends Controller
         $errors = [];
         $existing_personel = Personel::findByEmail($_POST['email']);
         if ($existing_personel === false) {
-            $errors[] = Messages::HESAP_BULUNAMADI;
+            $errors[] = Messages::HESAP_BULUNAMADI['message'];
             $requested_personel = new Personel($_POST);
             View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
             exit;
         }
         if (!password_verify($_POST['sifre'], $existing_personel->getPasswordHash())) {
-            $errors[] = Messages::SIFRE_YANLIS;
+            $errors[] = Messages::SIFRE_YANLIS['message'];
             $requested_personel = new Personel($_POST);
             View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
+            exit;
         }
         Auth::login($existing_personel);
         Popup::add(Messages::HOSGELDINIZ);

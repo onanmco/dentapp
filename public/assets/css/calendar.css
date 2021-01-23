@@ -1,60 +1,34 @@
-body, html {
-    overflow-x: hidden;
-}
-
-#calendar thead, #calendar tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    background-color: white;
-}
-
-#calendar tbody {
-    display: block;
-    overflow-y: scroll;
-}
-
-#calendar td {
-    border-left: 1px solid lightgrey;
-    border-right: 1px solid lightgrey;
-    -webkit-box-shadow: inset 0px -1px 0px 0px lightgrey;
-    -moz-box-shadow: inset 0px -1px 0px 0px lightgrey;
-    box-shadow: inset 0px -1px 0px 0px lightgrey;
-}
-
-#calendar {
-    font-size: 10px;
-    text-align: center;
-    width: 100%;
-}
-
-#calendar .calendar_clickable {
-    cursor: pointer;
-}
-
-#calendar_nav #calendar_buttons button {
-    width: 30px;
+#calendar button {
     height: 30px;
-    line-height: 15px;
-}
-
-#calendar_nav i {
     font-size: 15px;
-}
-
-#calendar_nav #calendar_buttons {
-    text-align: left;
-}
-
-#calendar_nav #calendar_heading {
-    text-align: center;
+    line-height: 15px;
+    background: #ffffff;
+    background: -moz-linear-gradient(top,  #ffffff 1%, #eeeeee 100%);
+    background: -webkit-linear-gradient(top,  #ffffff 1%,#eeeeee 100%);
+    background: linear-gradient(to bottom,  #ffffff 1%,#eeeeee 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee',GradientType=0 );
+    bordeR: 1px solid lightgrey;
+    color: dimgray;
     font-weight: bold;
 }
 
-#calendar_nav #calendar_today {
-    text-align: right;
+#calendar button:hover {
+    background: #cecece;
+    background: -moz-linear-gradient(top,  #cecece 0%, #dedede 47%, #cecece 100%);
+    background: -webkit-linear-gradient(top,  #cecece 0%,#dedede 47%,#cecece 100%);
+    background: linear-gradient(to bottom,  #cecece 0%,#dedede 47%,#cecece 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', endColorstr='#cecece',GradientType=0 );
 }
 
-#calendar_nav {
-    align-items: center;
+#calendar button:focus {
+    box-shadow: none;
+}
+
+.error-class {
+    border-color: crimson;
+}
+
+.error-class:focus {
+    border-color: crimson;
+    box-shadow: 0 0 0 0.2rem rgba(220, 20, 60, 0.3);
 }

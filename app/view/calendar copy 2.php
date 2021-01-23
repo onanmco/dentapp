@@ -70,18 +70,18 @@ $personel = Auth::getAuthPersonel();
                             <div class="col-12 col-lg-6">
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="isim" class="small text-muted">Hasta Adı:</label>
+                                        <label for="name" class="small text-muted">Hasta Adı:</label>
                                     </div>
                                     <div class="col-6 text-right d-lg-none">
                                         <a href="" class="toggle small">Mevcut Hasta</a>
                                     </div>
                                 </div>
-                                <input type="text" name="isim" id="isim" class="form-control form-control-sm">
+                                <input type="text" name="name" id="name" class="form-control form-control-sm">
                             </div>
                             <div class="col-12 col-lg-6">
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="soyisim" class="small text-muted">Hasta Soyadı:</label>
+                                        <label for="surname" class="small text-muted">Hasta Soyadı:</label>
                                     </div>
                                     <div class="col-6 text-right d-none d-lg-block">
                                         <a href="" class="toggle small">Mevcut Hasta</a>
@@ -89,13 +89,13 @@ $personel = Auth::getAuthPersonel();
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <input type="text" name="soyisim" id="soyisim" class="form-control form-control-sm">
+                                        <input type="text" name="surname" id="surname" class="form-control form-control-sm">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-6">
-                                <label for="telefon" class="small text-muted">Tel:</label>
-                                <input type="text" name="telefon" id="telefon" class="form-control form-control-sm">
+                                <label for="phone" class="small text-muted">Tel:</label>
+                                <input type="text" name="phone" id="phone" class="form-control form-control-sm">
                             </div>
                             <div class="col-12 col-lg-6">
                                 <label for="tckn" class="small text-muted">TCKN:</label>
@@ -169,7 +169,7 @@ $personel = Auth::getAuthPersonel();
         }
         $('#start_hour').inputmask(time_options);
         $('#end_hour').inputmask(time_options);
-        $('#telefon').inputmask(phone_options);
+        $('#phone').inputmask(phone_options);
         $('#tckn').inputmask(tckn_options);
     </script>
     <script>
@@ -201,9 +201,9 @@ $personel = Auth::getAuthPersonel();
             var new_record = $('#new_record').hasClass('d-none') === false;
             if (new_record) {
                 var hasta = {
-                    isim: $('#isim').val(),
-                    soyisim: $('#soyisim').val(),
-                    telefon: $('#telefon').inputmask('unmaskedvalue'),
+                    isim: $('#name').val(),
+                    soyisim: $('#surname').val(),
+                    telefon: $('#phone').inputmask('unmaskedvalue'),
                     tckn: $('#tckn').inputmask('unmaskedvalue')
                 }
 
@@ -421,11 +421,11 @@ $personel = Auth::getAuthPersonel();
                     is_not_overlap: true,
                     is_not_past: true,
                 },
-                soyisim: {
+                surname: {
                     required: true,
                     is_valid_name_set: true,
                 },
-                isim: {
+                name: {
                     required: true,
                     is_valid_name_set: true,
                 },
@@ -433,7 +433,7 @@ $personel = Auth::getAuthPersonel();
                     required: true,
                     is_valid_tckn: true
                 },
-                telefon: {
+                phone: {
                     is_valid_phone: true
                 }
 
@@ -445,11 +445,11 @@ $personel = Auth::getAuthPersonel();
                 end_hour: {
                     is_valid_hour: 'Lütfen bitiş saatini girin.'
                 },
-                isim: {
+                name: {
                     required: 'İsim alanı boş bırakılamaz.',
                     is_valid_name_set: 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
                 },
-                soyisim: {
+                surname: {
                     required: 'Soyisim alanı boş bırakılamaz.',
                     is_valid_name_set: 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
                 },
@@ -457,7 +457,7 @@ $personel = Auth::getAuthPersonel();
                     required: 'TCKN alanı boş bırakılamaz.',
                     is_valid_tckn: 'Lütfen geçerli bir TCKN girin.'
                 },
-                telefon: {
+                phone: {
                     is_valid_phone: 'Lütfen geçerli bir telefon girin.'
                 }
 
