@@ -71,13 +71,7 @@ class Randevu extends Model
         $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
         $sql = 'SELECT COUNT(*) 
                 FROM randevu 
-                WHERE (baslangic >= :start_datetime AND baslangic < :end_datetime) 
-                      OR 
-                      (bitis > :start_datetime AND bitis <= :end_datetime)
-                      OR
-                      (:start_datetime >= baslangic AND :start_datetime < bitis)
-                      OR
-                      (:end_datetime > baslangic AND :end_datetime <= bitis)';
+                WHERE :start_datetime < bitis AND :end_datetime > baslangic';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);

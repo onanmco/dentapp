@@ -334,23 +334,14 @@ $personel = Auth::getAuthPersonel();
         }
 
         function is_not_overlap(start_date, end_date) {
-            var start_timestamp = start_date.getTime();
-            var end_timestamp = end_date.getTime();
+            var new_start = start_date.getTime();
+            var new_end = end_date.getTime();
             var all_events = calendar.getEvents();
 
             for (var i = 0; i < all_events.length; ++i) {
-                var i_start_timestamp = all_events[i].start.getTime();
-                var i_end_timestamp = all_events[i].end.getTime();
-                if (start_timestamp >= i_start_timestamp && start_timestamp < i_end_timestamp) {
-                    return false;
-                }
-                if (end_timestamp > i_start_timestamp && end_timestamp <= i_end_timestamp) {
-                    return false;
-                }
-                if (i_start_timestamp >= start_timestamp && i_start_timestamp < end_timestamp) {
-                    return false;
-                }
-                if (i_end_timestamp > start_timestamp && i_end_timestamp <= end_timestamp) {
+                var existing_start = all_events[i].start.getTime();
+                var existing_end = all_events[i].end.getTime();
+                if (new_start < existing_end && new_end > existing_start) {
                     return false;
                 }
             }
