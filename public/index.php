@@ -21,3 +21,4 @@ $router->add('login', ['controller' => 'login', 'action' => 'user']);
 $router->add('<controller>/<action>');
 
 $router->dispatch(Request::uri());
+

@@ -55,7 +55,10 @@ class Randevu extends Model
     {
         $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
         $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
-        $sql = 'SELECT * FROM randevu WHERE baslangic > :start_datetime AND baslangic < :end_datetime ORDER BY baslangic ASC';
+        $sql = 'SELECT * 
+                FROM randevu 
+                WHERE baslangic > :start_datetime AND baslangic < :end_datetime 
+                ORDER BY baslangic ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
@@ -79,5 +82,18 @@ class Randevu extends Model
         $stmt->setFetchMode(PDO::FETCH_NUM);
         $stmt->execute();
         return $stmt->fetch()[0];
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->id,
+            'personel_id' => $this->personel_id,
+            'hasta_id' => $this->hasta_id,
+            'baslangic' => $this->baslangic,
+            'bitis' => $this->bitis,
+            'notlar' => $this->notlar,
+            'hatirlat' => $this->hatirlat
+        ];
     }
 }

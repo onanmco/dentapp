@@ -1,4 +1,5 @@
 <?php
+
 use app\utility\Auth;
 use config\Config;
 
@@ -195,9 +196,6 @@ $personel = Auth::getAuthPersonel();
 
             var start_date = calc_start_date();
             var end_date = calc_end_date();
-
-
-
             var new_record = $('#new_record').hasClass('d-none') === false;
             if (new_record) {
                 var hasta = {
@@ -207,9 +205,33 @@ $personel = Auth::getAuthPersonel();
                     tckn: $('#tckn').inputmask('unmaskedvalue')
                 }
 
-                console.log(hasta);
-                // validate
-                // insert hasta to db
+                fetch('/api/hasta/kayit', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(hasta)
+                    })
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(result) {
+                        console.log(result);
+                        if (!result.errors && result.body) {
+                            show_popup('Başarılı', result.title, 200);
+                        } else if (result.errors) {
+                            Array.prototype.forEach.call(result.errors, function(value) {
+                                show_popup(result.title, value, 400);
+                            });
+                        } else {
+                            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                        }
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    });
                 var event = {
                     title: hasta.isim + ' ' + hasta.soyisim,
                     start: start_date,
