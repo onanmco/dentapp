@@ -1,7 +1,5 @@
 <?php
 
-use app\model\Personel;
-use app\utility\Token;
 use core\Request;
 use core\Router;
 
@@ -23,3 +21,4 @@ $router->add('login', ['controller' => 'login', 'action' => 'user']);
 $router->add('<controller>/<action>');
 
 $router->dispatch(Request::uri());
+

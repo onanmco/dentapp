@@ -24,6 +24,31 @@ class Hasta extends Model
         }
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getIsim()
+    {
+        return $this->isim;
+    }
+
+    public function getSoyisim()
+    {
+        return $this->soyisim;
+    }
+
+    public function getTelefon()
+    {
+        return $this->telefon;
+    }
+
+    public function getTckn()
+    {
+        return $this->tckn;
+    }
+
     public static function findById($id)
     {
         $sql = 'SELECT * FROM hasta WHERE id = :id';
@@ -60,6 +85,18 @@ class Hasta extends Model
         $stmt->bindValue(':soyisim', $this->soyisim, PDO::PARAM_STR);
         $stmt->bindValue(':telefon', $this->telefon, PDO::PARAM_STR);
         $stmt->bindValue(':tckn', $this->tckn, PDO::PARAM_STR);
+        return $stmt->execute();
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->id,
+            'isim' => $this->isim,
+            'soyisim' => $this->soyisim,
+            'telefon' => $this->telefon,
+            'tckn' => $this->tckn
+        ];
     }
 
 

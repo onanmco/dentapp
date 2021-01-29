@@ -50,7 +50,7 @@ $errors = (isset($errors)) ? $errors : [];
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center">
                     <div class="col-6 text-left">
-                        <h3>DentApp</h3>
+                        <h3><?php echo Config::CLIENT_APP_NAME; ?></h3>
                     </div>
                     <div class="col-6 text-right">
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
@@ -134,7 +134,7 @@ $errors = (isset($errors)) ? $errors : [];
             </div>
             <div class="card-footer p-2 pl-3 bg-white">
                 <p class="m-0 small text-muted">Tüm Hakları Saklıdır.</p>
-                <p class="m-0 small text-muted">DentApp &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
@@ -166,7 +166,7 @@ $errors = (isset($errors)) ? $errors : [];
             help_drawer.classList.add('d-none');
         });
     </script>
-    <!-- <script src="/assets/js/signup-validation.js"></script> -->
+    <script src="/assets/js/signup-validation.js"></script>
     <script>
         <?php app\utility\Popup::printAll() ?>
     </script>

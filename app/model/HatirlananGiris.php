@@ -7,6 +7,7 @@ use PDO;
 
 class HatirlananGiris extends Model
 {
+    private $id = '';
     private $personel_id = '';
     private $token_hash = '';
     private $bitis_tarihi = '';
@@ -19,6 +20,11 @@ class HatirlananGiris extends Model
                 $this->$key = $value;
             }
         }
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getPersonelId()

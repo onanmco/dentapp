@@ -44,4 +44,9 @@ abstract class Messages
         'message' => 'Hatalı şifre girdiniz. Lütfen tekrar deneyin.',
         'code' => 400
     ];
+    const POST_METHOD = [
+        'title' => 'Yanlış İstek',
+        'message' => 'İstek sadece POST methoduyla yapılabilir.',
+        'code' => 400
+    ];
 }
