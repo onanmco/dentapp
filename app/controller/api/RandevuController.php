@@ -18,7 +18,7 @@ class RandevuController extends Controller
         // Check if request method is correct
         if (Request::method() !== 'post') {
             $error = Messages::POST_METHOD;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            Response::json([$error], $error['code']);
             exit;
         }
         // Parse request body
@@ -26,93 +26,166 @@ class RandevuController extends Controller
         try {
             $request_body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::APPLICATION_JSON;
+            Response::json([$error], $error['code']);
             exit;
         }
         if ($request_body == false) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::JSON_DECODING_ERROR;
+            Response::json([$error], $error['code']);
             exit;
         }
         if (!isset($request_body['personel_id'])) {
-            $errors[] = 'Personel id alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'personel_id alanı eksik.',
+                'code' => 400,
+            ];
         }
         if (!isset($request_body['hasta_id'])) {
-            $errors[] = 'Hasta id alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'hasta_id alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['baslangic'])) {
-            $errors[] = 'Başlangıç tarih-zamanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'Başlangıç tarihi-zaman alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['bitis'])) {
-            $errors[] = 'Bitiş tarih-zamanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'Bitiş tarihi-zaman alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['notlar'])) {
-            $errors[] = 'Notlar alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'notlar alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['hatirlat'])) {
-            $errors[] = 'Hatırlat alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'hatirlat alanı eksik.',
+                'code' => 400
+            ];
         }        
         if (!empty($errors)) {
-            Response::json_failure('Hatalı istek', $errors);
+            Response::json($errors, 400);
             exit;
         }
         //validation
         if (!preg_match('/\d+/', $request_body['personel_id'])) {
-            $errors[] = 'Personel id 0\'dan büyük bir sayı olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Personel id 0\'dan büyük bir sayı olmalıdır.',
+                'code' => 400
+            ];
         }
         if (!Personel::findById($request_body['personel_id'])) {
-            $errors[] = 'Sistemimize ' . $request_body['personel_id'] . ' id\'siyle kayıtlı bir personel bulunamadı.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Sistemimize ' . $request_body['personel_id'] . ' id\'siyle kayıtlı bir personel bulunamadı.',
+                'code' => 400
+            ];
         }
         if (!preg_match('/\d+/', $request_body['hasta_id'])) {
-            $errors[] = 'Hasta id 0\'dan büyük bir sayı olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Hasta id 0\'dan büyük bir sayı olmalıdır.',
+                'code' => 400
+            ];
         }
         if (!Hasta::findById($request_body['hasta_id'])) {
-            $errors[] = 'Sistemimize ' . $request_body['hasta_id'] . ' id\'siyle kayıtlı bir hasta bulunamadı.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Sistemimize ' . $request_body['hasta_id'] . ' id\'siyle kayıtlı bir hasta bulunamadı.',
+                'code' => 400
+            ];
         }
         if (((string) (int) $request_body['baslangic'] === $request_body['baslangic']) 
         && ($request_body['baslangic'] <= PHP_INT_MAX)
         && ($request_body['baslangic'] >= ~PHP_INT_MAX)) {
-            $errors[] = 'Başlangıç tarihi UNIX timestamp formatında olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Başlangıç tarihi UNIX timestamp formatında olmalıdır.',
+                'code' => 400
+            ];
         }
         if (((string) (int) $request_body['bitis'] === $request_body['bitis']) 
         && ($request_body['bitis'] <= PHP_INT_MAX)
         && ($request_body['bitis'] >= ~PHP_INT_MAX)) {
-            $errors[] = 'Bitiş tarihi UNIX timestamp formatında olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Bitiş tarihi UNIX timestamp formatında olmalıdır.',
+                'code' => 400
+            ];
         }
         if ($request_body['baslangic'] >= $request_body['bitis']) {
-            $errors[] = 'Başlangıç saati bitiş saatinden önce olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Başlangıç saati bitiş saatinden önce olmalıdır.',
+                'code' => 400
+            ];
         }
         if ($request_body['baslangic'] < time()) {
-            $errors[] = 'Geçmiş tarihe randevu veremezsiniz.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Geçmiş tarihe randevu veremezsiniz.',
+                'code' => 400
+            ];
         }
         if (Randevu::getOverlappingCount($request_body['baslangic'], $request_body['bitis']) > 0) {
-            $errors[] = 'Girmiş olduğunuz aralıkta başka bir randevu var.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Girmiş olduğunuz aralıkta başka bir randevu var.',
+                'code' => 400
+            ];
         }
         if (!is_string($request_body['notlar'])) {
-            $errors[] = 'Notlar sadece String(yazı) formatında olmalıdır.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Notlar sadece String(yazı) formatında olmalıdır.',
+                'code' => 400
+            ];
         }
         if (!is_bool($request_body['hatirlat'])) {
-            $errors[] = 'Hatırlat alanı sadece boolean true false değerlerini alabilir.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Hatırlat alanı sadece boolean true false değerlerini alabilir.',
+                'code' => 400
+            ];
         }
         if (!empty($errors)) {
-            Response::json_failure('Doğrulama hatası', $errors);
+            Response::json($errors, 400);
             exit;
         }
         // registration
         $randevu = new Randevu($request_body);
         if (!$randevu->save()) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::DB_WRITE_ERROR;
+            Response::json([$error], 500);
         }
         $saved_randevu = Randevu::getBetween($request_body['baslangic'], $request_body['bitis']);
         if (!$saved_randevu) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::DB_READ_ERROR;
+            Response::json([$error], 500);
         }
         $saved_randevu = $saved_randevu[0];
-        // return the saved result
-        Response::json_success('Randevu başarıyla kaydedildi.', $saved_randevu->serialize());
+        $body = [
+            'title' => 'Başarılı',
+            'message' => 'Randevu başarıyla kaydedildi.',
+            'code' => 200,
+            'data' => $saved_randevu->serialize()
+        ];
+        Response::json($body, 200);
         exit;
     }
 }
