@@ -4,20 +4,12 @@ namespace core;
 
 class Response
 {
-    public static function json_success($title = '', $body = [], $code = 200)
+    public static function json($body = [], $code = 200)
     {
+        $status = ($code >= 200 && $code < 300) ? 'success' : 'error';
         $payload = [
-            'title' => $title,
+            'status' => $status,
             'body' => $body
-        ];
-        self::json_dispatch($payload, $code);
-    }
-
-    public static function json_failure($title = '', $errors = [], $code = 400)
-    {
-        $payload = [
-            'title' => $title,
-            'errors' => $errors
         ];
         self::json_dispatch($payload, $code);
     }

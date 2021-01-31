@@ -16,7 +16,7 @@ class HastaController extends Controller
         // Check if request method is correct
         if (Request::method() !== 'post') {
             $error = Messages::POST_METHOD;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            Response::json([$error], $error['code']);
             exit;
         }
         // Parse request body
@@ -24,77 +24,131 @@ class HastaController extends Controller
         try {
             $request_body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::APPLICATION_JSON;
+            Response::json([$error], $error['code']);
             exit;
         }
         if ($request_body == false) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::JSON_DECODING_ERROR;
+            Response::json([$error], $error['code']);
             exit;
         }
         if (!isset($request_body['isim'])) {
-            $errors[] = 'isim alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'isim alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['soyisim'])) {
-            $errors[] = 'soyisim alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'soyisim alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['telefon'])) {
-            $errors[] = 'telefon alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'telefon alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!isset($request_body['tckn'])) {
-            $errors[] = 'TCKN alanı eksik.';
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'TCKN alanı eksik.',
+                'code' => 400
+            ];
         }
         if (!empty($errors)) {
-            Response::json_failure('Hatalı istek', $errors);
+            Response::json($errors, 400);
             exit;
         }
         // validation
         if (strlen($request_body['isim']) < 1) {
-            $errors[] = 'İsim alanı boş bırakılamaz.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'İsim alanı boş bırakılamaz.',
+                'code' => 400
+            ];
         }
         if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $request_body['isim'])) {
-            $errors[] = 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
+                'code' => 400
+            ];
         }
         if (strlen($request_body['soyisim']) < 1) {
-            $errors[] = 'Soyisim alanı boş bırakılamaz.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Soyisim alanı boş bırakılamaz.',
+                'code' => 400
+            ];
         }
         if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $request_body['soyisim'])) {
-            $errors[] = 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
+                'code' => 400
+            ];
         }
         if (!preg_match('/^0\d{10}$/', $request_body['telefon'])) {
-            $errors[] = 'Lütfen geçerli bir telefon girin.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Lütfen geçerli bir telefon girin.',
+                'code' => 400
+            ];
         }
         if (strlen($request_body['tckn']) < 1) {
-            $errors[] = 'TCKN alanı boş bırakılamaz.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'TCKN alanı boş bırakılamaz.',
+                'code' => 400
+            ];
         }
         if (!preg_match('/^\d{11}$/', $request_body['tckn'])) {
-            $errors[] = 'Lütfen geçerli bir TCKN girin.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Lütfen geçerli bir TCKN girin.',
+                'code' => 400
+            ];
         }
         $existing_hasta = Hasta::findByTckn($request_body['tckn']);
         if ($existing_hasta) {
-            $errors[] = 'Bu TCKN ile zaten kayıtlı bir hasta mevcut.';
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Bu TCKN ile kayıtlı bir hasta zaten mevcut.',
+                'code' => 400
+            ];
         }
         if (!empty($errors)) {
-            Response::json_failure('Doğrulama hatası', $errors);
+            Response::json($errors, 400);
             exit;
         }
         // registration
         $hasta = new Hasta($request_body);
         $result = $hasta->save();
         if (!$result) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::DB_WRITE_ERROR;
+            Response::json([$error], $error['code']);
             exit;
         }
         $saved_hasta = Hasta::findByTckn($hasta->getTckn());
         if (!$saved_hasta) {
-            $error = Messages::BILINMEYEN_HATA;
-            Response::json_failure($error['title'], [$error['message']], $error['code']);
+            $error = Messages::DB_READ_ERROR;
+            Response::json([$error], $error['code']);
             exit;
         }
         // return the saved record
-        Response::json_success('Hasta başarıyla kaydedildi.', $saved_hasta->serialize());
+        $body = [
+            'title' => 'Başarılı',
+            'message' => 'Hasta başarıyla kaydedildi.',
+            'code' => 200,
+            'data' => $saved_hasta->serialize()
+        ];
+        Response::json($body, 200);
         exit;
     }
 }

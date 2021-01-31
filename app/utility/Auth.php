@@ -16,8 +16,8 @@ class Auth
         }
         $auth_personel = Personel::findById($_SESSION['personel_id']);
         if ($auth_personel === false) {
-            $message = Messages::BILINMEYEN_HATA;
-            throw new Exception($message['message'], $message['code']);
+            $message = Messages::UNKNOWN_ERROR;
+            throw new Exception($message['message'], 500);
         }
         return $auth_personel;
     }
