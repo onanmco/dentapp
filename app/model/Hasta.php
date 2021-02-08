@@ -51,7 +51,7 @@ class Hasta extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM hasta WHERE id = :id';
+        $sql = 'SELECT * FROM hastalar WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -62,7 +62,7 @@ class Hasta extends Model
 
     public static function findByTckn($tckn)
     {
-        $sql = 'SELECT * FROM hasta WHERE tckn = :tckn';
+        $sql = 'SELECT * FROM hastalar WHERE tckn = :tckn';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':tckn', $tckn, PDO::PARAM_STR);
@@ -78,7 +78,7 @@ class Hasta extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO hasta(isim, soyisim, telefon, tckn) VALUES(:isim, :soyisim, :telefon, :tckn)';
+        $sql = 'INSERT INTO hastalar(isim, soyisim, telefon, tckn) VALUES(:isim, :soyisim, :telefon, :tckn)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);

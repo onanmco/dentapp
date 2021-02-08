@@ -1,5 +1,6 @@
 <?php
 
+use app\model\Meslek;
 use app\model\Personel;
 use config\Config;
 
@@ -105,25 +106,27 @@ $errors = (isset($errors)) ? $errors : [];
                             <input type="text" name="tckn" id="tckn" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getTckn()) ?>">
                         </div>
                     </div>
+                    
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="maas" class="m-0 text-muted font-weight-bold">Maaş:</label>
+                        <label for="meslek_id" class="m-0 text-muted font-weight-bold">Meslek:</label>
                         <div class="w-80">
-                            <input type="text" name="maas" id="maas" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getMaas()) ?>">
-                        </div>
-                    </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="meslek" class="m-0 text-muted font-weight-bold">Meslek:</label>
-                        <div class="w-80">
-                            <select type="text" name="meslek" id="meslek" class="form-control form-control-sm mt-1">
+                            <select type="text" name="meslek_id" id="meslek_id" class="form-control form-control-sm mt-1">
                                 <?php
-                                $meslek = $personel->getMeslek();
-                                if ($meslek === 'sekreter' || $meslek === 'hekim' || $meslek === 'patron') {
-                                    echo '<option value="' . $meslek . '" selected>' . ucfirst($meslek) . '</option>';
+                                $meslek_id = $personel->getMeslekId();
+                                $all_roles = Meslek::getAll();
+                                
+                                foreach ($all_roles as $row) {
+                                    if ($meslek_id === $row->getId()) {
+                                        echo '<option value="' . $row->getId() . '" selected>' . ucfirst($row->getMeslek()) . '</option>';
+                                    }
+                                }
+
+                                foreach ($all_roles as $row) {
+                                   echo '<option value="' . $row->getId() . '">' . ucfirst($row->getMeslek()) . '</option>';                                    
                                 }
                                 ?>
-                                <option value="sekreter">Sekreter</option>
-                                <option value="hekim">Hekim</option>
-                                <option value="patron">Patron</option>
+                                <!-- <option value="hekim">Hekim</option> -->
+                                <!-- <option value="patron">Patron</option> -->
                             </select>
                         </div>
                     </div>
