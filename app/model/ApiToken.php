@@ -32,7 +32,7 @@ class ApiToken extends Model
 
     public static function findById($personel_id)
     {
-        $sql = 'SELECT * FROM api_tokens WHERE personel_id = :personel_id';
+        $sql = 'SELECT * FROM api_tokenler WHERE personel_id = :personel_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':personel_id', $personel_id, PDO::PARAM_STR);
@@ -43,7 +43,7 @@ class ApiToken extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO api_tokens(personel_id, api_token_hash) VALUES(:personel_id, :api_token_hash)';
+        $sql = 'INSERT INTO api_tokenler(personel_id, api_token_hash) VALUES(:personel_id, :api_token_hash)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':personel_id', $this->personel_id, PDO::PARAM_INT);

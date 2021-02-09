@@ -83,9 +83,6 @@ $(document).ready(function() {
                 validPasswordSet: true,
                 atLeastOneUppercase: true,
                 atLeastOneDigit: true
-            },
-            maas: {
-                number: true
             }
         },
         messages: {
@@ -103,9 +100,6 @@ $(document).ready(function() {
                 required: "Şifre alanı boş bırakılamaz.",
                 minlength: "Şifre alanı en az 8 karakter içermelidir.",
                 maxlength: "Şifre alanı en fazla 20 karakter içerebilir."
-            },
-            maas: {
-                number: "Maaş alanı yalnızca sayısal değerler içerebilir (virgül yerine nokta kullanın)."  
             }
         }
     });

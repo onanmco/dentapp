@@ -179,13 +179,13 @@ class RandevuController extends Controller
             Response::json([$error], 500);
         }
         $saved_randevu = $saved_randevu[0];
-        $body = [
+        $data = [
             'title' => 'Başarılı',
             'message' => 'Randevu başarıyla kaydedildi.',
             'code' => 200,
-            'data' => $saved_randevu->serialize()
+            'kaydedilen_randevu' => $saved_randevu->serialize()
         ];
-        Response::json($body, 200);
+        Response::json($data, 200);
         exit;
     }
 }

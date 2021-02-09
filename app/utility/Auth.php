@@ -46,7 +46,7 @@ class Auth
     public static function loginRequired()
     {
         if (!self::isLoggedIn()) {
-            Popup::add(Messages::ERISIM_KISITLANDI);
+            Popup::add(Messages::ACCESS_DENIED);
             self::setLastVisit($_SERVER['REQUEST_URI']);
             Router::redirectAfterPost('/personel/giris');
         }

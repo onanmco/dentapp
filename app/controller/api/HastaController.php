@@ -142,13 +142,13 @@ class HastaController extends Controller
             exit;
         }
         // return the saved record
-        $body = [
+        $data = [
             'title' => 'Başarılı',
             'message' => 'Hasta başarıyla kaydedildi.',
             'code' => 200,
-            'data' => $saved_hasta->serialize()
+            'kaydedilen_hasta' => $saved_hasta->serialize()
         ];
-        Response::json($body, 200);
+        Response::json($data, 200);
         exit;
     }
 }

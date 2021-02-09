@@ -4,11 +4,11 @@ namespace app\controller;
 
 use app\constant\Messages;
 use app\model\ApiToken;
+use app\model\Meslek;
 use app\model\Personel;
 use app\utility\Auth;
 use app\utility\Popup;
 use app\utility\Token;
-use app\utility\UtilityFunctions;
 use app\utility\Validator;
 use core\Controller;
 use core\Router;
@@ -24,29 +24,70 @@ class PersonelController extends Controller
 
     public function olusturAction()
     {
-        $_POST['isim'] = UtilityFunctions::sanitizeName($_POST['isim']);
-        $_POST['soyisim'] = UtilityFunctions::sanitizeName($_POST['soyisim']);
-        $rules = [
-            ['İsim', $_POST['isim'], 'REQUIRED'],
-            ['İsim', $_POST['isim'], 'CAN', ['regexp' => 'a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ', 'verbal' => 'harf, boşluk, nokta, kesme işareti ve tire']],
-            ['Soyisim', $_POST['soyisim'], 'REQUIRED'],
-            ['Soyisim', $_POST['soyisim'], 'CAN', ['regexp' => 'a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ', 'verbal' => 'harf, boşluk, nokta, kesme işareti ve tire']],
-            ['E-mail', $_POST['email'], 'REQUIRED'],
-            ['E-mail', $_POST['email'], 'EMAIL'],
-            ['Şifre', $_POST['sifre'], 'MIN', ['min' => 8]],
-            ['Şifre', $_POST['sifre'], 'MAX', ['max' => 20]],
-            ['Şifre', $_POST['sifre'], 'CAN', ['regexp' => '\@\!\^\+\%\/\(\)\=\?\_\*\-\<\>\#\$\½\{\[\]\}\\\|\w', 'verbal' => 'harf, sayı, özel karakterler, tire ve nokta']],
-            ['Şifre', $_POST['sifre'], 'MUST', ['regexp' => 'A-Z', 'verbal' => 'büyük harf']],
-            ['Şifre', $_POST['sifre'], 'MUST', ['regexp' => '\d', 'verbal' => 'rakam']],
-            ['TCKN', $_POST['tckn'], 'TCKN'],
-            ['Maaş', $_POST['maas'], 'NUMBER'],
-            ['Meslek', $_POST['meslek'], 'MESLEK']
-            
-        ];
-        $validator = new Validator();
-        $errors = $validator->validateAll($rules);
+        if (!isset($_POST['isim'])) {
+            throw new Exception('personel kayit formunda isim alani eksik.', 500);
+        }
+        if (!isset($_POST['soyisim'])) {
+            throw new Exception('personel kayit formunda soyisim alani eksik.', 500);
+        }
+        if (!isset($_POST['email'])) {
+            throw new Exception('personel kayit formunda email alani eksik.', 500);
+        }
+        if (!isset($_POST['sifre'])) {
+            throw new Exception('personel kayit formunda sifre alani eksik.', 500);
+        }
+        if (!isset($_POST['tckn'])) {
+            throw new Exception('personel kayit formunda tckn alani eksik.', 500);
+        }
+
+        $_POST['isim'] = trim($_POST['isim'], ' ');
+        $_POST['isim'] = preg_replace('/\s\s+/', ' ', $_POST['isim']);
+        $_POST['soyisim'] = trim($_POST['soyisim'], ' ');
+        $_POST['soyisim'] = preg_replace('/\s\s+/', ' ', $_POST['soyisim']);
+
+        $errors = [];
+
+        if (strlen($_POST['isim']) < 1) {
+            $errors[] = 'İsim alanı boş bırakılamaz.';
+        }
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['isim'])) {
+            $errors[] = 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
+        }
+        if (strlen($_POST['soyisim']) < 1) {
+            $errors[] = 'Soyisim alanı boş bırakılamaz.';
+        }
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['soyisim'])) {
+            $errors[] = 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
+        }
+        if (strlen($_POST['email']) < 1) {
+            $errors[] = 'Email alanı boş bırakılamaz.';
+        }
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Lütfen geçerli bir email adresi girin.';
+        }
+        if (strlen($_POST['sifre']) < 8) {
+            $errors[] = 'Şifre alanı en az 8 karakter içermelidir.';
+        }
+        if (strlen($_POST['sifre']) > 20) {
+            $errors[] = 'Şifre alanı en fazla 20 karakter içermelidir.';
+        }
+        if (!preg_match('/^[\@\!\^\+\%\/\(\)\=\?\_\*\-\<\>\#\$\½\{\[\]\}\\\|\w]*$/', $_POST['sifre'])) {
+            $errors[] = 'Şifre alanı yalnızca harf, sayı, özel karakterler, tire ve nokta içerebilir.';
+        }
+        if (!preg_match('/[A-Z]/', $_POST['sifre'])) {
+            $errors[] = 'Şifre alanı en az bir adet büyük harf içermelidir.';
+        }
+        if (!preg_match('/[\d]/', $_POST['sifre'])) {
+            $errors[] = 'Şifre alanı en az bir adet rakam içermelidir.';
+        }
+        if (!preg_match('/(^$)|(^\d{11}$)/', $_POST['tckn'])) {
+            $errors[] = 'Lütfen geçerli bir TCKN girin.';
+        }
+        if (!Meslek::isExist($_POST['meslek_id'])) {
+            $errors[] = 'Seçmiş olduğunuz meslek türü sistemimizde yer almamaktadır.';
+        }
         if (!Personel::isEmailAvailable($_POST['email'])) {
-            $errors[] = Messages::GECERSIZ_EMAIL['message'];
+            $errors[] = Messages::INVALID_EMAIL['message'];
         }
         if (empty($errors)) {
             $_POST['password_hash'] = password_hash($_POST['sifre'], PASSWORD_DEFAULT);
@@ -70,7 +111,7 @@ class PersonelController extends Controller
                 $saved_personel->delete();
                 throw new Exception("An error occurred when inserting api_token_hash of a saved personel to api_tokens table. Deleting user.\nDeleted user email: " . $saved_personel->getEmail() . "\nDeleted user id: " . $saved_personel->getId(), 500);
             }
-            Popup::add(Messages::KAYIT_BASARILI);
+            Popup::add(Messages::REGISTER_SUCCESSFUL);
             Router::redirectAfterPost('/');
         } else {
             $personel = new Personel($_POST);
@@ -88,19 +129,19 @@ class PersonelController extends Controller
         $errors = [];
         $existing_personel = Personel::findByEmail($_POST['email']);
         if ($existing_personel === false) {
-            $errors[] = Messages::HESAP_BULUNAMADI['message'];
+            $errors[] = Messages::ACCOUNT_CANNOT_FOUND['message'];
             $requested_personel = new Personel($_POST);
             View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
             exit;
         }
         if (!password_verify($_POST['sifre'], $existing_personel->getPasswordHash())) {
-            $errors[] = Messages::SIFRE_YANLIS['message'];
+            $errors[] = Messages::WRONG_PASSWORD['message'];
             $requested_personel = new Personel($_POST);
             View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
             exit;
         }
         Auth::login($existing_personel);
-        Popup::add(Messages::HOSGELDINIZ);
+        Popup::add(Messages::WELCOME);
         Router::redirectAfterPost(Auth::getLastVisit());
     }
 
@@ -112,7 +153,7 @@ class PersonelController extends Controller
     
     public function byeAction()
     {
-        Popup::add(Messages::CIKIS_BASARILI);
+        Popup::add(Messages::LOGOUT_SUCCESSFUL);
         Router::redirectAfterPost('/');
     }
 }
