@@ -190,7 +190,7 @@ $personel = Auth::getAuthPersonel();
             e.preventDefault();
 
             if ($('#modal_form').valid() !== true) {
-                console.log('islem basarisiz');
+                console.log('debug log: islem basarisiz');
                 return false;
             }
 
@@ -351,8 +351,6 @@ $personel = Auth::getAuthPersonel();
         }
 
         function is_valid_range(start_date, end_date) {
-            console.log(start_date);
-            console.log(end_date);
             return start_date.getTime() < end_date.getTime();
         }
 
