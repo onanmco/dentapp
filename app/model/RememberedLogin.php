@@ -2,7 +2,6 @@
 
 namespace app\model;
 
-use app\utility\Token;
 use core\Model;
 use PDO;
 
