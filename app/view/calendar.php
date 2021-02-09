@@ -190,7 +190,7 @@ $personel = Auth::getAuthPersonel();
             e.preventDefault();
 
             if ($('#modal_form').valid() !== true) {
-                console.log('denied');
+                console.log('debug log: islem basarisiz');
                 return false;
             }
 
@@ -312,8 +312,11 @@ $personel = Auth::getAuthPersonel();
                 var day_names = ['pazar', 'pazartesi', 'salı', 'çarşamba', 'perşembe', 'cuma', 'cumartesi'];
                 var html = '<strong>Seçilen Tarih: </strong> ' + info.start.toLocaleString().substring(0, 10) + ' ' + uc_first(day_names[info.start.getDay()]);
                 $('#current_date').html(html);
-                $('#modal').attr('data-start', info.start.getTime());
-                $('#modal').attr('data-end', info.end.getTime());
+                var start_date = info.start;
+                var end_date = info.end;
+                end_date.setDate(start_date.getDate());
+                $('#modal').attr('data-start', start_date.getTime());
+                $('#modal').attr('data-end', end_date.getTime());
                 var start_hour = (info.start.getHours() < 10) ? ('0' + info.start.getHours()) : info.start.getHours();
                 var start_min = (info.start.getMinutes() < 10) ? ('0' + info.start.getMinutes()) : info.start.getMinutes();
                 var end_hour = (info.end.getHours() < 10) ? ('0' + info.end.getHours()) : info.end.getHours();
