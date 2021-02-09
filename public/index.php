@@ -1,5 +1,7 @@
 <?php
 
+use app\model\Meslek;
+use app\model\Personel;
 use core\Request;
 use core\Router;
 
@@ -21,4 +23,3 @@ $router->add('login', ['controller' => 'login', 'action' => 'user']);
 $router->add('<controller>/<action>');
 
 $router->dispatch(Request::uri());
-

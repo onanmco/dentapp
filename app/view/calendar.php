@@ -217,15 +217,15 @@ $personel = Auth::getAuthPersonel();
                         return response.json()
                     })
                     .then(function(result) {
-                        console.log(result);
-                        if (!result.errors && result.body) {
-                            show_popup('Başarılı', result.title, 200);
-                        } else if (result.errors) {
-                            Array.prototype.forEach.call(result.errors, function(value) {
-                                show_popup(result.title, value, 400);
+                        if (result['status'] === 'success') {
+                            show_popup(result['data']['title'], result['data']['message'], 200);
+                        } else if (result['status'] === 'failure'){
+                            var errors = result['data'];
+                            errors.forEach(function (error) {
+                                show_popup(error['title'], error['message'], error['code']);
                             });
                         } else {
-                            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
                         }
                     })
                     .catch(function(err) {

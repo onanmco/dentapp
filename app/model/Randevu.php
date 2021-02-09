@@ -27,7 +27,7 @@ class Randevu extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO randevu (personel_id, hasta_id, baslangic, bitis, notlar, hatirlat) 
+        $sql = 'INSERT INTO randevular (personel_id, hasta_id, baslangic, bitis, notlar, hatirlat) 
                 VALUES (:personel_id, :hasta_id, :baslangic, :bitis, :notlar, :hatirlat)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
@@ -42,7 +42,7 @@ class Randevu extends Model
 
     public static function getById($id)
     {
-        $sql = 'SELECT * FROM randevu WHERE id = :id';
+        $sql = 'SELECT * FROM randevular WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -56,7 +56,7 @@ class Randevu extends Model
         $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
         $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
         $sql = 'SELECT * 
-                FROM randevu 
+                FROM randevular 
                 WHERE baslangic > :start_datetime AND baslangic < :end_datetime 
                 ORDER BY baslangic ASC';
         $db = self::getDB();
@@ -73,7 +73,7 @@ class Randevu extends Model
         $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
         $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
         $sql = 'SELECT COUNT(*) 
-                FROM randevu 
+                FROM randevular 
                 WHERE :start_datetime < bitis AND :end_datetime > baslangic';
         $db = self::getDB();
         $stmt = $db->prepare($sql);

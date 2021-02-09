@@ -2,6 +2,7 @@
 
 namespace app\model;
 
+use config\Config;
 use core\Model;
 use PDO;
 
@@ -13,8 +14,7 @@ class Personel extends Model
     private $tckn = '';
     private $email = '';
     private $password_hash = '';
-    private $maas = '';
-    private $meslek = '';
+    private $meslek_id = '';
     private $api_token = '';
 
     public function __construct($args = [])
@@ -57,14 +57,9 @@ class Personel extends Model
         return $this->password_hash;
     }
 
-    public function getMaas()
+    public function getMeslekId()
     {
-        return $this->maas;
-    }
-
-    public function getMeslek()
-    {
-        return $this->meslek;
+        return $this->meslek_id;
     }
 
     public function getApiToken()
@@ -73,7 +68,7 @@ class Personel extends Model
     }
 
     public static function getAll(){
-        $sql = 'SELECT * FROM personel ORDER BY id DESC';
+        $sql = 'SELECT * FROM personeller ORDER BY id DESC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -83,7 +78,7 @@ class Personel extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM personel WHERE id = :id';
+        $sql = 'SELECT * FROM personeller WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -94,7 +89,7 @@ class Personel extends Model
 
     public static function findByEmail($email)
     {
-        $sql = 'SELECT * FROM personel WHERE email = :email';
+        $sql = 'SELECT * FROM personeller WHERE email = :email';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
@@ -105,7 +100,7 @@ class Personel extends Model
 
     public static function findByName($isim)
     {
-        $sql = 'SELECT * FROM personel WHERE isim = :isim';
+        $sql = 'SELECT * FROM personeller WHERE isim = :isim';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':isim', $isim, PDO::PARAM_STR);
@@ -116,7 +111,7 @@ class Personel extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO personel(isim, soyisim, tckn, email, password_hash, maas, meslek, api_token) VALUES(:isim, :soyisim, :tckn, :email, :password_hash, :maas, :meslek, :api_token)';
+        $sql = 'INSERT INTO personeller(isim, soyisim, tckn, email, password_hash, meslek_id, api_token) VALUES(:isim, :soyisim, :tckn, :email, :password_hash, :meslek_id, :api_token)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);
@@ -124,15 +119,14 @@ class Personel extends Model
         $stmt->bindValue(':tckn', $this->tckn, PDO::PARAM_STR);
         $stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
         $stmt->bindValue(':password_hash', $this->password_hash, PDO::PARAM_STR);
-        $stmt->bindValue(':maas', $this->maas, PDO::PARAM_STR);
-        $stmt->bindValue(':meslek', $this->meslek, PDO::PARAM_STR);
+        $stmt->bindValue(':meslek_id', $this->meslek_id, PDO::PARAM_INT);
         $stmt->bindValue(':api_token', $this->api_token, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
     public static function getLastInserted()
     {
-        $sql = 'SELECT * FROM personel WHERE id = (SELECT MAX(id) FROM personel)';
+        $sql = 'SELECT * FROM personeller WHERE id = (SELECT MAX(id) FROM personeller)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -142,7 +136,7 @@ class Personel extends Model
 
     public static function findByApiToken($api_token)
     {
-        $sql = 'SELECT * FROM personel WHERE api_token = :api_token';
+        $sql = 'SELECT * FROM personeller WHERE api_token = :api_token';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':api_token', $api_token, PDO::PARAM_STR);
@@ -158,7 +152,7 @@ class Personel extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM personel WHERE id = :id';
+        $sql = 'DELETE FROM personeller WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
