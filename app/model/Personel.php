@@ -2,7 +2,6 @@
 
 namespace app\model;
 
-use config\Config;
 use core\Model;
 use PDO;
 

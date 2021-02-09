@@ -9,7 +9,6 @@ use app\model\Personel;
 use app\utility\Auth;
 use app\utility\Popup;
 use app\utility\Token;
-use app\utility\Validator;
 use core\Controller;
 use core\Router;
 use core\View;
