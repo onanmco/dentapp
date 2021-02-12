@@ -88,6 +88,15 @@ class Hasta extends Model
         return $stmt->execute();
     }
 
+    public function delete()
+    {
+        $sql = 'DELETE FROM hastalar WHERE id = :id';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public function serialize()
     {
         return [

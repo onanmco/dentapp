@@ -10,6 +10,14 @@ use core\Response;
 
 class HastaController extends Controller
 {
+    public function silAction()
+    {
+        $id = $this->args['id'];
+        $existing_hasta = Hasta::findById($id);
+        $result = $existing_hasta->delete();
+        Response::json_dispatch($result, 200);
+    }
+
     public function kayitAction()
     {
         $errors = [];

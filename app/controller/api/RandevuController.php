@@ -110,18 +110,18 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }
-        if (((string) (int) $request_body['baslangic'] === $request_body['baslangic']) 
-        && ($request_body['baslangic'] <= PHP_INT_MAX)
-        && ($request_body['baslangic'] >= ~PHP_INT_MAX)) {
+        if (!(((string) (int) $request_body['baslangic'] === $request_body['baslangic']) 
+        && ((int) $request_body['baslangic'] <= PHP_INT_MAX)
+        && ((int) $request_body['baslangic'] >= ~PHP_INT_MAX))) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Başlangıç tarihi UNIX timestamp formatında olmalıdır.',
                 'code' => 400
             ];
         }
-        if (((string) (int) $request_body['bitis'] === $request_body['bitis']) 
+        if (!(((string) (int) $request_body['bitis'] === $request_body['bitis']) 
         && ($request_body['bitis'] <= PHP_INT_MAX)
-        && ($request_body['bitis'] >= ~PHP_INT_MAX)) {
+        && ($request_body['bitis'] >= ~PHP_INT_MAX))) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Bitiş tarihi UNIX timestamp formatında olmalıdır.',
@@ -142,6 +142,8 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }
+        $request_body['baslangic'] = date('Y-m-d H:i:s', $request_body['baslangic']);
+        $request_body['bitis'] = date('Y-m-d H:i:s', $request_body['bitis']);
         if (Randevu::getOverlappingCount($request_body['baslangic'], $request_body['bitis']) > 0) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
@@ -173,12 +175,11 @@ class RandevuController extends Controller
             $error = Messages::DB_WRITE_ERROR;
             Response::json([$error], 500);
         }
-        $saved_randevu = Randevu::getBetween($request_body['baslangic'], $request_body['bitis']);
+        $saved_randevu = Randevu::getByRange($request_body['baslangic'], $request_body['bitis']);
         if (!$saved_randevu) {
             $error = Messages::DB_READ_ERROR;
             Response::json([$error], 500);
         }
-        $saved_randevu = $saved_randevu[0];
         $data = [
             'title' => 'Başarılı',
             'message' => 'Randevu başarıyla kaydedildi.',

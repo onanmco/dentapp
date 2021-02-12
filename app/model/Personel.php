@@ -157,4 +157,15 @@ class Personel extends Model
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public static function findAllByMeslekId($meslek_id)
+    {
+        $sql = 'SELECT * FROM personeller WHERE meslek_id = :meslek_id';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':meslek_id', $meslek_id, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

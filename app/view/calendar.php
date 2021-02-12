@@ -4,10 +4,7 @@ use app\utility\Auth;
 use config\Config;
 
 $personel = Auth::getAuthPersonel();
-// if ($personel === false) {
-//     echo "yetkisiz giris";
-//     exit;
-// }
+$personel_id = $personel->getId();
 
 ?>
 <!doctype html>
@@ -186,7 +183,7 @@ $personel = Auth::getAuthPersonel();
             $('#error').html('');
             $('#current_date').html('');
         });
-        $('#submit').on('click', function(e) {
+        $('#submit').on('click', async function(e) {
             e.preventDefault();
 
             if ($('#modal_form').valid() !== true) {
@@ -205,39 +202,82 @@ $personel = Auth::getAuthPersonel();
                     tckn: $('#tckn').inputmask('unmaskedvalue')
                 }
 
-                fetch('/api/hasta/kayit', {
+                try {
+                    var hasta_response = await fetch('/api/hasta/kayit', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(hasta)
-                    })
-                    .then(function(response) {
-                        return response.json()
-                    })
-                    .then(function(result) {
-                        if (result['status'] === 'success') {
-                            show_popup(result['data']['title'], result['data']['message'], 200);
-                        } else if (result['status'] === 'failure'){
-                            var errors = result['data'];
-                            errors.forEach(function (error) {
-                                show_popup(error['title'], error['message'], error['code']);
-                            });
-                        } else {
-                            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
-                        }
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
                     });
+                    hasta_response = await hasta_response.json();
+                } catch (error) {
+                    show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+                if (hasta_response.status === 'failure') {
+                    var errors = hasta_response['data'];
+                    errors.forEach(function(error) {
+                        show_popup(error['title'], error['message'], error['code']);
+                    });
+                    return;
+                } else if (hasta_response.status !== 'success') {
+                    show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+
+                hasta = hasta_response['data']['kaydedilen_hasta'];
+
                 var event = {
                     title: hasta.isim + ' ' + hasta.soyisim,
                     start: start_date,
                     end: end_date
                 }
-                // add event to calendar
+
+                var randevu = {
+                    personel_id: <?php echo $personel_id ?>,
+                    hasta_id: hasta['id'],
+                    baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
+                    bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
+                    notlar: '',
+                    hatirlat: false
+                }
+
+                console.log(randevu);
+
+                
+                try {
+                    var randevu_response = await fetch('/api/randevu/olustur', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(randevu)
+                    });
+                    randevu_response = await randevu_response.json();
+                } catch (error) {
+                    show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+                console.log(randevu_response);
+                
+                if (randevu_response.status === 'success') {
+                    show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
+                } else if (randevu_response.status === 'failure') {
+                    await fetch('/api/hasta/sil/' + hasta['id']);
+                    var errors = randevu_response['data'];
+                    errors.forEach(function(error) {
+                        show_popup(error['title'], error['message'], error['code']);
+                    });
+                    return;
+                } else {
+                    show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+                
+
             } else {
                 // find hasta from db
 
@@ -387,6 +427,10 @@ $personel = Auth::getAuthPersonel();
             end_date.setHours(Number(input_end_hour[0]));
             end_date.setMinutes(Number(input_end_hour[1]));
             return end_date;
+        }
+
+        function js_timestamp_to_unix_timestamp(js_timestamp) {
+            return (js_timestamp / 1000).toFixed(0);
         }
     </script>
     <script>

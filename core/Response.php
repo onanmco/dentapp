@@ -14,7 +14,7 @@ class Response
         self::json_dispatch($payload, $code);
     }
 
-    private static function json_dispatch($payload, $code)
+    public static function json_dispatch($payload, $code)
     {
         http_response_code($code);
         header('Content-Type: application/json');

@@ -51,27 +51,36 @@ class Randevu extends Model
         return $stmt->fetch();
     }
 
-    public static function getBetween($start_timestamp, $end_timestamp)
+    public static function getByRange($start_datetime, $end_datetime)
     {
-        $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
-        $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
+        $sql = 'SELECT * FROM randevular WHERE baslangic = :start_datetime AND bitis = :end_datetime';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':end_datetime', $end_datetime, PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetch();
+
+    }
+
+    public static function getBetween($start_datetime, $end_datetime)
+    {
         $sql = 'SELECT * 
                 FROM randevular 
-                WHERE baslangic > :start_datetime AND baslangic < :end_datetime 
+                WHERE baslangic >= :start_datetime AND baslangic <= :end_datetime 
                 ORDER BY baslangic ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
-        $stmt->bindValue(':start_datetime', $end_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':end_datetime', $end_datetime, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public static function getOverlappingCount($start_timestamp, $end_timestamp)
+    public static function getOverlappingCount($start_datetime, $end_datetime)
     {
-        $start_datetime = date('Y-m-d H:i:s', $start_timestamp);
-        $end_datetime = date('Y-m-d H:i:s', $end_timestamp);
         $sql = 'SELECT COUNT(*) 
                 FROM randevular 
                 WHERE :start_datetime < bitis AND :end_datetime > baslangic';
