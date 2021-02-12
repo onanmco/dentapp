@@ -36,3 +36,37 @@
 .modal {
     z-index: 1100;
 }
+
+#search_wrapper {
+    position: relative;
+}
+
+#search_results ul {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: calc(100% - 10px);
+    transform: translateX(-50%);
+    border-left: 1px solid lightgrey;
+    border-right: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+}
+
+.search_result {
+    background-color: whitesmoke !important;
+    font-size: small;
+    border-bottom: 1px solid lightgrey !important;
+    padding-left: 10px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+}
+
+.search_result:last-child {
+    border: none !important;
+}
+
+.search_result:hover {
+    cursor: pointer;
+    background-color: lightgrey !important;
+}
+

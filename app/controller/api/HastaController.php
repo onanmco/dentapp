@@ -159,4 +159,84 @@ class HastaController extends Controller
         Response::json($data, 200);
         exit;
     }
+
+    public function araAction()
+    {
+        $errors = [];
+        // Check if request method is correct
+        if (Request::method() !== 'post') {
+            $error = Messages::POST_METHOD;
+            Response::json([$error], $error['code']);
+            exit;
+        }
+        // Parse request body
+        $request_body = false;
+        try {
+            $request_body = json_decode(file_get_contents("php://input"), true);
+        } catch (\Throwable $th) {
+            $error = Messages::APPLICATION_JSON;
+            Response::json([$error], $error['code']);
+            exit;
+        }
+        if ($request_body == false) {
+            $error = Messages::JSON_DECODING_ERROR;
+            Response::json([$error], $error['code']);
+            exit;
+        }
+        if (!isset($request_body['deger'])) {
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'Aranacak değer eksik.',
+                'code' => 400
+            ];
+        }
+        if (!empty($errors)) {
+            Response::json($errors, 400);
+            exit;
+        }
+        if (!preg_match('/^[\w\s]+$/', $request_body['deger'])) {
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Aranacak değer string(yazı) tipinde olmalıdır.',
+                'code' => 400
+            ];
+        }
+        $request_body['deger'] = preg_replace('/\s+/', ' ', trim($request_body['deger'], " \t"));
+        if (!empty($errors)) {
+            Response::json($errors, 400);
+            exit;
+        }
+        if (strlen($request_body['deger']) < 3) {
+            $errors[] = [
+                'title' => 'Doğrulama Hatası',
+                'message' => 'Aranacak değer en az 3 karakter içermelidir.',
+                'code' => 400
+            ];
+        }
+        if (!empty($errors)) {
+            Response::json($errors, 400);
+            exit;
+        }
+        $splitted = explode(' ', $request_body['deger']);
+        $results = [];
+        foreach ($splitted as $value) {
+            $temp = Hasta::findByIsimOrSoyisimOrTckn($value);
+            if ($temp === false) {
+                $error = Messages::DB_READ_ERROR;
+                Response::json([$error], $error['code']);
+                exit;
+            }
+            foreach ($temp as $record) {
+                $results[] = $record->serialize();
+            }
+        }
+        $data = [
+            'title' => 'Başarılı',
+            'message' => 'Arama başarıyla tamamlandı.',
+            'code' => 200,
+            'sonuclar' => $results
+        ];
+        Response::json($data, 200);
+        exit;
+    }
 }

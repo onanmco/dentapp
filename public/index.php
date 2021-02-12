@@ -1,6 +1,9 @@
 <?php
 
+use app\constant\Messages;
+use app\model\Hasta;
 use core\Request;
+use core\Response;
 use core\Router;
 
 date_default_timezone_set('Europe/Istanbul');
@@ -20,3 +23,4 @@ $router->add('login', ['controller' => 'login', 'action' => 'user']);
 $router->add('<controller>/<action>');
 
 $router->dispatch(Request::uri());
+

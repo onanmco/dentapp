@@ -67,5 +67,6 @@ abstract class Messages
     const DB_READ_ERROR = [
         'title' => 'Veritabanı Hatası',
         'message' => 'İstek veritabanından okunurken bir hata oluştu.',
+        'code' => 500
     ];
 }

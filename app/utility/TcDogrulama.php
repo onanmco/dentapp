@@ -40,8 +40,8 @@ class TcDogrulama
         if (!empty($this->errors)) {
             return false;
         }        
-        $this->isim = UtilityFunctions::turkish_lowercase(trim($this->isim, "\s"));
-        $this->soyisim = UtilityFunctions::turkish_lowercase(trim($this->soyisim, "\s"));
+        $this->isim = UtilityFunctions::turkish_lowercase(trim($this->isim, " \t"));
+        $this->soyisim = UtilityFunctions::turkish_lowercase(trim($this->soyisim, " \t"));
 
         $request = '<?xml version="1.0" encoding="utf-8"?>
                     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">

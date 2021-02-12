@@ -108,5 +108,18 @@ class Hasta extends Model
         ];
     }
 
+    public static function findByIsimOrSoyisimOrTckn($string)
+    {
+        $sql = "SELECT * 
+                FROM hastalar 
+                WHERE isim LIKE :placeholder OR soyisim LIKE :placeholder OR tckn LIKE :placeholder";
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':placeholder', '%' . $string . '%', PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
 
 }

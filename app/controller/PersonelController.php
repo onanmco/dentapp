@@ -39,10 +39,10 @@ class PersonelController extends Controller
             throw new Exception('personel kayit formunda tckn alani eksik.', 500);
         }
 
-        $_POST['isim'] = trim($_POST['isim'], ' ');
-        $_POST['isim'] = preg_replace('/\s\s+/', ' ', $_POST['isim']);
-        $_POST['soyisim'] = trim($_POST['soyisim'], ' ');
-        $_POST['soyisim'] = preg_replace('/\s\s+/', ' ', $_POST['soyisim']);
+        $_POST['isim'] = trim($_POST['isim'], " \t");
+        $_POST['isim'] = preg_replace('/\s+/', ' ', $_POST['isim']);
+        $_POST['soyisim'] = trim($_POST['soyisim'], " \t");
+        $_POST['soyisim'] = preg_replace('/\s+/', ' ', $_POST['soyisim']);
 
         $errors = [];
 

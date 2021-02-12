@@ -60,8 +60,12 @@ $personel_id = $personel->getId();
                                 <a href="#" class="toggle small">Yeni Hasta</a>
                                 <span class=""></span>
                             </div>
-                            <div class="col-12">
+                            <div id="search_wrapper" class="col-12">
                                 <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="İsim, soyisim ya da TCKN ile arayın.">
+                                <div id="search_results">
+                                    <ul class="list-unstyled">
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div id="new_record" class="form-row">
@@ -183,6 +187,50 @@ $personel_id = $personel->getId();
             $('#error').html('');
             $('#current_date').html('');
         });
+        $('#search').on('input', async function(e) {
+            var search_this = e.target.value;
+            search_this = search_this.trim();
+            search_this = search_this.replace(/\s+/g, ' ');
+            var ul = document.querySelector('#search_results ul');
+            ul.innerHTML = '';
+            if (search_this.length >= 3) {
+                try {
+                    var response = await fetch('/api/hasta/ara', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            deger: search_this
+                        })
+                    });
+                    response = await response.json();
+                } catch (error) {
+                    show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+                if (response.status === 'success') {
+                    var hastalar = response['data']['sonuclar'];
+                    console.log('arama basarili');
+                    hastalar.forEach(function(hasta) {
+                        var li = document.createElement('li');
+                        li.className = 'search_result';
+                        li.innerHTML = 'İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn;
+                        ul.appendChild(li);
+                    });
+                } else if (response.status === 'failure') {
+                    var errors = response['data'];
+                    errors.forEach(function(error) {
+                        show_popup(error['title'], error['message'], error['code']);
+                    });
+                    return;
+                } else {
+                    show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+            }
+        });
         $('#submit').on('click', async function(e) {
             e.preventDefault();
 
@@ -246,7 +294,7 @@ $personel_id = $personel->getId();
 
                 console.log(randevu);
 
-                
+
                 try {
                     var randevu_response = await fetch('/api/randevu/olustur', {
                         method: 'POST',
@@ -262,7 +310,7 @@ $personel_id = $personel->getId();
                     return;
                 }
                 console.log(randevu_response);
-                
+
                 if (randevu_response.status === 'success') {
                     show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
                 } else if (randevu_response.status === 'failure') {
@@ -276,10 +324,11 @@ $personel_id = $personel->getId();
                     show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
                     return;
                 }
-                
+
 
             } else {
                 // find hasta from db
+
 
             }
         });
