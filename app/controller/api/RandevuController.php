@@ -120,8 +120,8 @@ class RandevuController extends Controller
             ];
         }
         if (!(((string) (int) $request_body['bitis'] === $request_body['bitis']) 
-        && ($request_body['bitis'] <= PHP_INT_MAX)
-        && ($request_body['bitis'] >= ~PHP_INT_MAX))) {
+        && ((int) $request_body['bitis'] <= PHP_INT_MAX)
+        && ((int) $request_body['bitis'] >= ~PHP_INT_MAX))) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Bitiş tarihi UNIX timestamp formatında olmalıdır.',

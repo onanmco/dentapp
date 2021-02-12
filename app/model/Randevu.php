@@ -61,10 +61,9 @@ class Randevu extends Model
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
         $stmt->execute();
         return $stmt->fetch();
-
     }
 
-    public static function getBetween($start_datetime, $end_datetime)
+    public static function getAllBetween($start_datetime, $end_datetime)
     {
         $sql = 'SELECT * 
                 FROM randevular 

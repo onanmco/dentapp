@@ -1,7 +1,5 @@
 <?php
 
-use app\model\Personel;
-use app\model\Randevu;
 use core\Request;
 use core\Router;
 
