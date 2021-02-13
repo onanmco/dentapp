@@ -175,7 +175,6 @@ $personel_id = $personel->getId();
         $('#tckn').inputmask(tckn_options);
     </script>
     <script>
-        // $('#modal').modal('show');
         $('#modal .toggle').click(function(e) {
             e.preventDefault();
             $('#existing_record').toggleClass('d-none');
@@ -187,11 +186,20 @@ $personel_id = $personel->getId();
             $('#error').html('');
             $('#current_date').html('');
         });
+        $('#search_results').on('click', function(e) {
+            document.getElementById('search').setAttribute('data-selected_hasta_id', e.target.getAttribute('data-hasta_id'));
+            document.getElementById('search').value = e.target.innerHTML;
+            document.getElementById('search_results').classList.add('d-none');
+        });
         $('#search').on('input', async function(e) {
+            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]+$/)) {
+                e.target.value = '';
+            }
             var search_this = e.target.value;
             search_this = search_this.trim();
             search_this = search_this.replace(/\s+/g, ' ');
             var ul = document.querySelector('#search_results ul');
+            document.getElementById('search').removeAttribute('data-selected_hasta_id');
             ul.innerHTML = '';
             if (search_this.length >= 3) {
                 try {
@@ -217,7 +225,9 @@ $personel_id = $personel->getId();
                         var li = document.createElement('li');
                         li.className = 'search_result';
                         li.innerHTML = 'İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn;
+                        li.setAttribute('data-hasta_id', '' + hasta.id);
                         ul.appendChild(li);
+                        document.getElementById('search_results').classList.remove('d-none');
                     });
                 } else if (response.status === 'failure') {
                     var errors = response['data'];
