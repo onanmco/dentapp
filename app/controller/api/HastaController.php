@@ -81,7 +81,7 @@ class HastaController extends Controller
                 'code' => 400
             ];
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $request_body['isim'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['isim'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
@@ -95,7 +95,7 @@ class HastaController extends Controller
                 'code' => 400
             ];
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $request_body['soyisim'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['soyisim'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
@@ -194,7 +194,7 @@ class HastaController extends Controller
             Response::json($errors, 400);
             exit;
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $request_body['deger'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['deger'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Aranacak değer string(yazı) tipinde olmalıdır.',

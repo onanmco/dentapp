@@ -8,7 +8,7 @@ class Config
         'HOST' => 'localhost',
         'PORT' => '3306',
         'NAME' => 'mvc',
-        'USER' => 'mvcuser',
+        'USER' => 'cem',
         'PASS' => '1234'
     ];
 

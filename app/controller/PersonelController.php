@@ -49,13 +49,13 @@ class PersonelController extends Controller
         if (strlen($_POST['isim']) < 1) {
             $errors[] = 'İsim alanı boş bırakılamaz.';
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['isim'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $_POST['isim'])) {
             $errors[] = 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
         }
         if (strlen($_POST['soyisim']) < 1) {
             $errors[] = 'Soyisim alanı boş bırakılamaz.';
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['soyisim'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $_POST['soyisim'])) {
             $errors[] = 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
         }
         if (strlen($_POST['email']) < 1) {

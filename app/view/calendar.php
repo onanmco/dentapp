@@ -192,7 +192,7 @@ $personel_id = $personel->getId();
             document.getElementById('search_results').classList.add('d-none');
         });
         $('#search').on('input', async function(e) {
-            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]+$/)) {
+            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]+$/)) {
                 e.target.value = '';
             }
             var search_this = e.target.value;
@@ -506,7 +506,7 @@ $personel_id = $personel->getId();
             return is_not_overlap(calc_start_date(), calc_end_date());
         }, 'Girmiş olduğunuz aralıkta başka bir randevu var.');
         $.validator.addMethod('is_valid_name_set', function(value) {
-            return value.match(/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/);
+            return value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/);
         });
         $.validator.addMethod('is_valid_tckn', function(value) {
             return is_valid_tckn(value);
