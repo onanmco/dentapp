@@ -192,7 +192,7 @@ $personel_id = $personel->getId();
             document.getElementById('search_results').classList.add('d-none');
         });
         $('#search').on('input', async function(e) {
-            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]+$/)) {
+            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]+$/)) {
                 e.target.value = '';
             }
             var search_this = e.target.value;

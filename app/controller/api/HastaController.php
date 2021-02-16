@@ -194,7 +194,7 @@ class HastaController extends Controller
             Response::json($errors, 400);
             exit;
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['deger'])) {
+        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]*$/', $request_body['deger'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Aranacak değer string(yazı) tipinde olmalıdır.',
