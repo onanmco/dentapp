@@ -4,6 +4,7 @@ namespace app\controller\api;
 
 use app\constant\Messages;
 use app\model\Hasta;
+use app\utility\CommonValidator;
 use core\Controller;
 use core\Request;
 use core\Response;
@@ -74,54 +75,45 @@ class HastaController extends Controller
             exit;
         }
         // validation
-        if (strlen($request_body['isim']) < 1) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'İsim alanı boş bırakılamaz.',
-                'code' => 400
-            ];
+        $isim_validation = CommonValidator::isValidName($request_body['isim'], 'İsim');
+        if ($isim_validation !== true) {
+            foreach ($isim_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['isim'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
-                'code' => 400
-            ];
+        $soyisim_validation = CommonValidator::isValidName($request_body['soyisim'], 'Soyisim');
+        if ($soyisim_validation !== true) {
+            foreach ($soyisim_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
-        if (strlen($request_body['soyisim']) < 1) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Soyisim alanı boş bırakılamaz.',
-                'code' => 400
-            ];
+        $telefon_validation = CommonValidator::isValidPhone($request_body['telefon'], 'telefon');
+        if ($telefon_validation !== true) {
+            foreach ($telefon_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/', $request_body['soyisim'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.',
-                'code' => 400
-            ];
-        }
-        if (!preg_match('/^0\d{10}$/', $request_body['telefon'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Lütfen geçerli bir telefon girin.',
-                'code' => 400
-            ];
-        }
-        if (strlen($request_body['tckn']) < 1) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'TCKN alanı boş bırakılamaz.',
-                'code' => 400
-            ];
-        }
-        if (!preg_match('/^\d{11}$/', $request_body['tckn'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Lütfen geçerli bir TCKN girin.',
-                'code' => 400
-            ];
+        $tckn_validation = CommonValidator::isValidTckn($request_body['tckn'], 'TCKN');
+        if ($tckn_validation !== true) {
+            foreach ($tckn_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         $existing_hasta = Hasta::findByTckn($request_body['tckn']);
         if ($existing_hasta) {

@@ -63,11 +63,11 @@ abstract class CommonValidator
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidEmail($value, $field = 'E-mail')
+    public static function isValidEmail($value, $field = 'e-mail')
     {
         $errors = [];
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Lütfen geçerli bir e-mail adresi girin.';
+            $errors[] = 'Lütfen geçerli bir' . $field . 'adresi girin.';
         }
         return (empty($errors)) ? true : $errors;
     }
@@ -77,6 +77,24 @@ abstract class CommonValidator
         $errors = [];
         if (!preg_match('/^\d+$/', $value)) {
             $errors[] = $field . ' alanı 0\'dan büyük bir sayı olmalıdır.';
+        }
+        return (empty($errors)) ? true : $errors;
+    }
+
+    public static function isValidPhone($value, $field = 'Telefon')
+    {
+        $errors = [];
+        if (!preg_match('/^0\d{10}$/', $value)) {
+            $errors[] = 'Lütfen geçerli bir ' . $field . ' numarası girin.';
+        }
+        return (empty($errors)) ? true : $errors;
+    }
+
+    public static function isValidTckn($value, $field = 'TCKN')
+    {
+        $errors = [];
+        if (!preg_match('/^\d{11}$/', $value)) {
+            $errors[] = 'Lütfen geçerli bir ' . $field . ' girin';
         }
         return (empty($errors)) ? true : $errors;
     }
