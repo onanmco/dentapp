@@ -16,7 +16,7 @@ class Datetime
      * @param int $timestamp
      * @return int
      */
-    public static function getMonday($timestamp = time())
+    public static function getMonday($timestamp)
     {
         $date_info = getdate($timestamp);
         $day_offset = ($date_info['wday'] == 0) ? 6 : ($date_info['wday']  - 1);
