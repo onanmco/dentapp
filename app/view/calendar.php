@@ -185,6 +185,8 @@ $personel_id = $personel->getId();
             $('#modal_form input').removeClass('error-class');
             $('#error').html('');
             $('#current_date').html('');
+            $('#existing_record').addClass('d-none');
+            $('#new_record').removeClass('d-none');
         });
         $('#search_results').on('click', function(e) {
             document.getElementById('search').setAttribute('data-selected_hasta_id', e.target.getAttribute('data-hasta_id'));
@@ -220,7 +222,6 @@ $personel_id = $personel->getId();
                 }
                 if (response.status === 'success') {
                     var hastalar = response['data']['sonuclar'];
-                    console.log('arama basarili');
                     hastalar.forEach(function(hasta) {
                         var li = document.createElement('li');
                         li.className = 'search_result';
@@ -245,7 +246,6 @@ $personel_id = $personel->getId();
             e.preventDefault();
 
             if ($('#modal_form').valid() !== true) {
-                console.log('debug log: islem basarisiz');
                 return false;
             }
 
@@ -302,8 +302,56 @@ $personel_id = $personel->getId();
                     hatirlat: false
                 }
 
-                console.log(randevu);
+                try {
+                    var randevu_response = await fetch('/api/randevu/olustur', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(randevu)
+                    });
+                    randevu_response = await randevu_response.json();
+                } catch (error) {
+                    show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
 
+                if (randevu_response.status === 'success') {
+                    show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
+                    $('#modal').modal('hide');
+                } else if (randevu_response.status === 'failure') {
+                    await fetch('/api/hasta/sil/' + hasta['id']);
+                    var errors = randevu_response['data'];
+                    errors.forEach(function(error) {
+                        show_popup(error['title'], error['message'], error['code']);
+                    });
+                    return;
+                } else {
+                    await fetch('/api/hasta/sil/' + hasta['id']);
+                    show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+                    return;
+                }
+
+
+            } else {
+                var selected_hasta_id = document.getElementById('search').getAttribute('data-selected_hasta_id');
+                if (selected_hasta_id == null && selected_hasta_id == undefined) {
+                    show_popup('Kayıt Başarısız', 'Lütfen geçerli bir hasta seçimi yapın.', 400);
+                    return;
+                }
+                if (!(('' + selected_hasta_id).match(/^\d+$/))) {
+                    show_popup('Kayıt Başarısız', 'Hasta ID sayısal bir değer olmalıdır.', 400);
+                    return;
+                }
+                var randevu = {
+                    personel_id: <?php echo $personel_id ?>,
+                    hasta_id: selected_hasta_id,
+                    baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
+                    bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
+                    notlar: '',
+                    hatirlat: false
+                }
 
                 try {
                     var randevu_response = await fetch('/api/randevu/olustur', {
@@ -319,12 +367,11 @@ $personel_id = $personel->getId();
                     show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
                     return;
                 }
-                console.log(randevu_response);
 
                 if (randevu_response.status === 'success') {
                     show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
+                    $('#modal').modal('hide');
                 } else if (randevu_response.status === 'failure') {
-                    await fetch('/api/hasta/sil/' + hasta['id']);
                     var errors = randevu_response['data'];
                     errors.forEach(function(error) {
                         show_popup(error['title'], error['message'], error['code']);
@@ -335,11 +382,8 @@ $personel_id = $personel->getId();
                     return;
                 }
 
-
-            } else {
-                // find hasta from db
-
-
+                document.getElementById('search').removeAttribute('data-selected_hasta_id');
+                $('#modal').modal('hide');
             }
         });
     </script>
