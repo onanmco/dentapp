@@ -67,7 +67,7 @@ class Randevu extends Model
     {
         $sql = 'SELECT * 
                 FROM randevular 
-                WHERE baslangic >= :start_datetime AND baslangic <= :end_datetime 
+                WHERE baslangic >= :start_datetime AND baslangic < :end_datetime 
                 ORDER BY baslangic ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
