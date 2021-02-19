@@ -2,7 +2,7 @@
 
 namespace app\constant;
 
-class SiteConfig
+class Environment
 {
     const PASSWORD_MIN_LENGTH = 8;
     const PASSWORD_MAX_LENGTH = 20;
@@ -15,4 +15,5 @@ class SiteConfig
     const TCKN_REGEX = '/^\d{11}$/';
     const ID_REGEX = '/^\d+$/';
     const COMPOSITE_SEARCH_CHARSET = '/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]+$/';
+    const COMPOSITE_SEARCH_MIN_LENGTH = 3;
 }

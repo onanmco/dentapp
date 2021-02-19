@@ -19,4 +19,25 @@ class UtilityFunctions
         $str = str_replace($lowercase, $uppercase, $str);
         return mb_strtoupper($str);
     }
+
+    /**
+     * Split given regular expression in two parts
+     * 1st part represents the string between forward slashes
+     * 2nd part represents the flag
+     * 
+     * @param string
+     * @return array
+     */
+    public static function parseRegex($regex)
+    {
+        $flag = false;
+        if (preg_match('/^\/(?P<regex>.+)\/(?P<flag>.+)$/', $regex, $matches)) {
+            $flag = $matches['flag'];
+            $regex = $matches['regex'];
+        }
+        return [
+            'regex' => $regex,
+            'flag' => $flag
+        ];
+    }
 }

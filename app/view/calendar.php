@@ -1,13 +1,13 @@
 <?php
 
-use app\constant\SiteConfig;
+use app\constant\Environment;
 use app\utility\Auth;
 use config\Config;
 
 $personel = Auth::getAuthPersonel();
 $personel_id = $personel->getId();
-
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -131,6 +131,17 @@ $personel_id = $personel->getId();
     <script src="/assets/js/fullcalendar_locales.js"></script>
     <script src="/assets/js/jquery.inputmask.js"></script>
     <script>
+        function newRegexp(regex) {
+            var with_flags = regex.match(/^\/(.+)\/(.+)$/);
+            var without_flags = regex.match(/^\/(.+)\/$/);
+            if (without_flags) {
+                return new RegExp(without_flags[1]);
+            } else {
+                return new RegExp(with_flags[1], with_flags[2]);
+            }
+        }
+    </script>
+    <script>
         var tckn_options = {
             mask: '99999999999',
             placeholder: '_',
@@ -188,6 +199,12 @@ $personel_id = $personel->getId();
             $('#current_date').html('');
             $('#existing_record').addClass('d-none');
             $('#new_record').removeClass('d-none');
+            document.querySelector('#search_results ul').innerHTML = '';
+            var search_bar = document.getElementById('search');
+            search_bar.value = '';
+            if (search_bar.hasAttribute('data-selected_hasta_id')) {
+                search_bar.removeAttribute('data-selected_hasta_id');
+            }
         });
         $('#search_results').on('click', function(e) {
             if (e.target.hasAttribute('data-hasta_id')) {
@@ -197,17 +214,19 @@ $personel_id = $personel->getId();
             }
         });
         $('#search').on('input', async function(e) {
-            var regex = new RegExp(<?php echo SiteConfig::COMPOSITE_SEARCH_CHARSET ?>);
-            if (!e.target.value.match(regex)) {
+            var composite_search_pattern = newRegexp(<?php echo json_encode(Environment::COMPOSITE_SEARCH_CHARSET) ?>);
+
+            if (!e.target.value.match(composite_search_pattern)) {
                 e.target.value = '';
             }
-            var search_this = e.target.value;
-            search_this = search_this.trim();
-            search_this = search_this.replace(/\s+/g, ' ');
+            var search_value = e.target.value;
+            search_value = search_value.trim();
+            search_value = search_value.replace(/\s+/g, ' ');
             var ul = document.querySelector('#search_results ul');
             document.getElementById('search').removeAttribute('data-selected_hasta_id');
             ul.innerHTML = '';
-            if (search_this.length >= 3) {
+            var min_length = <?php echo Environment::COMPOSITE_SEARCH_MIN_LENGTH ?>;
+            if (search_value.length >= min_length) {
                 try {
                     var response = await fetch('/api/hasta/ara', {
                         method: 'POST',
@@ -216,7 +235,7 @@ $personel_id = $personel->getId();
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            deger: search_this
+                            value: search_value
                         })
                     });
                     response = await response.json();
@@ -646,10 +665,10 @@ $personel_id = $personel->getId();
     <script>
         var next = document.querySelector('.fc-next-button');
         var prev = document.querySelector('.fc-prev-button');
-        next.addEventListener('click', function (e) {
+        next.addEventListener('click', function(e) {
             console.log("ileri tarihe tiklandi");
         });
-        prev.addEventListener('click', function (e) {
+        prev.addEventListener('click', function(e) {
             console.log("geri tarihe tiklandi");
         });
     </script>

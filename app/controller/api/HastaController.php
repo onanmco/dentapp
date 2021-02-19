@@ -2,6 +2,7 @@
 
 namespace app\controller\api;
 
+use app\constant\Environment;
 use app\constant\Messages;
 use app\model\Hasta;
 use app\utility\CommonValidator;
@@ -175,7 +176,7 @@ class HastaController extends Controller
             Response::json([$error], $error['code']);
             exit;
         }
-        if (!isset($request_body['deger'])) {
+        if (!isset($request_body['value'])) {
             $errors[] = [
                 'title' => 'Eksik Alan',
                 'message' => 'Aranacak değer eksik.',
@@ -186,22 +187,22 @@ class HastaController extends Controller
             Response::json($errors, 400);
             exit;
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]*$/', $request_body['deger'])) {
+        if (!preg_match(Environment::COMPOSITE_SEARCH_CHARSET, $request_body['value'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
                 'message' => 'Aranacak değer string(yazı) tipinde olmalıdır.',
                 'code' => 400
             ];
         }
-        $request_body['deger'] = preg_replace('/\s+/', ' ', trim($request_body['deger'], " \t"));
+        $request_body['value'] = preg_replace('/\s+/', ' ', trim($request_body['value'], " \t"));
         if (!empty($errors)) {
             Response::json($errors, 400);
             exit;
         }
-        if (strlen($request_body['deger']) < 3) {
+        if (strlen($request_body['value']) < Environment::COMPOSITE_SEARCH_MIN_LENGTH) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
-                'message' => 'Aranacak değer en az 3 karakter içermelidir.',
+                'message' => 'Aranacak değer en az ' . Environment::COMPOSITE_SEARCH_MIN_LENGTH .' karakter içermelidir.',
                 'code' => 400
             ];
         }
@@ -209,7 +210,7 @@ class HastaController extends Controller
             Response::json($errors, 400);
             exit;
         }
-        $splitted = explode(' ', $request_body['deger']);
+        $splitted = explode(' ', $request_body['value']);
         $results = [];
         foreach ($splitted as $value) {
             $temp = Hasta::findByIsimOrSoyisimOrTckn($value);
