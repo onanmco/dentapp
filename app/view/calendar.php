@@ -633,6 +633,16 @@ $personel_id = $personel->getId();
             },
         });
     </script>
+    <script>
+        var next = document.querySelector('.fc-next-button');
+        var prev = document.querySelector('.fc-prev-button');
+        next.addEventListener('click', function (e) {
+            console.log("ileri tarihe tiklandi");
+        });
+        prev.addEventListener('click', function (e) {
+            console.log("geri tarihe tiklandi");
+        });
+    </script>
 
 </body>
 
