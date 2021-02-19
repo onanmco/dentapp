@@ -68,8 +68,12 @@
     border: none !important;
 }
 
-.search_result:hover {
+.search_result[data-hasta_id]:hover {
     cursor: pointer;
     background-color: lightgrey !important;
+}
+
+#telefon, #tckn {
+    letter-spacing: 0.1em;
 }
 

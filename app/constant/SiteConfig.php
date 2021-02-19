@@ -14,4 +14,5 @@ class SiteConfig
     const PHONE_REGEX = '/^0\d{10}$/';
     const TCKN_REGEX = '/^\d{11}$/';
     const ID_REGEX = '/^\d+$/';
+    const COMPOSITE_SEARCH_CHARSET = '/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]+$/';
 }

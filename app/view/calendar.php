@@ -1,5 +1,6 @@
 <?php
 
+use app\constant\SiteConfig;
 use app\utility\Auth;
 use config\Config;
 
@@ -189,12 +190,15 @@ $personel_id = $personel->getId();
             $('#new_record').removeClass('d-none');
         });
         $('#search_results').on('click', function(e) {
-            document.getElementById('search').setAttribute('data-selected_hasta_id', e.target.getAttribute('data-hasta_id'));
-            document.getElementById('search').value = e.target.innerHTML;
-            document.getElementById('search_results').classList.add('d-none');
+            if (e.target.hasAttribute('data-hasta_id')) {
+                document.getElementById('search').setAttribute('data-selected_hasta_id', e.target.getAttribute('data-hasta_id'));
+                document.getElementById('search').value = e.target.innerHTML;
+                document.getElementById('search_results').classList.add('d-none');
+            }
         });
         $('#search').on('input', async function(e) {
-            if (!e.target.value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ\d]+$/)) {
+            var regex = new RegExp(<?php echo SiteConfig::COMPOSITE_SEARCH_CHARSET ?>);
+            if (!e.target.value.match(regex)) {
                 e.target.value = '';
             }
             var search_this = e.target.value;
@@ -222,14 +226,20 @@ $personel_id = $personel->getId();
                 }
                 if (response.status === 'success') {
                     var hastalar = response['data']['sonuclar'];
-                    hastalar.forEach(function(hasta) {
-                        var li = document.createElement('li');
-                        li.className = 'search_result';
-                        li.innerHTML = 'İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn;
-                        li.setAttribute('data-hasta_id', '' + hasta.id);
+                    var li = document.createElement('li');
+                    li.className = 'search_result';
+                    if (hastalar.length == 0) {
+                        ul.innerHTML = '';
+                        li.innerHTML = 'Sonuç bulunamadı';
                         ul.appendChild(li);
-                        document.getElementById('search_results').classList.remove('d-none');
-                    });
+                    } else {
+                        hastalar.forEach(function(hasta) {
+                            li.innerHTML = 'İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn;
+                            li.setAttribute('data-hasta_id', '' + hasta.id);
+                            ul.appendChild(li);
+                        });
+                    }
+                    document.getElementById('search_results').classList.remove('d-none');
                 } else if (response.status === 'failure') {
                     var errors = response['data'];
                     errors.forEach(function(error) {
