@@ -130,17 +130,7 @@ $personel_id = $personel->getId();
     <script src="/assets/js/fullcalendar.js"></script>
     <script src="/assets/js/fullcalendar_locales.js"></script>
     <script src="/assets/js/jquery.inputmask.js"></script>
-    <script>
-        function newRegexp(regex) {
-            var with_flags = regex.match(/^\/(.+)\/(.+)$/);
-            var without_flags = regex.match(/^\/(.+)\/$/);
-            if (without_flags) {
-                return new RegExp(without_flags[1]);
-            } else {
-                return new RegExp(with_flags[1], with_flags[2]);
-            }
-        }
-    </script>
+    <script src="/assets/js/utility-functions.js"></script>
     <script>
         var tckn_options = {
             mask: '99999999999',
