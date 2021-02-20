@@ -492,6 +492,12 @@ $personel_id = $personel->getId();
         calendar.updateSize();
     </script>
     <script>
+        function is_valid_name_charset(string)
+        {
+            var pattern = <?php echo json_encode(Environment::NAME_CHARSET, JSON_UNESCAPED_UNICODE);?>;
+            return string.match(newRegexp(pattern));
+        }
+
         function is_valid_tckn(string) {
             return Inputmask.isValid(string, tckn_options);
         }
@@ -568,8 +574,8 @@ $personel_id = $personel->getId();
         $.validator.addMethod('is_not_overlap', function() {
             return is_not_overlap(calc_start_date(), calc_end_date());
         }, 'Girmiş olduğunuz aralıkta başka bir randevu var.');
-        $.validator.addMethod('is_valid_name_set', function(value) {
-            return value.match(/^[a-zA-Z\s\.\'\-ığüşöçİĞÜŞÖÇ]*$/);
+        $.validator.addMethod('is_valid_name_charset', function(value) {
+            return is_valid_name_charset(value);
         });
         $.validator.addMethod('is_valid_tckn', function(value) {
             return is_valid_tckn(value);
@@ -611,11 +617,11 @@ $personel_id = $personel->getId();
                 },
                 soyisim: {
                     required: true,
-                    is_valid_name_set: true,
+                    is_valid_name_charset: true,
                 },
                 isim: {
                     required: true,
-                    is_valid_name_set: true,
+                    is_valid_name_charset: true,
                 },
                 tckn: {
                     required: true,
@@ -635,11 +641,11 @@ $personel_id = $personel->getId();
                 },
                 isim: {
                     required: 'İsim alanı boş bırakılamaz.',
-                    is_valid_name_set: 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
+                    is_valid_name_charset: 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
                 },
                 soyisim: {
                     required: 'Soyisim alanı boş bırakılamaz.',
-                    is_valid_name_set: 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
+                    is_valid_name_charset: 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
                 },
                 tckn: {
                     required: 'TCKN alanı boş bırakılamaz.',
