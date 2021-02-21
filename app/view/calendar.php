@@ -141,7 +141,6 @@ $personel = Auth::getAuthPersonel();
     <script src="/assets/js/calendar_main.js"></script>
     <script src="/assets/js/calendar_utility_functions.js"></script>
     <script src="/assets/js/calendar_jquery_validator_definitions.js"></script>
-
 </body>
 
 </html>
