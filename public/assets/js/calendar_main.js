@@ -16,6 +16,9 @@ $('#modal').on('hidden.bs.modal', function (e) {
     if ($('#search_bar').attr('data-selected_hasta_id')) {
         $('#search_bar').removeAttr('data-selected_hasta_id');
     }
+    setTimeout(() => {
+        clear_popups();
+    }, 2000);
 });
 
 $('#search_results').on('click', function (e) {
@@ -56,14 +59,17 @@ $('#search').on('input', async function (e) {
         }
         if (response.status === 'success') {
             var hastalar = response['data']['sonuclar'];
-            var li = document.createElement('li');
-            li.className = 'search_result';
+            console.log(hastalar);
             if (hastalar.length == 0) {
+                var li = document.createElement('li');
+                li.className = 'search_result';
                 $('#search_results ul').html('');
                 $(li).html('Sonuç bulunamadı');
                 $('#search_results ul').append(li);
             } else {
                 hastalar.forEach(function (hasta) {
+                    var li = document.createElement('li');
+                    li.className = 'search_result';
                     $(li).html('İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn);
                     $(li).attr('data-hasta_id', '' + hasta.id);
                     $('#search_results ul').append(li);

@@ -121,5 +121,10 @@ class Hasta extends Model
         return $stmt->fetchAll();
     }
 
+    public function isEqual($other_hasta) 
+    {
+        return $this->id === $other_hasta->getId();
+    }
+
 
 }

@@ -211,23 +211,33 @@ class HastaController extends Controller
             exit;
         }
         $splitted = explode(' ', $request_body['value']);
-        $results = [];
+        $existing_records = [];
         foreach ($splitted as $value) {
-            $temp = Hasta::findByIsimOrSoyisimOrTckn($value);
-            if ($temp === false) {
+            $search_results = Hasta::findByIsimOrSoyisimOrTckn($value);
+            if ($search_results === false) {
                 $error = Messages::DB_READ_ERROR;
                 Response::json([$error], $error['code']);
                 exit;
             }
-            foreach ($temp as $record) {
-                $results[] = $record->serialize();
+            foreach ($search_results as $search_result) {
+                $is_exist = false;
+                foreach ($existing_records as $existing_record) {
+                    if ($existing_record['id'] == $search_result->getId()) {
+                        $is_exist = true;
+                        break;
+                    }
+                }
+                if (!$is_exist) {
+                    $existing_records[] = $search_result->serialize();
+                }
             }
         }
+        
         $data = [
             'title' => 'Başarılı',
             'message' => 'Arama başarıyla tamamlandı.',
             'code' => 200,
-            'sonuclar' => $results
+            'sonuclar' => $existing_records
         ];
         Response::json($data, 200);
         exit;
