@@ -14,6 +14,7 @@ class Randevu extends Model
     private $bitis = '';
     private $notlar = '';
     private $hatirlat = false;
+    private $randevu_turu_id = '';
 
     public function __construct($args = [])
     {
@@ -27,8 +28,8 @@ class Randevu extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO randevular (personel_id, hasta_id, baslangic, bitis, notlar, hatirlat) 
-                VALUES (:personel_id, :hasta_id, :baslangic, :bitis, :notlar, :hatirlat)';
+        $sql = 'INSERT INTO randevular (personel_id, hasta_id, baslangic, bitis, notlar, hatirlat, randevu_turu_id) 
+                VALUES (:personel_id, :hasta_id, :baslangic, :bitis, :notlar, :hatirlat, :randevu_turu_id)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':personel_id', $this->personel_id, PDO::PARAM_INT);
@@ -37,6 +38,7 @@ class Randevu extends Model
         $stmt->bindValue(':bitis', $this->bitis, PDO::PARAM_STR);
         $stmt->bindValue(':notlar', $this->notlar, PDO::PARAM_STR);
         $stmt->bindValue(':hatirlat', $this->hatirlat, PDO::PARAM_BOOL);
+        $stmt->bindValue(':randevu_turu_id', $this->randevu_turu_id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
@@ -101,7 +103,8 @@ class Randevu extends Model
             'baslangic' => $this->baslangic,
             'bitis' => $this->bitis,
             'notlar' => $this->notlar,
-            'hatirlat' => $this->hatirlat
+            'hatirlat' => $this->hatirlat,
+            'randevu_turu_id' => $this->randevu_turu_id
         ];
     }
 }

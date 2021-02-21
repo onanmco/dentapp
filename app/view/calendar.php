@@ -1,10 +1,12 @@
 <?php
 
 use app\constant\Environment;
+use app\model\RandevuTuru;
 use app\utility\Auth;
 use config\Config;
 
 $personel = Auth::getAuthPersonel();
+$randevu_turleri = RandevuTuru::getAll();
 ?>
 
 <!doctype html>
@@ -102,6 +104,39 @@ $personel = Auth::getAuthPersonel();
                             <div class="col-12 col-lg-6">
                                 <label for="tckn" class="small text-muted">TCKN:</label>
                                 <input type="text" name="tckn" id="tckn" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-6">
+                                <label for="randevu_turu_id" class="small text-muted">Randevu Türü</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="hatirlat" class="small text-muted">Hatırlat?</label>
+                            </div>
+                            <div class="col-6">
+                                <select name="randevu_turu_id" id="randevu_turu_id" class="form-control form-control-sm">
+                                    <?php
+                                    foreach ($randevu_turleri as $randevu_turu) {
+                                        $selected = '';
+                                        if ($randevu_turu->getId() == 2) {
+                                            $selected = ' selected';
+                                        }
+                                        echo '<option value="' . $randevu_turu->getId() . '"' . $selected . '>' . $randevu_turu->getRandevuTuru() . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <select name="hatirlat" id="hatirlat" class="form-control form-control-sm">
+                                    <option value="0">Hayır</option>
+                                    <option value="1">Evet</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="notlar" class="small text-muted">Notlar:</label>
+                            </div>
+                            <div class="col-12">
+                                <textarea name="notlar" id="notlar" rows="3" class="form-control form-control-sm"></textarea>
                             </div>
                         </div>
                     </form>

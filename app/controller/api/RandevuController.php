@@ -53,14 +53,14 @@ class RandevuController extends Controller
         if (!isset($request_body['baslangic'])) {
             $errors[] = [
                 'title' => 'Eksik Alan',
-                'message' => 'Başlangıç tarihi-zaman alanı eksik.',
+                'message' => 'baslangic alanı eksik.',
                 'code' => 400
             ];
         }
         if (!isset($request_body['bitis'])) {
             $errors[] = [
                 'title' => 'Eksik Alan',
-                'message' => 'Bitiş tarihi-zaman alanı eksik.',
+                'message' => 'bitis alanı eksik.',
                 'code' => 400
             ];
         }
@@ -78,6 +78,13 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }        
+        if (!isset($request_body['randevu_turu_id'])) {
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'randevu_turu_id alani eksik.',
+                'code' => 400
+            ];
+        }
         if (!empty($errors)) {
             Response::json($errors, 400);
             exit;
@@ -118,7 +125,7 @@ class RandevuController extends Controller
             ];
         }
 
-        $baslangic_validation = CommonValidator::isValidUnixTimestamp($request_body['baslangic'], 'Başlangıç tarihi');
+        $baslangic_validation = CommonValidator::isValidUnixTimestamp($request_body['baslangic'], 'baslangic_tarihi');
         if ($baslangic_validation !== true) {
             foreach ($baslangic_validation as $error_msg) {
                 $errors[] = [
@@ -128,7 +135,7 @@ class RandevuController extends Controller
                 ];
             }
         }
-        $bitis_validation = CommonValidator::isValidUnixTimestamp($request_body['bitis'], 'Bitiş tarihi');
+        $bitis_validation = CommonValidator::isValidUnixTimestamp($request_body['bitis'], 'bitis_tarihi');
         if ($bitis_validation !== true) {
             foreach ($bitis_validation as $error_msg) {
                 $errors[] = [
@@ -164,16 +171,26 @@ class RandevuController extends Controller
         if (!is_string($request_body['notlar'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
-                'message' => 'Notlar sadece String(yazı) formatında olmalıdır.',
+                'message' => 'notlar sadece String(yazı) formatında olmalıdır.',
                 'code' => 400
             ];
         }
         if (!is_bool($request_body['hatirlat'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
-                'message' => 'Hatırlat alanı sadece boolean true false değerlerini alabilir.',
+                'message' => 'hatirlat alanı sadece boolean true false değerlerini alabilir.',
                 'code' => 400
             ];
+        }
+        $randevu_turu_id_validation = CommonValidator::isValidId($request_body['randevu_turu_id'], 'randevu_turu');
+        if ($randevu_turu_id_validation !== true) {
+            foreach ($randevu_turu_id_validation as $erros_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         if (!empty($errors)) {
             Response::json($errors, 400);

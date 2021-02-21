@@ -52,6 +52,7 @@
     border-bottom: 1px solid lightgrey;
     max-height: 150px;
     overflow-y: scroll;
+    z-index: 1110;
 }
 
 .search_result {

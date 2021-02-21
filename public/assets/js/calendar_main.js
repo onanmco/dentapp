@@ -145,8 +145,15 @@ $('#submit').on('click', async function (e) {
             hasta_id: hasta['id'],
             baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
             bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
-            notlar: '',
-            hatirlat: false
+            notlar: $('#notlar').val(),
+            hatirlat: false,
+            randevu_turu_id: $('#randevu_turu_id').val()
+        }
+
+        if ($('#hatirlat').val() == 1) {
+            randevu['hatirlat'] = true;
+        } else {
+            randevu['hatirlat'] = false;
         }
 
         try {
@@ -161,6 +168,7 @@ $('#submit').on('click', async function (e) {
             randevu_response = await randevu_response.json();
         } catch (error) {
             show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            await fetch('/api/hasta/sil/' + hasta['id']);
             return;
         }
 
@@ -195,8 +203,15 @@ $('#submit').on('click', async function (e) {
             hasta_id: $('#search').attr('data-selected_hasta_id'),
             baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
             bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
-            notlar: '',
-            hatirlat: false
+            notlar: $('#notlar').val(),
+            hatirlat: false,
+            randevu_turu_id: $('#randevu_turu_id').val()
+        }
+
+        if ($('#hatirlat').val() == 1) {
+            randevu['hatirlat'] = true;
+        } else {
+            randevu['hatirlat'] = false;
         }
 
         try {
