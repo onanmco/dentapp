@@ -1,7 +1,14 @@
 $('#modal .toggle').click(function (e) {
     e.preventDefault();
+    $('#modal_form input').removeClass('error-class');
+    $('#error').html('');
     $('#existing_record').toggleClass('d-none');
     $('#new_record').toggleClass('d-none');
+    $('#search_results ul').html('');
+    $('#search_bar').val('');
+    if ($('#search_bar').attr('data-selected_hasta_id')) {
+        $('#search_bar').removeAttr('data-selected_hasta_id');
+    }
 });
 
 $('#modal').on('hidden.bs.modal', function (e) {
