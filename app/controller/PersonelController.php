@@ -7,6 +7,7 @@ use app\model\ApiToken;
 use app\model\Meslek;
 use app\model\Personel;
 use app\utility\Auth;
+use app\utility\CommonValidator;
 use app\utility\Popup;
 use app\utility\Token;
 use core\Controller;
@@ -23,61 +24,23 @@ class PersonelController extends Controller
 
     public function olusturAction()
     {
-        if (!isset($_POST['isim'])) {
-            throw new Exception('personel kayit formunda isim alani eksik.', 500);
-        }
-        if (!isset($_POST['soyisim'])) {
-            throw new Exception('personel kayit formunda soyisim alani eksik.', 500);
-        }
-        if (!isset($_POST['email'])) {
-            throw new Exception('personel kayit formunda email alani eksik.', 500);
-        }
-        if (!isset($_POST['sifre'])) {
-            throw new Exception('personel kayit formunda sifre alani eksik.', 500);
-        }
-        if (!isset($_POST['tckn'])) {
-            throw new Exception('personel kayit formunda tckn alani eksik.', 500);
-        }
-
-        $_POST['isim'] = trim($_POST['isim'], ' ');
-        $_POST['isim'] = preg_replace('/\s\s+/', ' ', $_POST['isim']);
-        $_POST['soyisim'] = trim($_POST['soyisim'], ' ');
-        $_POST['soyisim'] = preg_replace('/\s\s+/', ' ', $_POST['soyisim']);
-
         $errors = [];
 
-        if (strlen($_POST['isim']) < 1) {
-            $errors[] = 'İsim alanı boş bırakılamaz.';
+        $isim_validation = CommonValidator::isValidName($_POST['isim'], 'İsim');
+        if ($isim_validation !== true) {
+            array_merge($errors, $isim_validation);
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['isim'])) {
-            $errors[] = 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
+        $soyisim_validation = CommonValidator::isValidName($_POST['soyisim'], 'Soyisim');
+        if ($soyisim_validation !== true) {
+            array_merge($errors, $soyisim_validation);
         }
-        if (strlen($_POST['soyisim']) < 1) {
-            $errors[] = 'Soyisim alanı boş bırakılamaz.';
+        $email_validation = CommonValidator::isValidEmail($_POST['email'], 'E-mail');
+        if ($email_validation !== true) {
+            array_merge($errors, $email_validation);
         }
-        if (!preg_match('/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/', $_POST['soyisim'])) {
-            $errors[] = 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
-        }
-        if (strlen($_POST['email']) < 1) {
-            $errors[] = 'Email alanı boş bırakılamaz.';
-        }
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Lütfen geçerli bir email adresi girin.';
-        }
-        if (strlen($_POST['sifre']) < 8) {
-            $errors[] = 'Şifre alanı en az 8 karakter içermelidir.';
-        }
-        if (strlen($_POST['sifre']) > 20) {
-            $errors[] = 'Şifre alanı en fazla 20 karakter içermelidir.';
-        }
-        if (!preg_match('/^[\@\!\^\+\%\/\(\)\=\?\_\*\-\<\>\#\$\½\{\[\]\}\\\|\w]*$/', $_POST['sifre'])) {
-            $errors[] = 'Şifre alanı yalnızca harf, sayı, özel karakterler, tire ve nokta içerebilir.';
-        }
-        if (!preg_match('/[A-Z]/', $_POST['sifre'])) {
-            $errors[] = 'Şifre alanı en az bir adet büyük harf içermelidir.';
-        }
-        if (!preg_match('/[\d]/', $_POST['sifre'])) {
-            $errors[] = 'Şifre alanı en az bir adet rakam içermelidir.';
+        $sifre_validation = CommonValidator::isValidPassword($_POST['sifre'], 8, 20, 'Şifre');
+        if ($sifre_validation !== true) {
+            array_merge($errors, $sifre_validation);
         }
         if (!preg_match('/(^$)|(^\d{11}$)/', $_POST['tckn'])) {
             $errors[] = 'Lütfen geçerli bir TCKN girin.';

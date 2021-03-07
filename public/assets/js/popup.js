@@ -45,6 +45,11 @@ function remove_popup(id)
     }, 300);
 }
 
+function clear_popups() 
+{
+    popups.innerHTML = '';
+}
+
 popups.addEventListener('click', function (e) {
     if (e.target.className == 'popup_closer') {
         let id = e.target.getAttribute('data-id');

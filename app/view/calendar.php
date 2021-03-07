@@ -1,15 +1,14 @@
 <?php
 
+use app\constant\Environment;
+use app\model\RandevuTuru;
 use app\utility\Auth;
 use config\Config;
 
 $personel = Auth::getAuthPersonel();
-// if ($personel === false) {
-//     echo "yetkisiz giris";
-//     exit;
-// }
-
+$randevu_turleri = RandevuTuru::getAll();
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -63,8 +62,12 @@ $personel = Auth::getAuthPersonel();
                                 <a href="#" class="toggle small">Yeni Hasta</a>
                                 <span class=""></span>
                             </div>
-                            <div class="col-12">
+                            <div id="search_wrapper" class="col-12">
                                 <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="İsim, soyisim ya da TCKN ile arayın.">
+                                <div id="search_results">
+                                    <ul class="list-unstyled">
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div id="new_record" class="form-row">
@@ -103,6 +106,39 @@ $personel = Auth::getAuthPersonel();
                                 <input type="text" name="tckn" id="tckn" class="form-control form-control-sm">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="col-6">
+                                <label for="randevu_turu_id" class="small text-muted">Randevu Türü</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="hatirlat" class="small text-muted">Hatırlat?</label>
+                            </div>
+                            <div class="col-6">
+                                <select name="randevu_turu_id" id="randevu_turu_id" class="form-control form-control-sm">
+                                    <?php
+                                    foreach ($randevu_turleri as $randevu_turu) {
+                                        $selected = '';
+                                        if ($randevu_turu->getId() == 2) {
+                                            $selected = ' selected';
+                                        }
+                                        echo '<option value="' . $randevu_turu->getId() . '"' . $selected . '>' . $randevu_turu->getRandevuTuru() . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <select name="hatirlat" id="hatirlat" class="form-control form-control-sm">
+                                    <option value="0">Hayır</option>
+                                    <option value="1">Evet</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="notlar" class="small text-muted">Notlar:</label>
+                            </div>
+                            <div class="col-12">
+                                <textarea name="notlar" id="notlar" rows="3" class="form-control form-control-sm"></textarea>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -122,371 +158,24 @@ $personel = Auth::getAuthPersonel();
     <script src="/assets/js/jquery-3.2.1.slim.min.js"></script>
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
+    <script>
+        var name_charset = <?php echo json_encode(Environment::NAME_CHARSET, JSON_UNESCAPED_UNICODE); ?>;
+        var personel_id = <?php echo $personel->getId(); ?>;
+        var composite_search_charset = <?php echo json_encode(Environment::COMPOSITE_SEARCH_CHARSET); ?>;
+        var composite_search_min_length = <?php echo Environment::COMPOSITE_SEARCH_MIN_LENGTH; ?>;
+    </script>
     <script src="/assets/js/jquery.validate.js"></script>
     <script src="/assets/js/additional-methods.js"></script>
     <script src="/assets/js/popup.js"></script>
     <script src="/assets/js/fullcalendar.js"></script>
     <script src="/assets/js/fullcalendar_locales.js"></script>
     <script src="/assets/js/jquery.inputmask.js"></script>
-    <script>
-        var tckn_options = {
-            mask: '99999999999',
-            placeholder: '_',
-            postValidation: function() {
-                return true;
-            },
-            onUnMask: function(maskedValue, unmaskedValue, opts) {
-                var temp = maskedValue.replace(/\s/, '');
-                var regexp = new RegExp((opts.placeholder || '_'), 'g');
-                return temp.replace(regexp, '');
-            },
-            clearMaskOnLostFocus: false
-        }
-        var phone_options = {
-            mask: '0 (999) 999 99 99',
-            placeholder: '_',
-            postValidation: function() {
-                return true;
-            },
-            onUnMask: function(maskedValue, unmaskedValue, opts) {
-                temp = maskedValue.replace(/\(/g, '');
-                temp = temp.replace(/\s/g, '');
-                return temp.replace(/\)/g, '');
-            },
-            clearMaskOnLostFocus: false
-        }
-        var time_options = {
-            alias: 'datetime',
-            inputFormat: 'HH:MM',
-            placeholder: '_',
-            postValidation: function() {
-                return true;
-            },
-            onUnMask: function(maskedValue, unmaskedValue, opts) {
-                var regexp = new RegExp((opts.placeholder || '_'), 'g');
-                return maskedValue.replace(regexp, '0');
-            },
-            clearMaskOnLostFocus: false
-        }
-        $('#start_hour').inputmask(time_options);
-        $('#end_hour').inputmask(time_options);
-        $('#telefon').inputmask(phone_options);
-        $('#tckn').inputmask(tckn_options);
-    </script>
-    <script>
-        // $('#modal').modal('show');
-        $('#modal .toggle').click(function(e) {
-            e.preventDefault();
-            $('#existing_record').toggleClass('d-none');
-            $('#new_record').toggleClass('d-none');
-        });
-        $('#modal').on('hidden.bs.modal', function(e) {
-            $('#modal_form').trigger('reset');
-            $('#modal_form input').removeClass('error-class');
-            $('#error').html('');
-            $('#current_date').html('');
-        });
-        $('#submit').on('click', function(e) {
-            e.preventDefault();
-
-            if ($('#modal_form').valid() !== true) {
-                console.log('debug log: islem basarisiz');
-                return false;
-            }
-
-            var start_date = calc_start_date();
-            var end_date = calc_end_date();
-            var new_record = $('#new_record').hasClass('d-none') === false;
-            if (new_record) {
-                var hasta = {
-                    isim: $('#isim').val(),
-                    soyisim: $('#soyisim').val(),
-                    telefon: $('#telefon').inputmask('unmaskedvalue'),
-                    tckn: $('#tckn').inputmask('unmaskedvalue')
-                }
-
-                fetch('/api/hasta/kayit', {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(hasta)
-                    })
-                    .then(function(response) {
-                        return response.json()
-                    })
-                    .then(function(result) {
-                        if (result['status'] === 'success') {
-                            show_popup(result['data']['title'], result['data']['message'], 200);
-                        } else if (result['status'] === 'failure'){
-                            var errors = result['data'];
-                            errors.forEach(function (error) {
-                                show_popup(error['title'], error['message'], error['code']);
-                            });
-                        } else {
-                            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
-                        }
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
-                    });
-                var event = {
-                    title: hasta.isim + ' ' + hasta.soyisim,
-                    start: start_date,
-                    end: end_date
-                }
-                // add event to calendar
-            } else {
-                // find hasta from db
-
-            }
-        });
-    </script>
-    <script>
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'tr',
-            timeZone: 'local',
-            views: {},
-            initialView: 'timeGridWeek',
-            headerToolbar: {
-                start: 'prev,next,today',
-                center: 'title',
-                end: 'dayGridMonth,timeGridWeek'
-            },
-            themeSystem: 'bootstrap',
-            bootstrapFontAwesome: {
-                prev: 'fa-angle-left',
-                next: 'fa-angle-right'
-            },
-            height: "70vh",
-            titleFormat: {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            },
-            buttonText: {
-                today: 'Bugün',
-                month: 'Aylık',
-                week: 'Haftalık',
-                day: 'gün'
-            },
-            slotEventOverlap: false,
-            allDaySlot: false,
-            scrollTime: "08:00:00",
-            firstDay: 1,
-            dayHeaderFormat: {
-                weekday: 'short',
-                month: 'numeric',
-                day: 'numeric',
-                omitCommas: true
-            },
-            slotDuration: '00:15:00',
-            slotLabelInterval: '01:00',
-            slotLabelFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
-                omitZeroMinute: false,
-                meridiem: false,
-                hour12: false
-            },
-            selectable: true,
-            selectMirror: true,
-            eventTimeFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
-                omitZeroMinute: false,
-                meridiem: false,
-                hour12: false
-            },
-            events: [{
-                title: 'Örnek Hasta',
-                start: '2021-01-05T04:00:00',
-                end: '2021-01-05T05:00:00',
-                color: 'crimson',
-
-            }, ],
-            select: function(info) {
-                var day_names = ['pazar', 'pazartesi', 'salı', 'çarşamba', 'perşembe', 'cuma', 'cumartesi'];
-                var html = '<strong>Seçilen Tarih: </strong> ' + info.start.toLocaleString().substring(0, 10) + ' ' + uc_first(day_names[info.start.getDay()]);
-                $('#current_date').html(html);
-                var start_date = info.start;
-                var end_date = info.end;
-                end_date.setDate(start_date.getDate());
-                $('#modal').attr('data-start', start_date.getTime());
-                $('#modal').attr('data-end', end_date.getTime());
-                var start_hour = (info.start.getHours() < 10) ? ('0' + info.start.getHours()) : info.start.getHours();
-                var start_min = (info.start.getMinutes() < 10) ? ('0' + info.start.getMinutes()) : info.start.getMinutes();
-                var end_hour = (info.end.getHours() < 10) ? ('0' + info.end.getHours()) : info.end.getHours();
-                var end_min = (info.end.getMinutes() < 10) ? ('0' + info.end.getMinutes()) : info.end.getMinutes();
-                $('#start_hour').val(start_hour + ':' + start_min);
-                $('#end_hour').val(end_hour + ':' + end_min);
-                $('#modal').modal('show');
-            }
-        });
-        calendar.render();
-        calendar.updateSize();
-    </script>
-    <script>
-        function is_valid_tckn(string) {
-            return Inputmask.isValid(string, tckn_options);
-        }
-
-        function is_valid_phone(string) {
-            return Inputmask.isValid(string, phone_options);
-        }
-
-        function uc_first(string = '') {
-            return string.charAt(0).toLocaleUpperCase() + string.slice(1);
-        }
-
-        function is_valid_hour(string) {
-            try {
-                return Inputmask.isValid(string, time_options);
-            } catch (error) {
-                return false;
-            }
-        }
-
-        function is_valid_range(start_date, end_date) {
-            return start_date.getTime() < end_date.getTime();
-        }
-
-        function is_not_past(start_date) {
-            return start_date.getTime() >= Date.now();
-        }
-
-        function is_not_overlap(start_date, end_date) {
-            var new_start = start_date.getTime();
-            var new_end = end_date.getTime();
-            var all_events = calendar.getEvents();
-
-            for (var i = 0; i < all_events.length; ++i) {
-                var existing_start = all_events[i].start.getTime();
-                var existing_end = all_events[i].end.getTime();
-                if (new_start < existing_end && new_end > existing_start) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        function calc_start_date() {
-            var start_date = new Date(Number($('#modal').attr('data-start')));
-            var input_start_hour = $('#start_hour').inputmask('unmaskedvalue').split(':');
-            start_date.setHours(Number(input_start_hour[0]));
-            start_date.setMinutes(Number(input_start_hour[1]));
-            return start_date;
-        }
-
-        function calc_end_date() {
-            var end_date = new Date(Number($('#modal').attr('data-end')));
-            var input_end_hour = $('#end_hour').inputmask('unmaskedvalue').split(':');
-            end_date.setHours(Number(input_end_hour[0]));
-            end_date.setMinutes(Number(input_end_hour[1]));
-            return end_date;
-        }
-    </script>
-    <script>
-        $.validator.addMethod('is_valid_hour', function(value, element, param) {
-            return is_valid_hour(value);
-        });
-        $.validator.addMethod('is_valid_range', function() {
-            return is_valid_range(calc_start_date(), calc_end_date());
-        }, 'Başlangıç saati bitiş saatinden önce olmalıdır.');
-        $.validator.addMethod('is_not_past', function() {
-            return is_not_past(calc_start_date());
-        }, 'Geçmiş tarihe randevu veremezsiniz.');
-        $.validator.addMethod('is_not_overlap', function() {
-            return is_not_overlap(calc_start_date(), calc_end_date());
-        }, 'Girmiş olduğunuz aralıkta başka bir randevu var.');
-        $.validator.addMethod('is_valid_name_set', function(value) {
-            return value.match(/^[a-zA-Z\s\.\'\-ğüşöçİĞÜŞÖÇ]*$/);
-        });
-        $.validator.addMethod('is_valid_tckn', function(value) {
-            return is_valid_tckn(value);
-        });
-        $.validator.addMethod('is_valid_phone', function(value) {
-            return is_valid_phone(value);
-        });
-
-        var validator = $('#modal_form').validate({
-            errorPlacement: function(error, element) {
-                error.appendTo($('#error'));
-            },
-            errorClass: 'error-class',
-            wrapper: 'div',
-            highlight: function(element, errorClass) {
-                $(element).addClass(errorClass);
-            },
-            unhighlight: function(element, errorClass) {
-                $(element).removeClass(errorClass);
-            },
-            resetForm: function() {
-                return 10;
-            },
-            groups: {
-                hours: 'start_hour end_hour',
-            },
-            rules: {
-                start_hour: {
-                    is_valid_hour: true,
-                    is_valid_range: true,
-                    is_not_overlap: true,
-                    is_not_past: true,
-                },
-                end_hour: {
-                    is_valid_hour: true,
-                    is_valid_range: true,
-                    is_not_overlap: true,
-                    is_not_past: true,
-                },
-                soyisim: {
-                    required: true,
-                    is_valid_name_set: true,
-                },
-                isim: {
-                    required: true,
-                    is_valid_name_set: true,
-                },
-                tckn: {
-                    required: true,
-                    is_valid_tckn: true
-                },
-                telefon: {
-                    is_valid_phone: true
-                }
-
-            },
-            messages: {
-                start_hour: {
-                    is_valid_hour: 'Lütfen başlangıç saatini girin.'
-                },
-                end_hour: {
-                    is_valid_hour: 'Lütfen bitiş saatini girin.'
-                },
-                isim: {
-                    required: 'İsim alanı boş bırakılamaz.',
-                    is_valid_name_set: 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
-                },
-                soyisim: {
-                    required: 'Soyisim alanı boş bırakılamaz.',
-                    is_valid_name_set: 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
-                },
-                tckn: {
-                    required: 'TCKN alanı boş bırakılamaz.',
-                    is_valid_tckn: 'Lütfen geçerli bir TCKN girin.'
-                },
-                telefon: {
-                    is_valid_phone: 'Lütfen geçerli bir telefon girin.'
-                }
-
-            },
-        });
-    </script>
-
+    <script src="/assets/js/utility-functions.js"></script>
+    <script src="/assets/js/calendar_inputmask_definitions.js"></script>
+    <script src="/assets/js/calendar_fullcalendar_definitions.js"></script>
+    <script src="/assets/js/calendar_main.js"></script>
+    <script src="/assets/js/calendar_utility_functions.js"></script>
+    <script src="/assets/js/calendar_jquery_validator_definitions.js"></script>
 </body>
 
 </html>

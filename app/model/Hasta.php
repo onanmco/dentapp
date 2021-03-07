@@ -88,6 +88,15 @@ class Hasta extends Model
         return $stmt->execute();
     }
 
+    public function delete()
+    {
+        $sql = 'DELETE FROM hastalar WHERE id = :id';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public function serialize()
     {
         return [
@@ -97,6 +106,24 @@ class Hasta extends Model
             'telefon' => $this->telefon,
             'tckn' => $this->tckn
         ];
+    }
+
+    public static function findByIsimOrSoyisimOrTckn($string)
+    {
+        $sql = "SELECT * 
+                FROM hastalar 
+                WHERE isim LIKE :placeholder OR soyisim LIKE :placeholder OR tckn LIKE :placeholder";
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':placeholder', '%' . $string . '%', PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function isEqual($other_hasta) 
+    {
+        return $this->id === $other_hasta->getId();
     }
 
 

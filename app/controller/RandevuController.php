@@ -5,7 +5,7 @@ namespace app\controller;
 use core\Controller;
 use core\View;
 
-class RandevuController extends Controller
+class RandevuController extends LoginRequiredController
 {
     public function takvimAction()
     {

@@ -6,6 +6,7 @@ use app\constant\Messages;
 use app\model\Hasta;
 use app\model\Personel;
 use app\model\Randevu;
+use app\utility\CommonValidator;
 use core\Controller;
 use core\Request;
 use core\Response;
@@ -52,14 +53,14 @@ class RandevuController extends Controller
         if (!isset($request_body['baslangic'])) {
             $errors[] = [
                 'title' => 'Eksik Alan',
-                'message' => 'Başlangıç tarihi-zaman alanı eksik.',
+                'message' => 'baslangic alanı eksik.',
                 'code' => 400
             ];
         }
         if (!isset($request_body['bitis'])) {
             $errors[] = [
                 'title' => 'Eksik Alan',
-                'message' => 'Bitiş tarihi-zaman alanı eksik.',
+                'message' => 'bitis alanı eksik.',
                 'code' => 400
             ];
         }
@@ -77,17 +78,27 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }        
+        if (!isset($request_body['randevu_turu_id'])) {
+            $errors[] = [
+                'title' => 'Eksik Alan',
+                'message' => 'randevu_turu_id alani eksik.',
+                'code' => 400
+            ];
+        }
         if (!empty($errors)) {
             Response::json($errors, 400);
             exit;
         }
         //validation
-        if (!preg_match('/\d+/', $request_body['personel_id'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Personel id 0\'dan büyük bir sayı olmalıdır.',
-                'code' => 400
-            ];
+        $personel_id_validation = CommonValidator::isValidId($request_body['personel_id'], 'personel_id');
+        if ($personel_id_validation !== true) {
+            foreach ($personel_id_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         if (!Personel::findById($request_body['personel_id'])) {
             $errors[] = [
@@ -96,12 +107,15 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }
-        if (!preg_match('/\d+/', $request_body['hasta_id'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Hasta id 0\'dan büyük bir sayı olmalıdır.',
-                'code' => 400
-            ];
+        $hasta_id_validation = CommonValidator::isValidId($request_body['hasta_id'], 'hasta_id');
+        if ($hasta_id_validation !== true) {
+            foreach ($hasta_id_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         if (!Hasta::findById($request_body['hasta_id'])) {
             $errors[] = [
@@ -110,23 +124,26 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }
-        if (((string) (int) $request_body['baslangic'] === $request_body['baslangic']) 
-        && ($request_body['baslangic'] <= PHP_INT_MAX)
-        && ($request_body['baslangic'] >= ~PHP_INT_MAX)) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Başlangıç tarihi UNIX timestamp formatında olmalıdır.',
-                'code' => 400
-            ];
+
+        $baslangic_validation = CommonValidator::isValidUnixTimestamp($request_body['baslangic'], 'baslangic_tarihi');
+        if ($baslangic_validation !== true) {
+            foreach ($baslangic_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
-        if (((string) (int) $request_body['bitis'] === $request_body['bitis']) 
-        && ($request_body['bitis'] <= PHP_INT_MAX)
-        && ($request_body['bitis'] >= ~PHP_INT_MAX)) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Bitiş tarihi UNIX timestamp formatında olmalıdır.',
-                'code' => 400
-            ];
+        $bitis_validation = CommonValidator::isValidUnixTimestamp($request_body['bitis'], 'bitis_tarihi');
+        if ($bitis_validation !== true) {
+            foreach ($bitis_validation as $error_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         if ($request_body['baslangic'] >= $request_body['bitis']) {
             $errors[] = [
@@ -142,6 +159,8 @@ class RandevuController extends Controller
                 'code' => 400
             ];
         }
+        $request_body['baslangic'] = date('Y-m-d H:i:s', $request_body['baslangic']);
+        $request_body['bitis'] = date('Y-m-d H:i:s', $request_body['bitis']);
         if (Randevu::getOverlappingCount($request_body['baslangic'], $request_body['bitis']) > 0) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
@@ -152,16 +171,26 @@ class RandevuController extends Controller
         if (!is_string($request_body['notlar'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
-                'message' => 'Notlar sadece String(yazı) formatında olmalıdır.',
+                'message' => 'notlar sadece String(yazı) formatında olmalıdır.',
                 'code' => 400
             ];
         }
         if (!is_bool($request_body['hatirlat'])) {
             $errors[] = [
                 'title' => 'Doğrulama Hatası',
-                'message' => 'Hatırlat alanı sadece boolean true false değerlerini alabilir.',
+                'message' => 'hatirlat alanı sadece boolean true false değerlerini alabilir.',
                 'code' => 400
             ];
+        }
+        $randevu_turu_id_validation = CommonValidator::isValidId($request_body['randevu_turu_id'], 'randevu_turu');
+        if ($randevu_turu_id_validation !== true) {
+            foreach ($randevu_turu_id_validation as $erros_msg) {
+                $errors[] = [
+                    'title' => 'Doğrulama Hatası',
+                    'message' => $error_msg,
+                    'code' => 400
+                ];
+            }
         }
         if (!empty($errors)) {
             Response::json($errors, 400);
@@ -173,12 +202,11 @@ class RandevuController extends Controller
             $error = Messages::DB_WRITE_ERROR;
             Response::json([$error], 500);
         }
-        $saved_randevu = Randevu::getBetween($request_body['baslangic'], $request_body['bitis']);
+        $saved_randevu = Randevu::getByRange($request_body['baslangic'], $request_body['bitis']);
         if (!$saved_randevu) {
             $error = Messages::DB_READ_ERROR;
             Response::json([$error], 500);
         }
-        $saved_randevu = $saved_randevu[0];
         $data = [
             'title' => 'Başarılı',
             'message' => 'Randevu başarıyla kaydedildi.',

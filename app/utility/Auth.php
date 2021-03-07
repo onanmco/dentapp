@@ -16,7 +16,7 @@ class Auth
         }
         $auth_personel = Personel::findById($_SESSION['personel_id']);
         if ($auth_personel === false) {
-            $message = Messages::UNKNOWN_ERROR;
+            $message = Messages::DB_READ_ERROR;
             throw new Exception($message['message'], 500);
         }
         return $auth_personel;

@@ -13,7 +13,6 @@ set_exception_handler('\core\Error::exceptionHandler');
 session_start();
 
 $router = new Router();
-$router->add('api/time/weekdays/<id:\-?\d+>', ['namespace' => 'api', 'controller' => 'time', 'action' => 'weekDays']);
 $router->add('api/<controller>/<action>/<id:number>', ['namespace' => 'api']);
 $router->add('api/<controller>/<action>', ['namespace' => 'api']);
 $router->add('', ['controller' => 'home', 'action' => 'index']);
