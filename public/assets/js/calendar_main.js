@@ -1,3 +1,41 @@
+var debouncedCompositeSearchTerm = {
+    value: '',
+    listeners: [],
+    getValue() { return this.value; },
+    setValue(val) {
+        this.value = val;
+        this.triggerListeners();
+    },
+    addListener(fn) {
+        this.listeners.push(fn);
+    },
+    removeListener(fn_to_remove) {
+        this.listeners = this.listeners.filter(function (fn) {
+            if (fn != fn_to_remove) {
+                return fn;
+            }
+        });
+    },
+    triggerListeners() {
+        var term = this.value;
+        this.listeners.forEach(function (listener) {
+            listener.call(null, term);
+        });
+    },
+};
+
+var compositeSearchTerm = {
+    value: '',
+    timeoutID: null,
+    getValue() { return this.value; },
+    setValue(val) {
+        clearTimeout(this.timeoutID);
+        this.timeoutID = setTimeout(function() {
+            debouncedCompositeSearchTerm.setValue(val);
+        }, 500);
+    },
+};
+
 $('#modal .toggle').click(function (e) {
     e.preventDefault();
     $('#modal_form input').removeClass('error-class');
@@ -36,6 +74,55 @@ $('#search_results').on('click', function (e) {
     }
 });
 
+var onDebouncedCompositeSearchTermChange = async function(term) {
+    try {
+        var response = await fetch('/api/hasta/ara', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                value: term
+            })
+        });
+        response = await response.json();
+    } catch (error) {
+        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+        return;
+    }
+    if (response.status === 'success') {
+        var hastalar = response['data']['sonuclar'];
+        if (hastalar.length == 0) {
+            var li = document.createElement('li');
+            li.className = 'search_result';
+            $('#search_results ul').html('');
+            $(li).html('Sonuç bulunamadı');
+            $('#search_results ul').append(li);
+        } else {
+            hastalar.forEach(function (hasta) {
+                var li = document.createElement('li');
+                li.className = 'search_result';
+                $(li).html('İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn);
+                $(li).attr('data-hasta_id', '' + hasta.id);
+                $('#search_results ul').append(li);
+            });
+        }
+        $('#search_results').removeClass('d-none');
+    } else if (response.status === 'failure') {
+        var errors = response['data'];
+        errors.forEach(function (error) {
+            show_popup(error['title'], error['message'], error['code']);
+        });
+        return;
+    } else {
+        show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+        return;
+    }
+};
+
+debouncedCompositeSearchTerm.addListener(ondebouncedCompositeSearchTermChange);
+
 $('#search').on('input', async function (e) {
 
     $('#search').removeAttr('data-selected_hasta_id');
@@ -48,51 +135,7 @@ $('#search').on('input', async function (e) {
 
     var search_value = $(e.target).val().trim().replace(/\s+/g, ' ');
     if (search_value.length >= composite_search_min_length) {
-        try {
-            var response = await fetch('/api/hasta/ara', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    value: search_value
-                })
-            });
-            response = await response.json();
-        } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
-            return;
-        }
-        if (response.status === 'success') {
-            var hastalar = response['data']['sonuclar'];
-            console.log(hastalar);
-            if (hastalar.length == 0) {
-                var li = document.createElement('li');
-                li.className = 'search_result';
-                $('#search_results ul').html('');
-                $(li).html('Sonuç bulunamadı');
-                $('#search_results ul').append(li);
-            } else {
-                hastalar.forEach(function (hasta) {
-                    var li = document.createElement('li');
-                    li.className = 'search_result';
-                    $(li).html('İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn);
-                    $(li).attr('data-hasta_id', '' + hasta.id);
-                    $('#search_results ul').append(li);
-                });
-            }
-            $('#search_results').removeClass('d-none');
-        } else if (response.status === 'failure') {
-            var errors = response['data'];
-            errors.forEach(function (error) {
-                show_popup(error['title'], error['message'], error['code']);
-            });
-            return;
-        } else {
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
-            return;
-        }
+        compositeSearchTerm.setValue(search_value);
     }
 });
 
