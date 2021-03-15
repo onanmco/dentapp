@@ -1,5 +1,6 @@
 <?php
 
+use app\model\Meslek;
 use app\model\Personel;
 use config\Config;
 
@@ -50,7 +51,7 @@ $errors = (isset($errors)) ? $errors : [];
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center">
                     <div class="col-6 text-left">
-                        <h3>DentApp</h3>
+                        <h3><?php echo Config::CLIENT_APP_NAME; ?></h3>
                     </div>
                     <div class="col-6 text-right">
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
@@ -105,25 +106,27 @@ $errors = (isset($errors)) ? $errors : [];
                             <input type="text" name="tckn" id="tckn" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getTckn()) ?>">
                         </div>
                     </div>
+                    
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="maas" class="m-0 text-muted font-weight-bold">Maaş:</label>
+                        <label for="meslek_id" class="m-0 text-muted font-weight-bold">Meslek:</label>
                         <div class="w-80">
-                            <input type="text" name="maas" id="maas" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getMaas()) ?>">
-                        </div>
-                    </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="meslek" class="m-0 text-muted font-weight-bold">Meslek:</label>
-                        <div class="w-80">
-                            <select type="text" name="meslek" id="meslek" class="form-control form-control-sm mt-1">
+                            <select type="text" name="meslek_id" id="meslek_id" class="form-control form-control-sm mt-1">
                                 <?php
-                                $meslek = $personel->getMeslek();
-                                if ($meslek === 'sekreter' || $meslek === 'hekim' || $meslek === 'patron') {
-                                    echo '<option value="' . $meslek . '" selected>' . ucfirst($meslek) . '</option>';
+                                $meslek_id = $personel->getMeslekId();
+                                $all_roles = Meslek::getAll();
+                                
+                                foreach ($all_roles as $row) {
+                                    if ($meslek_id === $row->getId()) {
+                                        echo '<option value="' . $row->getId() . '" selected>' . ucfirst($row->getMeslek()) . '</option>';
+                                    }
+                                }
+
+                                foreach ($all_roles as $row) {
+                                   echo '<option value="' . $row->getId() . '">' . ucfirst($row->getMeslek()) . '</option>';                                    
                                 }
                                 ?>
-                                <option value="sekreter">Sekreter</option>
-                                <option value="hekim">Hekim</option>
-                                <option value="patron">Patron</option>
+                                <!-- <option value="hekim">Hekim</option> -->
+                                <!-- <option value="patron">Patron</option> -->
                             </select>
                         </div>
                     </div>
@@ -134,7 +137,7 @@ $errors = (isset($errors)) ? $errors : [];
             </div>
             <div class="card-footer p-2 pl-3 bg-white">
                 <p class="m-0 small text-muted">Tüm Hakları Saklıdır.</p>
-                <p class="m-0 small text-muted">DentApp &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
@@ -166,7 +169,7 @@ $errors = (isset($errors)) ? $errors : [];
             help_drawer.classList.add('d-none');
         });
     </script>
-    <!-- <script src="/assets/js/signup-validation.js"></script> -->
+    <script src="/assets/js/signup-validation.js"></script>
     <script>
         <?php app\utility\Popup::printAll() ?>
     </script>

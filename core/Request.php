@@ -38,5 +38,14 @@ abstract class Request
         }
         return $uri;
     }
+
+    public static function method()
+    {
+        $method = '';
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            $method = strtolower($_SERVER['REQUEST_METHOD']);
+        }
+        return $method;
+    }
     
 }

@@ -124,7 +124,7 @@ class Router
             return '(?P<' . $matches[1] . '>' . $this->patterns[$pattern] . ')';
         } else {
             $pattern = ltrim($pattern, ':');
-            if (!(CommonValidator::isRegexp($pattern))) {
+            if (!(CommonValidator::isValidRegexp($pattern))) {
                 throw new Exception('Custom pattern: \'' . $pattern . '\' is not a valid regexp in route element: \'' . $matches[0] . '\'.', 500);
             }
             return '(?P<' . $matches[1] . '>' . $pattern . ')';

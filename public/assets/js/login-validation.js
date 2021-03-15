@@ -3,23 +3,29 @@ $(document).ready(function() {
         errorPlacement: function(error, element) {
             if (element.parent('.input-group').length) {
                 error.addClass('validation_error');
-                error.insertAfter(element.parent());
+                error.appendTo(element.parent().parent());
             } else {
                 error.addClass('validation_error');
-                error.insertAfter(element);
+                error.appendTo(element.parent());
             }
         },
-        wrapper: 'span',
+        wrapper: 'div',
         rules: {
             email: {
                 required: true,
                 email: true
+            },
+            sifre: {
+                required: true,
             }
         },
         messages: {
             email: {
-                required: "E-mail address cannot be empty.",
-                email: "E-mail address is not valid."
+                required: "E-mail alanı boş bırakılamaz.",
+                email: "Lütfen geçerli bir e-mail girin."
+            },
+            sifre: {
+                required: "Şifre alanı boş bırakılamaz."
             }
         }
     });

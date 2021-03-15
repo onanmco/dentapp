@@ -5,6 +5,7 @@ use config\Config;
 
 $personel = (isset($personel)) ? $personel : new Personel();
 $remember = (isset($remember) && $remember) ? 'checked' : '';
+$errors = (isset($errors)) ? $errors : [];
 ?>
 <!doctype html>
 <html lang="en">
@@ -26,7 +27,7 @@ $remember = (isset($remember) && $remember) ? 'checked' : '';
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center justify-content-start">
                     <div class="col-6">
-                        <h3>DentApp</h3>
+                        <h3><?php echo Config::CLIENT_APP_NAME; ?></h3>
                     </div>
                     <div class="col-6 text-right">
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
@@ -36,20 +37,32 @@ $remember = (isset($remember) && $remember) ? 'checked' : '';
             </div>
             <div class="card-body p-0 pl-3 pr-3">
                 <form action="/personel/auth" method="POST" id="login_form">
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
+                    <?php
+                    if (!empty($errors)) {
+                        echo '<h3 class="text-danger">Hatalar:</h3>';
+                        echo '<ul>';
+                        foreach ($errors as $error) {
+                            echo '<li class="small text-muted">' . htmlspecialchars($error) . '</li>';
+                        }
+                        echo '</ul>';
+                    }
+                    ?>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="email" class="m-0 text-muted font-weight-bold">E-mail:</label>
                         <div class="w-80">
                             <input type="email" name="email" id="email" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
                         </div>
                     </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="sifre" class="m-0 text-muted font-weight-bold">Şifre: </label>
-                        <div class="w-80 input-group input-group-sm password_input_group">
-                            <input type="password" name="sifre" id="sifre" class="form-control form-control-sm">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary">
-                                    <i class="fas fa-eye-slash"></i>
-                                </button>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm password_input_group">
+                                <input type="password" name="sifre" id="sifre" class="form-control form-control-sm">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -64,7 +77,7 @@ $remember = (isset($remember) && $remember) ? 'checked' : '';
             </div>
             <div class="card-footer p-2 pl-3 bg-white">
                 <p class="m-0 small text-muted">Tüm Hakları Saklıdır.</p>
-                <p class="m-0 small text-muted">DentApp &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
@@ -81,7 +94,7 @@ $remember = (isset($remember) && $remember) ? 'checked' : '';
             provide_show_hide_password(element);
         });
     </script>
-    <!-- <script src="/assets/js/login-validation.js"></script> -->
+    <script src="/assets/js/login-validation.js"></script>
     <script>
         <?php app\utility\Popup::printAll() ?>
     </script>

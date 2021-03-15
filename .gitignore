@@ -1,2 +1,5 @@
 .idea/
+.DS_Store
+"Icon\r"
+app/.DS_Store
 !.gitignore

@@ -5,7 +5,7 @@ document.body.insertBefore(popups, document.body.firstChild);
 function show_popup(title, message, code)
 {
     let id = Date.now();
-    type = (code == 200) ? 'success' : 'danger';
+    type = (code >= 200 && code < 300) ? 'success' : 'danger';
     let html =
         `
         <div id="${id}" class="visible popup_wrapper col-lg-6 col-md-8 col-10">
@@ -43,6 +43,11 @@ function remove_popup(id)
     setTimeout(() => {
         popups.removeChild(document.getElementById(id));
     }, 300);
+}
+
+function clear_popups() 
+{
+    popups.innerHTML = '';
 }
 
 popups.addEventListener('click', function (e) {

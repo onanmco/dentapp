@@ -9,7 +9,8 @@ class HomeController extends Controller
 {
     public function indexAction()
     {
-        View::render('calendar.php');
+        // View::render('calendar.php');
+        View::render('home.php');
     }
 
     public function before()

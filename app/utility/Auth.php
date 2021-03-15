@@ -16,8 +16,8 @@ class Auth
         }
         $auth_personel = Personel::findById($_SESSION['personel_id']);
         if ($auth_personel === false) {
-            $message = Messages::BILINMEYEN_HATA;
-            throw new Exception($message['message'], $message['code']);
+            $message = Messages::DB_READ_ERROR;
+            throw new Exception($message['message'], 500);
         }
         return $auth_personel;
     }
@@ -46,7 +46,7 @@ class Auth
     public static function loginRequired()
     {
         if (!self::isLoggedIn()) {
-            Popup::add(Messages::ERISIM_KISITLANDI);
+            Popup::add(Messages::ACCESS_DENIED);
             self::setLastVisit($_SERVER['REQUEST_URI']);
             Router::redirectAfterPost('/personel/giris');
         }
