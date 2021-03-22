@@ -121,7 +121,7 @@ var onDebouncedCompositeSearchTermChange = async function(term) {
     }
 };
 
-debouncedCompositeSearchTerm.addListener(ondebouncedCompositeSearchTermChange);
+debouncedCompositeSearchTerm.addListener(onDebouncedCompositeSearchTermChange);
 
 $('#search').on('input', async function (e) {
 
