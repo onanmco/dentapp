@@ -41,8 +41,16 @@ class Routes
                 ]
             ],
             [
+                'path'   => 'iletisim',
+                'params' => [
+                    'controller' => 'contact',
+                    'action'     => 'index'
+                ]
+            ],
+            [
                 'path'   => '<controller>/<action>',
-            ]
+            ],
+            
         ];
     }
 }
