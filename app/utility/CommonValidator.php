@@ -75,7 +75,7 @@ abstract class CommonValidator
             $errors[] = 'E-mail alanı en fazla ' . Environment::EMAIL_MAX_LENGTH . ' karakter içermelidir.';
         }
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Lütfen geçerli bir' . $field . 'adresi girin.';
+            $errors[] = 'Lütfen geçerli bir ' . $field . ' adresi girin.';
         }
         return (empty($errors)) ? true : $errors;
     }
