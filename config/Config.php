@@ -17,6 +17,12 @@ class Config
     const SECRET_KEY = '2fd9d2364580b0f6ebeff9a1d58993c1';
 
     const CLIENT_APP_NAME = 'DentApp';
-    const CLIENT_EMAIL = 'info@dentapp.com';
+    const CLIENT_DOMAIN = 'dentapp.com';
+    const CLIENT_EMAIL = 'info@' . self::CLIENT_DOMAIN;
+    const CLIENT_EMAIL_OUTGOING = 'noreply@' . self::CLIENT_DOMAIN;
+    const CLIENT_EMAIL_INCOMING = 'info@' . self::CLIENT_DOMAIN;
     const CLIENT_PHONE = '+90 (850) 000 00 00';
+
+    const MAILGUN_BASE_URL = 'https://api.mailgun.net/v3/{YOUR_DOMAIN_NAME}';
+    const MAILGUN_API_KEY = '{YOUR_API_KEY}';
 }
