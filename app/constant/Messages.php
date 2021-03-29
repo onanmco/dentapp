@@ -69,4 +69,9 @@ abstract class Messages
         'message' => 'İstek veritabanından okunurken bir hata oluştu.',
         'code' => 500
     ];
+    const MAIL_SENT_SUCCESSFULLY = [
+        'title' => 'Başarılı',
+        'message' => 'Mesajınız tarafımıza iletilmiştir.',
+        'code' => 200
+    ];
 }
