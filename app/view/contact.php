@@ -1,6 +1,7 @@
 <?php
 
 use app\constant\Messages;
+use app\constant\Responses;
 use config\Config;
 
 ?>
@@ -114,7 +115,7 @@ use config\Config;
                     });
                     break;
                 default:
-                    error = <?php echo json_encode(Messages::UNKNOWN_ERROR) ?>;
+                    error = <?php echo json_encode(Responses::UNKNOWN_ERROR(Messages::UNKNOWN_ERROR())) ?>;
                     show_popup(error.title, error.message, error.code);
                     break;
             }

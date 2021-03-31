@@ -2,8 +2,12 @@
 
 namespace app\controller\api;
 
+use app\constant\Constants;
+use app\constant\Constraints;
 use app\constant\Environment;
+use app\constant\Fields;
 use app\constant\Messages;
+use app\constant\Responses;
 use app\model\Hasta;
 use app\utility\CommonValidator;
 use core\Controller;
@@ -25,7 +29,7 @@ class HastaController extends Controller
         $errors = [];
         // Check if request method is correct
         if (Request::method() !== 'post') {
-            $error = Messages::POST_METHOD;
+            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -34,122 +38,82 @@ class HastaController extends Controller
         try {
             $request_body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
-            $error = Messages::APPLICATION_JSON;
+            $error = Responses::BAD_REQUEST(Messages::APPLICATION_JSON());
             Response::json([$error], $error['code']);
             exit;
         }
         if ($request_body == false) {
-            $error = Messages::JSON_DECODING_ERROR;
+            $error = Responses::BAD_REQUEST(Messages::JSON_DECODING_ERROR());
             Response::json([$error], $error['code']);
             exit;
         }
-        if (!isset($request_body['isim'])) {
-            $errors[] = [
-                'title' => 'Eksik Alan',
-                'message' => 'isim alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::NAME])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::NAME));
         }
-        if (!isset($request_body['soyisim'])) {
-            $errors[] = [
-                'title' => 'Eksik Alan',
-                'message' => 'soyisim alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::SURNAME])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::SURNAME));
         }
-        if (!isset($request_body['telefon'])) {
-            $errors[] = [
-                'title' => 'Eksik Alan',
-                'message' => 'telefon alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::PHONE])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::PHONE));
         }
-        if (!isset($request_body['tckn'])) {
-            $errors[] = [
-                'title' => 'Eksik Alan',
-                'message' => 'TCKN alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::TCKN])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::TCKN));
         }
         if (!empty($errors)) {
-            Response::json($errors, 400);
+            Response::json($errors, Responses::VALIDATION_ERROR()['code']);
             exit;
         }
         // validation
-        $isim_validation = CommonValidator::isValidName($request_body['isim'], 'İsim');
-        if ($isim_validation !== true) {
-            foreach ($isim_validation as $error_msg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $error_msg,
-                    'code' => 400
-                ];
+        $name_validation = CommonValidator::isValidName($request_body[Fields::NAME], Fields::NAME);
+        if ($name_validation !== true) {
+            foreach ($name_validation as $error_msg) {
+                $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $soyisim_validation = CommonValidator::isValidName($request_body['soyisim'], 'Soyisim');
-        if ($soyisim_validation !== true) {
-            foreach ($soyisim_validation as $error_msg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $error_msg,
-                    'code' => 400
-                ];
+        $surname_validation = CommonValidator::isValidName($request_body[Fields::SURNAME], Fields::SURNAME);
+        if ($surname_validation !== true) {
+            foreach ($surname_validation as $error_msg) {
+                $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $telefon_validation = CommonValidator::isValidPhone($request_body['telefon'], 'telefon');
-        if ($telefon_validation !== true) {
-            foreach ($telefon_validation as $error_msg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $error_msg,
-                    'code' => 400
-                ];
+        $phone_validation = CommonValidator::isValidPhone($request_body[Fields::PHONE], Fields::PHONE);
+        if ($phone_validation !== true) {
+            foreach ($phone_validation as $error_msg) {
+                $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $tckn_validation = CommonValidator::isValidTckn($request_body['tckn'], 'TCKN');
+        $tckn_validation = CommonValidator::isValidTckn($request_body[Fields::TCKN], Fields::TCKN);
         if ($tckn_validation !== true) {
             foreach ($tckn_validation as $error_msg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $error_msg,
-                    'code' => 400
-                ];
+                $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $existing_hasta = Hasta::findByTckn($request_body['tckn']);
-        if ($existing_hasta) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Bu TCKN ile kayıtlı bir hasta zaten mevcut.',
-                'code' => 400
-            ];
+        $existing_patient = Hasta::findByTckn($request_body[Fields::TCKN]);
+        if ($existing_patient) {
+            $errors[] = Responses::VALIDATION_ERROR(Messages::PATIENT_WITH_TCKN_ALREADY_EXISTS());
         }
         if (!empty($errors)) {
-            Response::json($errors, 400);
+            Response::json($errors, Responses::VALIDATION_ERROR()['code']);
             exit;
         }
         // registration
-        $hasta = new Hasta($request_body);
-        $result = $hasta->save();
+        $patient = new Hasta($request_body);
+        $result = $patient->save();
         if (!$result) {
-            $error = Messages::DB_WRITE_ERROR;
+            $error = Responses::UNKNOWN_ERROR(Messages::DB_WRITE_ERROR());
             Response::json([$error], $error['code']);
             exit;
         }
-        $saved_hasta = Hasta::findByTckn($hasta->getTckn());
-        if (!$saved_hasta) {
-            $error = Messages::DB_READ_ERROR;
+        $saved_patient = Hasta::findByTckn($patient->getTckn());
+        if (!$saved_patient) {
+            $error = Responses::UNKNOWN_ERROR(Messages::DB_READ_ERROR());
             Response::json([$error], $error['code']);
             exit;
         }
         // return the saved record
-        $data = [
-            'title' => 'Başarılı',
-            'message' => 'Hasta başarıyla kaydedildi.',
-            'code' => 200,
-            'kaydedilen_hasta' => $saved_hasta->serialize()
-        ];
-        Response::json($data, 200);
+        $data = Responses::SUCCESS(Messages::PATIENT_REGISTERED_SUCCESSFULLY());
+        $data['kaydedilen_hasta'] = $saved_patient->serialize();
+        Response::json($data, $data['code']);
         exit;
     }
 
@@ -158,7 +122,7 @@ class HastaController extends Controller
         $errors = [];
         // Check if request method is correct
         if (Request::method() !== 'post') {
-            $error = Messages::POST_METHOD;
+            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -167,44 +131,34 @@ class HastaController extends Controller
         try {
             $request_body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
-            $error = Messages::APPLICATION_JSON;
+            $error = Responses::BAD_REQUEST(Messages::APPLICATION_JSON());
             Response::json([$error], $error['code']);
             exit;
         }
         if ($request_body == false) {
-            $error = Messages::JSON_DECODING_ERROR;
+            $error = Responses::BAD_REQUEST(Messages::JSON_DECODING_ERROR());
             Response::json([$error], $error['code']);
             exit;
         }
         if (!isset($request_body['value'])) {
-            $errors[] = [
-                'title' => 'Eksik Alan',
-                'message' => 'Aranacak değer eksik.',
-                'code' => 400
-            ];
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::SEARCH_TERM));
         }
         if (!empty($errors)) {
-            Response::json($errors, 400);
+            Response::json($errors, Responses::MISSING_FIELD()['code']);
             exit;
         }
-        if (!preg_match(Environment::COMPOSITE_SEARCH_CHARSET, $request_body['value'])) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Aranacak değer string(yazı) tipinde olmalıdır.',
-                'code' => 400
-            ];
+        $rule = Constraints::COMPOSITE_SEARCH_REGEXP(Fields::COMPOSITE_SEARCH);
+        if (!preg_match($rule['value'], $request_body['value'])) {
+            $errors[] = Responses::VALIDATION_ERROR($rule['message']);
         }
         $request_body['value'] = preg_replace('/\s+/', ' ', trim($request_body['value'], " \t"));
         if (!empty($errors)) {
             Response::json($errors, 400);
             exit;
         }
-        if (strlen($request_body['value']) < Environment::COMPOSITE_SEARCH_MIN_LENGTH) {
-            $errors[] = [
-                'title' => 'Doğrulama Hatası',
-                'message' => 'Aranacak değer en az ' . Environment::COMPOSITE_SEARCH_MIN_LENGTH .' karakter içermelidir.',
-                'code' => 400
-            ];
+        $rule = Constraints::COMPOSITE_SEARCH_MIN_LEN(Fields::COMPOSITE_SEARCH);
+        if (strlen($request_body['value']) < $rule['value']) {
+            $errors[] = Responses::VALIDATION_ERROR($rule['message']);
         }
         if (!empty($errors)) {
             Response::json($errors, 400);
@@ -215,7 +169,7 @@ class HastaController extends Controller
         foreach ($splitted as $value) {
             $search_results = Hasta::findByIsimOrSoyisimOrTckn($value);
             if ($search_results === false) {
-                $error = Messages::DB_READ_ERROR;
+                $error = Responses::UNKNOWN_ERROR(Messages::DB_READ_ERROR());
                 Response::json([$error], $error['code']);
                 exit;
             }
@@ -233,13 +187,9 @@ class HastaController extends Controller
             }
         }
         
-        $data = [
-            'title' => 'Başarılı',
-            'message' => 'Arama başarıyla tamamlandı.',
-            'code' => 200,
-            'sonuclar' => $existing_records
-        ];
-        Response::json($data, 200);
+        $data = Responses::SUCCESS(Messages::SEARCH_COMPLETED());
+        $data['sonuclar'] = $existing_records;
+        Response::json($data, Responses::SUCCESS()['code']);
         exit;
     }
 }

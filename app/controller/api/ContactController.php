@@ -2,8 +2,9 @@
 
 namespace app\controller\api;
 
+use app\constant\Fields;
 use app\constant\Messages;
-use app\utility\CommonValidator;
+use app\constant\Responses;
 use app\utility\Mail;
 use config\Config;
 use core\Controller;
@@ -17,7 +18,7 @@ class ContactController extends Controller
         $errors = [];
 
         if (Request::method() !== 'post') {
-            $error = Messages::POST_METHOD;
+            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -26,89 +27,62 @@ class ContactController extends Controller
         try {
             $request_body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
-            $error = Messages::APPLICATION_JSON;
+            $error = Responses::BAD_REQUEST(Messages::APPLICATION_JSON());
             Response::json([$error], $error['code']);
             exit;
         }
         if ($request_body == false) {
-            $error = Messages::JSON_DECODING_ERROR;
+            $error = Responses::BAD_REQUEST(Messages::JSON_DECODING_ERROR());
             Response::json([$error], $error['code']);
             exit;
         }
 
-        if (!isset($request_body['full_name'])) {
-            $errors[] = [
-                'title' => 'Eksik alan',
-                'message' => 'İsim alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::FULL_NAME])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::FULL_NAME));
         }
-        if (!isset($request_body['email'])) {
-            $errors[] = [
-                'title' => 'Eksik alan',
-                'message' => 'E-mail alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::EMAIL])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::EMAIL));
         }
-        if (!isset($request_body['message'])) {
-            $errors[] = [
-                'title' => 'Eksik alan',
-                'message' => 'Mesaj alanı eksik.',
-                'code' => 400
-            ];
+        if (!isset($request_body[Fields::MESSAGE])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::MESSAGE));
         }
 
         if (!empty($errors)) {
-            Response::json($errors, 400);
+            Response::json($errors, Responses::VALIDATION_ERROR()['code']);
             exit;
         }
 
-        $full_name_validation = CommonValidator::isValidName($request_body['full_name']);
-        if ($full_name_validation !== true) {
-            foreach ($full_name_validation as $errorMsg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $errorMsg,
-                    'code' => 400                    
-                ];
-            }
-        }
+        $content  = "<p>Sayın sistem yöneticisi, yeni bir mesajınız var:</p>";
+        $content .= "<p><b>İsim:</b>"    . $request_body['full_name'] . "</p>";
+        $content .= "<p><b>E-posta:</b>" . $request_body['email']     . "</p>";
+        $content .= "<p><b>Mesaj:</b>"   . $request_body['message']   . "</p>";
 
-        $email_validation = CommonValidator::isValidEmail($request_body['email'], 'E-mail');
-        if ($email_validation !== true) {
-            foreach ($email_validation as $errorMsg) {
-                $errors[] = [
-                    'title' => 'Doğrulama Hatası',
-                    'message' => $errorMsg,
-                    'code' => 400
-                ];
-            }
-        }
+        $payload = [
+            'from'    => Config::CLIENT_EMAIL_OUTGOING,
+            'to'      => Config::CLIENT_EMAIL_INCOMING,
+            'subject' => Fields::CONTACT_EMAIL_TITLE,
+            'content' => $content
+        ];
 
-        if (!empty($errors)) {
-            Response::json($errors, 400);
+        $mail = new Mail($payload);
+
+        $validation = $mail->validate();
+
+        if ($validation === false) {
+            Response::json($mail->getErrors(), Responses::VALIDATION_ERROR()['code']);
             exit;
         }
 
-        $from = Config::CLIENT_EMAIL_OUTGOING;
-        $to = Config::CLIENT_EMAIL_INCOMING;
-        $subject = 'New Contact Form';
-        $content = 
-        'Name: '    . $request_body['full_name'] . '\n' .
-        'E-mail: '  . $request_body['email']     . '\n' .
-        'Message: ' . $request_body['message'];
-
-        $result = Mail::send($to, $from, $subject, $content);
+        $result = $mail->send();
         
-        if (!$result) {
-            $errors[] = Messages::UNKNOWN_ERROR;
-            Response::json($errors, Messages::UNKNOWN_ERROR['code']);
+        if ($result === false) {
+            Response::json($mail->getErrors(), Responses::UNKNOWN_ERROR()['code']);
             exit;
         }
 
-        $payload = Messages::MAIL_SENT_SUCCESSFULLY;
+        $payload = Responses::SUCCESS(Messages::MAIL_SENT_SUCCESSFULLY());
 
-        Response::json($payload, Messages::MAIL_SENT_SUCCESSFULLY['code']);
+        Response::json($payload, $payload['code']);
         exit;
     }
 }
