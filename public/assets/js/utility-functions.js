@@ -1,6 +1,6 @@
-function newRegexp(regex) {
-    var with_flags = regex.match(/^\/(.+)\/(.+)$/);
-    var without_flags = regex.match(/^\/(.+)\/$/);
+function newRegexp(pattern) {
+    var with_flags = pattern.match(/^\/(.+)\/(.+)$/);
+    var without_flags = pattern.match(/^\/(.+)\/$/);
     if (without_flags) {
         return new RegExp(without_flags[1]);
     } else {
