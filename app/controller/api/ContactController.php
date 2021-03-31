@@ -2,6 +2,7 @@
 
 namespace app\controller\api;
 
+use app\constant\Constants;
 use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
@@ -60,7 +61,7 @@ class ContactController extends Controller
         $payload = [
             'from'    => Config::CLIENT_EMAIL_OUTGOING,
             'to'      => Config::CLIENT_EMAIL_INCOMING,
-            'subject' => Fields::CONTACT_EMAIL_TITLE,
+            'subject' => Constants::CONTACT_EMAIL_TITLE,
             'content' => $content
         ];
 
