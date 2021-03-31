@@ -128,13 +128,13 @@ $('#search').on('input', async function (e) {
     $('#search').removeAttr('data-selected_hasta_id');
     $('#search_results ul').html('');
 
-    var pattern = newRegexp(composite_search_charset);
+    var pattern = newRegexp(composite_search_regexp.value);
     if (!pattern.test($(e.target).val())) {
         $(e.target).val('');
     }
 
     var search_value = $(e.target).val().trim().replace(/\s+/g, ' ');
-    if (search_value.length >= composite_search_min_length) {
+    if (search_value.length >= composite_search_min_length.value) {
         compositeSearchTerm.setValue(search_value);
     }
 });

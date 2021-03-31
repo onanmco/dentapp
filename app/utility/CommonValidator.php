@@ -2,6 +2,8 @@
 
 namespace app\utility;
 
+use app\constant\Constraints;
+use app\constant\Messages;
 use app\constant\Environment;
 
 abstract class CommonValidator
@@ -19,45 +21,62 @@ abstract class CommonValidator
         return (!(@preg_match($string, null) === false));
     }
 
-    public static function isValidName($value, $field = 'İsim')
+    public static function isValidName($value, $field)
     {
         $errors = [];
+
         $value = trim($value, " \t");
         $value = preg_replace('/\s+/', ' ', $value);
-        if (strlen($value) < Environment::NAME_MIN_LENGTH) {
-            $errors[] = $field . ' alanı boş bırakılamaz.';
+
+        $min_length = Constraints::NAME_MIN_LEN($field);
+        if (strlen($value) < $min_length['value']) {
+            $errors[] = $min_length['message'];
         }
-        if (strlen($value) > Environment::NAME_MAX_LENGTH) {
-            $errors[] = $field . ' alanı en fazla ' . Environment::NAME_MAX_LENGTH . ' karakter içermelidir.';
+
+        $max_length = Constraints::NAME_MAX_LEN($field);
+        if (strlen($value) > $max_length['value']) {
+            $errors[] = $max_length['message'];
         }
-        if (!preg_match(Environment::NAME_CHARSET, $value)) {
-            $errors[] = $field . ' alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.';
+
+        $name_regexp = Constraints::NAME_REGEXP($field);
+        if (!preg_match($name_regexp['value'], $value)) {
+            $errors[] = $name_regexp['message'];
         }
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidPassword($value, $field = 'Şifre')
+    public static function isValidPassword($value, $field)
     {
         $errors = [];
-        if (!preg_match(Environment::PASSWORD_CHARSET, $value)) {
-            $errors[] = $field . ' alanı yalnızca harf, sayı, özel karakterler, tire ve nokta içerebilir.';
+
+        $password_regexp = Constraints::PASSWORD_REGEXP($field);
+        if (!preg_match($password_regexp['value'], $value)) {
+            $errors[] = $password_regexp['message'];
         }
-        if (strlen($value) < Environment::PASSWORD_MIN_LENGTH) {
-            $errors[] = $field . ' alanı en az ' . Environment::PASSWORD_MIN_LENGTH . ' karakter içermelidir.';
+
+        $password_min_length = Constraints::PASSWORD_MIN_LENGTH($field);
+        if (strlen($value) < $password_min_length['value']) {
+            $errors[] = $password_min_length['message'];
         }
-        if (strlen($value) > Environment::PASSWORD_MAX_LENGTH) {
-            $errors[] = $field . ' alanı en fazla ' . Environment::PASSWORD_MAX_LENGTH . ' karakter içermelidir.';
+
+        $password_max_length = Constraints::PASSWORD_MAX_LEN($field);
+        if (strlen($value) > $password_max_length['value']) {
+            $errors[] = $password_max_length['message'];
         }
-        if (!preg_match('/[A-Z]/', $value)) {
-            $errors[] = $field . ' alanı en az bir adet büyük harf içermelidir.';
+
+        $password_regexp_uppercase = Constraints::PASSWORD_REGEXP_UPPERCASE($field);
+        if (!preg_match($password_regexp_uppercase['value'], $value)) {
+            $errors[] = $password_regexp_uppercase['message'];
         }
-        if (!preg_match('/[\d]/', $value)) {
-            $errors[] = $field . ' alanı en az bir adet rakam içermelidir.';
+
+        $password_regexp_digit = Constraints::PASSWORD_REGEXP_DIGIT($field);
+        if (!preg_match($password_regexp_digit['value'], $value)) {
+            $errors[] = $password_regexp_digit['message'];
         }
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidUnixTimestamp($value, $field = 'Zaman damgası')
+    public static function isValidUnixTimestamp($value, $field)
     {
         $errors = [];
         if (!(((string) (int) $value === $value) 
@@ -68,42 +87,55 @@ abstract class CommonValidator
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidEmail($value, $field = 'e-mail')
+    public static function isValidEmail($value, $field)
     {
         $errors = [];
-        if (strlen($value) > Environment::EMAIL_MAX_LENGTH) {
-            $errors[] = 'E-mail alanı en fazla ' . Environment::EMAIL_MAX_LENGTH . ' karakter içermelidir.';
+
+        $email_max_length = Constraints::EMAIL_MAX_LEN($field);
+        if (strlen($value) > $email_max_length['value']) {
+            $errors[] =  $email_max_length['message'];
         }
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Lütfen geçerli bir ' . $field . ' adresi girin.';
+            $errors[] = Messages::INVALID_EMAIL($field);
         }
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidId($value, $field = 'Id')
+    public static function isValidId($value, $field)
     {
         $errors = [];
-        if (!preg_match(Environment::ID_REGEX, $value)) {
-            $errors[] = $field . ' alanı 0\'dan büyük bir sayı olmalıdır.';
+
+        $id_regexp = Constraints::ID_REGEXP($field);
+        if (!preg_match($id_regexp['value'], $value)) {
+            $errors[] = $id_regexp['message'];
         }
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidPhone($value, $field = 'telefon')
+    public static function isValidPhone($value, $field)
     {
         $errors = [];
-        if (!preg_match(Environment::PHONE_REGEX, $value)) {
-            $errors[] = 'Lütfen geçerli bir ' . $field . ' numarası girin.';
+
+        $phone_regexp = Constraints::PHONE_REGEXP($field);
+        if (!preg_match($phone_regexp['value'], $value)) {
+            $errors[] = $phone_regexp['message'];
         }
         return (empty($errors)) ? true : $errors;
     }
 
-    public static function isValidTckn($value, $field = 'TCKN')
+    public static function isValidTckn($value, $field)
     {
         $errors = [];
-        if (!preg_match(Environment::TCKN_REGEX, $value)) {
-            $errors[] = 'Lütfen geçerli bir ' . $field . ' girin';
+
+        $tckn_regexp = Constraints::TCKN_REGEXP($field);
+        if (!preg_match($tckn_regexp['value'], $value)) {
+            $errors[] = $tckn_regexp['message'];
         }
         return (empty($errors)) ? true : $errors;
+    }
+
+    public static function isHTML($string)
+    {
+        return $string != strip_tags($string);
     }
 }

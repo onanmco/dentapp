@@ -2,51 +2,53 @@
 
 namespace app\utility;
 
+use app\constant\Fields;
 use app\constant\Messages;
+use app\constant\Responses;
 use app\model\Personel;
 use core\Router;
 use Exception;
 
 class Auth
 {
-    public static function getAuthPersonel()
+    public static function getAuthStaff()
     {
-        if (!isset($_SESSION['personel_id'])) {
+        if (!isset($_SESSION[Fields::STAFF_ID])) {
             return false;
         }
-        $auth_personel = Personel::findById($_SESSION['personel_id']);
-        if ($auth_personel === false) {
-            $message = Messages::DB_READ_ERROR;
-            throw new Exception($message['message'], 500);
+        $auth_staff = Personel::findById($_SESSION[Fields::STAFF_ID]);
+        if ($auth_staff === false) {
+            $error = Responses::UNKNOWN_ERROR();
+            throw new Exception(Messages::DB_READ_ERROR(), $error['code']);
         }
-        return $auth_personel;
+        return $auth_staff;
     }
 
     public static function isLoggedIn()
     {
-        return self::getAuthPersonel() !== false;
+        return self::getAuthStaff() !== false;
     }
 
-    public static function login($personel)
+    public static function login($staff)
     {
         session_regenerate_id(true);
-        $_SESSION['personel_id'] = $personel->getId();
+        $_SESSION[Fields::STAFF_ID] = $staff->getId();
     }
 
     public static function setLastVisit()
     {
-        $_SESSION['last_visit'] = $_SERVER['REQUEST_URI'];
+        $_SESSION[Fields::LAST_VISIT] = $_SERVER['REQUEST_URI'];
     }
 
     public static function getLastVisit()
     {
-        return (isset($_SESSION['last_visit'])) ? $_SESSION['last_visit'] : '/';
+        return (isset($_SESSION[Fields::LAST_VISIT])) ? $_SESSION[Fields::LAST_VISIT] : '/';
     }
 
     public static function loginRequired()
     {
         if (!self::isLoggedIn()) {
-            Popup::add(Messages::ACCESS_DENIED);
+            Popup::add(Responses::UNAUTHORIZED_ACCESS(Messages::UNAUTHORIZED_ACCESS()));
             self::setLastVisit($_SERVER['REQUEST_URI']);
             Router::redirectAfterPost('/personel/giris');
         }

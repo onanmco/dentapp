@@ -4,7 +4,7 @@ use app\model\Personel;
 use app\utility\Auth;
 use config\Config;
 
-$auth_personel = Auth::getAuthPersonel();
+$auth_personel = Auth::getAuthStaff();
 ?>
 <!doctype html>
 <html lang="en">

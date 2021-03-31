@@ -2,7 +2,9 @@
 
 namespace app\controller;
 
+use app\constant\Fields;
 use app\constant\Messages;
+use app\constant\Responses;
 use app\model\ApiToken;
 use app\model\Meslek;
 use app\model\Personel;
@@ -11,6 +13,7 @@ use app\utility\CommonValidator;
 use app\utility\Popup;
 use app\utility\Token;
 use core\Controller;
+use core\Response;
 use core\Router;
 use core\View;
 use Exception;
@@ -25,59 +28,67 @@ class PersonelController extends Controller
     public function olusturAction()
     {
         $errors = [];
-
-        $isim_validation = CommonValidator::isValidName($_POST['isim'], 'İsim');
-        if ($isim_validation !== true) {
-            array_merge($errors, $isim_validation);
+        
+        $name_validation = CommonValidator::isValidName($_POST[Fields::NAME], Fields::NAME);
+        if ($name_validation !== true) {
+            foreach ($name_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
         }
-        $soyisim_validation = CommonValidator::isValidName($_POST['soyisim'], 'Soyisim');
-        if ($soyisim_validation !== true) {
-            array_merge($errors, $soyisim_validation);
+        $surname_validation = CommonValidator::isValidName($_POST[Fields::SURNAME], Fields::SURNAME);
+        if ($surname_validation !== true) {
+            foreach ($surname_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
         }
-        $email_validation = CommonValidator::isValidEmail($_POST['email'], 'E-mail');
+        $email_validation = CommonValidator::isValidEmail($_POST[Fields::EMAIL], Fields::EMAIL);
         if ($email_validation !== true) {
-            array_merge($errors, $email_validation);
+            foreach ($email_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
         }
-        $sifre_validation = CommonValidator::isValidPassword($_POST['sifre'], 8, 20, 'Şifre');
-        if ($sifre_validation !== true) {
-            array_merge($errors, $sifre_validation);
+        $password_validation = CommonValidator::isValidPassword($_POST[Fields::PASSWORD], Fields::PASSWORD);
+        if ($password_validation !== true) {
+            foreach ($password_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
         }
-        if (!preg_match('/(^$)|(^\d{11}$)/', $_POST['tckn'])) {
-            $errors[] = 'Lütfen geçerli bir TCKN girin.';
+        if (!preg_match('/(^$)|(^\d{11}$)/', $_POST[Fields::TCKN])) {
+            $errors[] = Messages::TCKN_REGEXP(Fields::TCKN);
         }
-        if (!Meslek::isExist($_POST['meslek_id'])) {
-            $errors[] = 'Seçmiş olduğunuz meslek türü sistemimizde yer almamaktadır.';
+        if (!Meslek::isExist($_POST[Fields::STAFF_GROUP_ID])) {
+            $errors[] = Messages::STAFF_GROUP_ID_NOT_EXIST();
         }
-        if (!Personel::isEmailAvailable($_POST['email'])) {
-            $errors[] = Messages::INVALID_EMAIL['message'];
+        if (!Personel::isEmailAvailable($_POST[Fields::EMAIL])) {
+            $errors[] = Messages::EMAIL_ALREADY_USED();
         }
         if (empty($errors)) {
-            $_POST['password_hash'] = password_hash($_POST['sifre'], PASSWORD_DEFAULT);
+            $_POST[Fields::PASSWORD_HASH] = password_hash($_POST[Fields::PASSWORD], PASSWORD_DEFAULT);
             $token = new Token();
-            $_POST['api_token'] = $token->getValue();
-            $personel = new Personel($_POST);
-            $result = $personel->save();
+            $_POST[Fields::API_TOKEN] = $token->getValue();
+            $staff = new Personel($_POST);
+            $result = $staff->save();
             if ($result === false) {
-                throw new Exception("An error occurred when inserting a valid new personel to db.\nEmail: " . $personel->getEmail());
+                throw new Exception(Messages::STAFF_COULD_NOT_BE_SAVED($staff->getEmail()));
             }
-            $saved_personel = Personel::findByApiToken($token->getValue());
-            if ($saved_personel === false) {
-                throw new Exception("An error occurred when finding a saved personel by its api_token value.\nemail: " . $personel->getEmail() . "\napi_token: " . $personel->getApiToken(), 500);
+            $saved_staff = Personel::findByApiToken($token->getValue());
+            if ($saved_staff === false) {
+                throw new Exception(Messages::FAILED_TO_GET_STAFF_BY_TOKEN($staff->getEmail(), $staff->getApiToken()));
             }
             $api_token_record = new ApiToken([
-                'personel_id' => $saved_personel->getId(),
-                'api_token_hash' => $token->getHash()
+                Fields::STAFF_ID => $saved_staff->getId(),
+                Fields::API_TOKEN_HASH => $token->getHash()
             ]);
             $result = $api_token_record->save();
             if ($result === false) {
-                $saved_personel->delete();
-                throw new Exception("An error occurred when inserting api_token_hash of a saved personel to api_tokens table. Deleting user.\nDeleted user email: " . $saved_personel->getEmail() . "\nDeleted user id: " . $saved_personel->getId(), 500);
+                $saved_staff->delete();
+                throw new Exception(Messages::FAILED_TO_INSERT_API_TOKEN_HASH($saved_staff->getEmail(), $saved_staff->getId()));
             }
-            Popup::add(Messages::REGISTER_SUCCESSFUL);
+            Popup::add(Responses::SUCCESS(Messages::REGISTER_SUCCESSFUL()));
             Router::redirectAfterPost('/');
         } else {
-            $personel = new Personel($_POST);
-            View::render('signup.php', ['personel' => $personel, 'errors' => $errors]);
+            $staff = new Personel($_POST);
+            View::render('signup.php', ['personel' => $staff, 'errors' => $errors]);
         }            
     }
 
@@ -89,21 +100,21 @@ class PersonelController extends Controller
     public function authAction()
     {
         $errors = [];
-        $existing_personel = Personel::findByEmail($_POST['email']);
-        if ($existing_personel === false) {
-            $errors[] = Messages::ACCOUNT_CANNOT_FOUND['message'];
-            $requested_personel = new Personel($_POST);
-            View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
+        $existing_staff = Personel::findByEmail($_POST[Fields::EMAIL]);
+        if ($existing_staff === false) {
+            $errors[] = Messages::ACCOUNT_CANNOT_FOUND();
+            $requested_staff = new Personel($_POST);
+            View::render('login.php', ['errors' => $errors, 'personel' => $requested_staff]);
             exit;
         }
-        if (!password_verify($_POST['sifre'], $existing_personel->getPasswordHash())) {
-            $errors[] = Messages::WRONG_PASSWORD['message'];
-            $requested_personel = new Personel($_POST);
-            View::render('login.php', ['errors' => $errors, 'personel' => $requested_personel]);
+        if (!password_verify($_POST[Fields::PASSWORD], $existing_staff->getPasswordHash())) {
+            $errors[] = Messages::WRONG_PASSWORD();
+            $requested_staff = new Personel($_POST);
+            View::render('login.php', ['errors' => $errors, 'personel' => $requested_staff]);
             exit;
         }
-        Auth::login($existing_personel);
-        Popup::add(Messages::WELCOME);
+        Auth::login($existing_staff);
+        Popup::add(Responses::SUCCESS(Messages::LOGIN_SUCCESSFUL()));
         Router::redirectAfterPost(Auth::getLastVisit());
     }
 
@@ -115,7 +126,7 @@ class PersonelController extends Controller
     
     public function byeAction()
     {
-        Popup::add(Messages::LOGOUT_SUCCESSFUL);
+        Popup::add(Responses::SUCCESS(Messages::LOGOUT_SUCCESSFUL()));
         Router::redirectAfterPost('/');
     }
 }
