@@ -20,24 +20,10 @@ class UtilityFunctions
         return mb_strtoupper($str);
     }
 
-    /**
-     * Split given regular expression in two parts
-     * 1st part represents the string between forward slashes
-     * 2nd part represents the flag
-     * 
-     * @param string
-     * @return array
-     */
-    public static function parseRegex($regex)
+    public static function turkish_uc_first($str)
     {
-        $flag = false;
-        if (preg_match('/^\/(?P<regex>.+)\/(?P<flag>.+)$/', $regex, $matches)) {
-            $flag = $matches['flag'];
-            $regex = $matches['regex'];
-        }
-        return [
-            'regex' => $regex,
-            'flag' => $flag
-        ];
+        $first_letter = substr($str, 0, 1);
+        $rest = substr($str, 1);
+        return self::turkish_uppercase($first_letter) . $rest;
     }
 }

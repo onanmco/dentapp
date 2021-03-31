@@ -23,6 +23,6 @@ class Config
     const CLIENT_EMAIL_INCOMING = 'info@' . self::CLIENT_DOMAIN;
     const CLIENT_PHONE = '+90 (850) 000 00 00';
 
-    const MAILGUN_BASE_URL = 'https://api.mailgun.net/v3/{YOUR_DOMAIN_NAME}';
-    const MAILGUN_API_KEY = '{YOUR_API_KEY}';
+    const MAILGUN_BASE_URL = 'https://api.mailgun.net/v3/{DOMAIN}';
+    const MAILGUN_API_KEY = '{API_KEY}';
 }

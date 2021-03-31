@@ -1,5 +1,5 @@
 function is_valid_name_charset(string) {
-    return newRegexp(name_charset).test(string);
+    return newRegexp(name_regexp.value).test(string);
 }
 
 function is_valid_tckn(string) {
