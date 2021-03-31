@@ -1,5 +1,6 @@
 .idea/
 .DS_Store
 "Icon\r"
+.vscode/
 app/.DS_Store
 !.gitignore
