@@ -218,4 +218,9 @@ class Messages
     {
         return "$field alanı boş bırakılamaz.";
     }
+
+    public static function PAGE_NOT_FOUND()
+    {
+        return "Sayfa bulunamadı.";
+    }
 }

@@ -1,8 +1,6 @@
 <?php
 
-use app\model\Personel;
 use app\utility\Auth;
-use config\Config;
 
 $auth_personel = Auth::getAuthStaff();
 ?>
