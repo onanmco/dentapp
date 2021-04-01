@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controller;
+
 use core\View;
 
 class RestrictedController extends LoginRequiredController

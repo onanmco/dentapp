@@ -44,7 +44,12 @@ class Error
 
         if (Request::is_from_api()) {
             self::writeLog(self::getMessage($exception));
-            Response::json([Responses::UNKNOWN_ERROR(Messages::UNKNOWN_ERROR())]);
+
+            $payload = $code === 404
+                ? Responses::PAGE_NOT_FOUND(Messages::PAGE_NOT_FOUND())
+                : Responses::UNKNOWN_ERROR(Messages::UNKNOWN_ERROR());
+
+            Response::json([$payload], $code);
             exit;
         }
 
@@ -94,7 +99,10 @@ class Error
      */
     public static function writeLog($message)
     {
-        $log_file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.txt';
+
+        $log_file = Request::is_from_api()
+            ? dirname(__DIR__) . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'api_log_' . date('Y-m-d') . '.txt'
+            : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'portal_log_' . date('Y-m-d') . '.txt';
         ini_set('error_log', $log_file);
         error_log($message);
     }
