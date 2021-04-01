@@ -22,8 +22,8 @@ $errors = (isset($errors)) ? $errors : [];
 </head>
 
 <body>
-    <div class="row d-flex justify-content-center mt-5 w-100">
-        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0">
+    <div class="row d-flex justify-content-center m-0 w-100">
+        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0 mt-5">
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center justify-content-start">
                     <div class="col-6">
@@ -50,7 +50,9 @@ $errors = (isset($errors)) ? $errors : [];
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="email" class="m-0 text-muted font-weight-bold">E-mail:</label>
                         <div class="w-80">
-                            <input type="email" name="email" id="email" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
+                            <div class="input-group input-group-sm">
+                                <input type="email" name="email" id="email" class="form-control form-control-sm" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
