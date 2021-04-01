@@ -2,6 +2,8 @@
 
 namespace core;
 
+use app\constant\Messages;
+use app\constant\Responses;
 use config\Config;
 use Exception;
 use ErrorException;
@@ -38,7 +40,14 @@ class Error
         if ($code != 404) {
             $code = 500;
         }
-        http_response_code($code);   
+        http_response_code($code);
+
+        if (Request::is_from_api()) {
+            self::writeLog(self::getMessage($exception));
+            Response::json([Responses::UNKNOWN_ERROR(Messages::UNKNOWN_ERROR())]);
+            exit;
+        }
+
         try {
             if (Config::SHOW_ERRORS) {
                 echo "<h1>Fatal Error</h1>";
