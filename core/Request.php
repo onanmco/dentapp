@@ -47,5 +47,24 @@ abstract class Request
         }
         return $method;
     }
-    
+
+    /**
+     * Returns true if the current request URI is from an API client
+     *
+     * @return bool
+     */
+    public static function is_from_api()
+    {
+        return preg_match('/^\/?api/', Request::uri());
+    }
+
+    /**
+     * Returns true if the current request URI is from a portal user
+     *
+     * @return bool
+     */
+    public static function is_from_portal()
+    {
+        return !preg_match('/^\/?api/', Request::uri());
+    }
 }
