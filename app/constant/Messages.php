@@ -213,4 +213,9 @@ class Messages
     {
         return "$field alanı için lütfen geçerli bir e-mail adresi girin.";
     }
+
+    public static function CANNOT_BE_EMPTY($field)
+    {
+        return "$field alanı boş bırakılamaz.";
+    }
 }

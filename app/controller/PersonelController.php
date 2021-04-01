@@ -17,6 +17,7 @@ use core\Response;
 use core\Router;
 use core\View;
 use Exception;
+use http\Message;
 
 class PersonelController extends Controller
 {
@@ -28,7 +29,24 @@ class PersonelController extends Controller
     public function olusturAction()
     {
         $errors = [];
-        
+        $existing_staff = new Personel($_POST);
+
+        $required_fields = [Fields::NAME, Fields::SURNAME, Fields::EMAIL, Fields::PASSWORD, Fields::STAFF_GROUP_ID];
+
+        foreach ($required_fields as $field_name) {
+            if (empty($_POST[$field_name])) {
+                $errors[] = Messages::CANNOT_BE_EMPTY($field_name);
+            }
+        }
+
+        if (!empty($errors)) {
+            View::render('signup.php', [
+                'personel' => $existing_staff,
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
         $name_validation = CommonValidator::isValidName($_POST[Fields::NAME], Fields::NAME);
         if ($name_validation !== true) {
             foreach ($name_validation as $error_msg) {
@@ -87,8 +105,7 @@ class PersonelController extends Controller
             Popup::add(Responses::SUCCESS(Messages::REGISTER_SUCCESSFUL()));
             Router::redirectAfterPost('/');
         } else {
-            $staff = new Personel($_POST);
-            View::render('signup.php', ['personel' => $staff, 'errors' => $errors]);
+            View::render('signup.php', ['personel' => $existing_staff, 'errors' => $errors]);
         }            
     }
 
@@ -100,10 +117,27 @@ class PersonelController extends Controller
     public function authAction()
     {
         $errors = [];
+
+        $requested_staff = new Personel($_POST);
+        $required_fields = [Fields::EMAIL, Fields::PASSWORD];
+
+        foreach ($required_fields as $field_name) {
+            if (empty($_POST[$field_name])) {
+                $errors[] = Messages::CANNOT_BE_EMPTY($field_name);
+            }
+        }
+
+        if (!empty($errors)) {
+            View::render('login.php', [
+                'personel' => $requested_staff,
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
         $existing_staff = Personel::findByEmail($_POST[Fields::EMAIL]);
         if ($existing_staff === false) {
             $errors[] = Messages::ACCOUNT_CANNOT_FOUND();
-            $requested_staff = new Personel($_POST);
             View::render('login.php', ['errors' => $errors, 'personel' => $requested_staff]);
             exit;
         }
