@@ -4,7 +4,6 @@ namespace app\utility;
 
 use app\constant\Constraints;
 use app\constant\Messages;
-use app\constant\Environment;
 
 abstract class CommonValidator
 {

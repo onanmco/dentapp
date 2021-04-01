@@ -31,6 +31,15 @@ abstract class Responses
         ];
     }
 
+    public static function PAGE_NOT_FOUND($message = Constants::DEFAULT_RESPONSE_MESSAGE)
+    {
+        return [
+            'title' => 'Sayfa Bulunamadı',
+            'message' => $message,
+            'code' => 404
+        ];
+    }
+
     public static function SUCCESS($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
