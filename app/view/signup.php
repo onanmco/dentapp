@@ -22,8 +22,8 @@ $errors = (isset($errors)) ? $errors : [];
 </head>
 
 <body>
-    <div id="help_drawer" class="d-none row justify-content-center m-0 mt-5 w-100">
-        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0">
+    <div id="help_drawer" class="d-none row justify-content-center m-0 w-100">
+        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0 mt-5">
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center">
                     <div class="col-6 text-left">
@@ -46,8 +46,8 @@ $errors = (isset($errors)) ? $errors : [];
             </div>
         </div>
     </div>
-    <div class="row d-flex justify-content-center m-0 mt-5 w-100">
-        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0">
+    <div class="row d-flex justify-content-center m-0 w-100">
+        <div class="card col-10 col-sm-8 col-md-7 mt-5 col-lg-5 p-0">
             <div class="card-header p-2 pl-3 pr-3 bg-white">
                 <div class="row align-items-center">
                     <div class="col-6 text-left">
@@ -70,64 +70,74 @@ $errors = (isset($errors)) ? $errors : [];
                     echo '</ul>';
                 }
                 ?>
-                <form action="/personel/olustur" method="POST">
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
+                <form action="/personel/olustur" method="POST" id="signup_form">
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="isim" class="m-0 text-muted font-weight-bold">İsim:</label>
                         <div class="w-80">
-                            <input type="text" name="isim" id="isim" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getIsim()) ?>">
-                        </div>
-                    </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="soyisim" class="m-0 text-muted font-weight-bold">Soyisim:</label>
-                        <div class="w-80">
-                            <input type="text" name="soyisim" id="soyisim" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getSoyisim()) ?>">
-                        </div>
-                    </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="email" class="m-0 text-muted font-weight-bold">E-mail:</label>
-                        <div class="w-80">
-                            <input type="email" name="email" id="email" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
-                        </div>
-                    </div>                    
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="sifre" class="m-0 text-muted font-weight-bold">Şifre: </label>
-                        <div class="w-80 input-group input-group-sm password_input_group">
-                            <input type="password" name="sifre" id="sifre" class="form-control form-control-sm">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary">
-                                    <i class="fas fa-eye-slash"></i>
-                                </button>
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="isim" id="isim" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getIsim()) ?>">
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
-                        <label for="tckn" class="m-0 text-muted font-weight-bold">TCKN:</label>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="soyisim" class="m-0 text-muted font-weight-bold">Soyisim:</label>
                         <div class="w-80">
-                            <input type="text" name="tckn" id="tckn" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getTckn()) ?>">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="soyisim" id="soyisim" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getSoyisim()) ?>">
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-center justify-content-between">
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="email" class="m-0 text-muted font-weight-bold">E-mail:</label>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm">
+                                <input type="email" name="email" id="email" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="sifre" class="m-0 text-muted font-weight-bold">Şifre: </label>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm password_input_group">
+                                <input type="password" name="sifre" id="sifre" class="form-control form-control-sm">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="tckn" class="m-0 text-muted font-weight-bold">TCKN:</label>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="tckn" id="tckn" class="form-control form-control-sm mt-1" value="<?php echo htmlspecialchars($personel->getTckn()) ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="meslek_id" class="m-0 text-muted font-weight-bold">Meslek:</label>
                         <div class="w-80">
-                            <select type="text" name="meslek_id" id="meslek_id" class="form-control form-control-sm mt-1">
-                                <?php
-                                $meslek_id = $personel->getMeslekId();
-                                $all_roles = Meslek::getAll();
-                                
-                                foreach ($all_roles as $row) {
-                                    if ($meslek_id === $row->getId()) {
-                                        echo '<option value="' . $row->getId() . '" selected>' . ucfirst($row->getMeslek()) . '</option>';
-                                    }
-                                }
+                            <div class="input-group input-group-sm">
+                                <select type="text" name="meslek_id" id="meslek_id" class="form-control form-control-sm mt-1">
+                                    <?php
+                                    $meslek_id = $personel->getMeslekId();
+                                    $all_roles = Meslek::getAll();
 
-                                foreach ($all_roles as $row) {
-                                   echo '<option value="' . $row->getId() . '">' . ucfirst($row->getMeslek()) . '</option>';                                    
-                                }
-                                ?>
-                                <!-- <option value="hekim">Hekim</option> -->
-                                <!-- <option value="patron">Patron</option> -->
-                            </select>
+                                    foreach ($all_roles as $row) {
+                                        if ($meslek_id === $row->getId()) {
+                                            echo '<option value="' . $row->getId() . '" selected>' . ucfirst($row->getMeslek()) . '</option>';
+                                        }
+                                    }
+
+                                    foreach ($all_roles as $row) {
+                                       echo '<option value="' . $row->getId() . '">' . ucfirst($row->getMeslek()) . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="row m-0 mt-2">
@@ -162,6 +172,8 @@ $errors = (isset($errors)) ? $errors : [];
             e.preventDefault();
             help_drawer.classList.remove('d-none');
             help_drawer.classList.add('d-flex');
+            var offset = help_drawer.offsetTop;
+            scrollTo(0, offset);
         });
         help_drawer_close_icon.addEventListener('click', function (e) {
             e.preventDefault();
