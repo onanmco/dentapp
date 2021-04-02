@@ -75,6 +75,56 @@ class Error
     }
 
     /**
+     * Default trace string function Exception::getTraceAsString() returns truncated output
+     * By the help of this new helper function you will be able to get full exception trace
+     * 
+     * @param Exception
+     * 
+     * @return string 
+     */
+    public static function getExceptionTraceStringNotTruncated($exception)
+    {
+        $trace = "";
+        $count = 0;
+        foreach ($exception->getTrace() as $frame) {
+            $args = "";
+            if (isset($frame['args'])) {
+                $args = array();
+                foreach ($frame['args'] as $arg) {
+                    if (is_string($arg)) {
+                        $args[] = "'" . $arg . "'";
+                    } elseif (is_array($arg)) {
+                        $args[] = "Array";
+                    } elseif (is_null($arg)) {
+                        $args[] = 'NULL';
+                    } elseif (is_bool($arg)) {
+                        $args[] = ($arg) ? "true" : "false";
+                    } elseif (is_object($arg)) {
+                        $args[] = get_class($arg);
+                    } elseif (is_resource($arg)) {
+                        $args[] = get_resource_type($arg);
+                    } else {
+                        $args[] = $arg;
+                    }
+                }
+                $args = join(", ", $args);
+            }
+            $trace .= sprintf(
+                "#%s %s(%s): %s%s%s(%s)\n",
+                $count,
+                $frame['file'],
+                $frame['line'],
+                isset($frame['class']) ? $frame['class'] : '',
+                isset($frame['type']) ? $frame['type'] : '',
+                $frame['function'],
+                $args
+            );
+            $count++;
+        }
+        return $trace;
+    }
+
+    /**
      * Get a formatted error message from the passed exception.
      * 
      * @param Exception $exception
@@ -83,10 +133,10 @@ class Error
      */
     public static function getMessage($exception)
     {
-        $message = "\nUncaught exception: '" . get_class($exception) . "'\n";
-        $message .= "Message: '" . $exception->getMessage() . "'\n";
-        $message .= "Stack trace: " . $exception->getTraceAsString() . "\n";
-        $message .= "Thrown in: '" . $exception->getFile() . "' on line: '" . $exception->getLine() . "'\n";
+        $message = "\nUncaught exception: " . get_class($exception) . "\n";
+        $message .= "Message: " . $exception->getMessage() . "\n";
+        $message .= "Stack trace: \n" . self::getExceptionTraceAsString($exception);
+        $message .= "Thrown in: " . $exception->getFile() . " on line: " . $exception->getLine() . "\n";
         return $message;
     }
 
