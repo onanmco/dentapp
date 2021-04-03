@@ -5,9 +5,9 @@ namespace app\utility;
 use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
+use app\model\ApiToken;
 use app\model\Personel;
 use core\Router;
-use Exception;
 
 class Auth
 {
@@ -16,12 +16,7 @@ class Auth
         if (!isset($_SESSION[Fields::STAFF_ID])) {
             return false;
         }
-        $auth_staff = Personel::findById($_SESSION[Fields::STAFF_ID]);
-        if ($auth_staff === false) {
-            $error = Responses::UNKNOWN_ERROR();
-            throw new Exception(Messages::DB_READ_ERROR(), $error['code']);
-        }
-        return $auth_staff;
+        return Personel::findById($_SESSION[Fields::STAFF_ID]);
     }
 
     public static function isLoggedIn()
@@ -33,6 +28,32 @@ class Auth
     {
         session_regenerate_id(true);
         $_SESSION[Fields::STAFF_ID] = $staff->getId();
+        
+        $old_session_id = isset($_COOKIE['last_session_id']) ? $_COOKIE['last_session_id'] : false;
+        
+        if ($old_session_id !== false) {
+            $will_be_deleted = ApiToken::findBySessionId($old_session_id);
+
+            if ($will_be_deleted !== false) {
+                $will_be_deleted->delete();
+            }
+        }
+
+        $new_session_id = session_id();
+
+        setcookie('last_session_id', $new_session_id, time() + Datetime::WEEK, '/');
+        
+        $api_token = new Token();
+
+        $api_token_record = new ApiToken([
+            'last_session_id' => $new_session_id,
+            'personel_id' => $staff->getId(),
+            'api_token_hash' => $api_token->getHash()
+        ]);
+
+        $api_token_record->save();
+
+        setcookie('api_token', $api_token->getValue(), time() + Datetime::WEEK, '/');
     }
 
     public static function setLastVisit()
@@ -56,6 +77,10 @@ class Auth
 
     public static function logout()
     {
+        if (isset($_COOKIE['last_session_id'])) {
+            $existing_api_token_record = ApiToken::findBySessionId($_COOKIE['last_session_id']);
+            $existing_api_token_record->delete();
+        }
         $_SESSION = [];
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();

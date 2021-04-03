@@ -14,7 +14,6 @@ class Personel extends Model
     private $email = '';
     private $password_hash = '';
     private $meslek_id = '';
-    private $api_token = '';
 
     public function __construct($args = [])
     {
@@ -61,11 +60,6 @@ class Personel extends Model
         return $this->meslek_id;
     }
 
-    public function getApiToken()
-    {
-        return $this->api_token;
-    }
-
     public static function getAll(){
         $sql = 'SELECT * FROM personeller ORDER BY id DESC';
         $db = self::getDB();
@@ -110,7 +104,7 @@ class Personel extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO personeller(isim, soyisim, tckn, email, password_hash, meslek_id, api_token) VALUES(:isim, :soyisim, :tckn, :email, :password_hash, :meslek_id, :api_token)';
+        $sql = 'INSERT INTO personeller(isim, soyisim, tckn, email, password_hash, meslek_id) VALUES(:isim, :soyisim, :tckn, :email, :password_hash, :meslek_id)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);
@@ -119,7 +113,6 @@ class Personel extends Model
         $stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
         $stmt->bindValue(':password_hash', $this->password_hash, PDO::PARAM_STR);
         $stmt->bindValue(':meslek_id', $this->meslek_id, PDO::PARAM_INT);
-        $stmt->bindValue(':api_token', $this->api_token, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
@@ -128,17 +121,6 @@ class Personel extends Model
         $sql = 'SELECT * FROM personeller WHERE id = (SELECT MAX(id) FROM personeller)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
-        $stmt->execute();
-        return $stmt->fetch();
-    }
-
-    public static function findByApiToken($api_token)
-    {
-        $sql = 'SELECT * FROM personeller WHERE api_token = :api_token';
-        $db = self::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':api_token', $api_token, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
         $stmt->execute();
         return $stmt->fetch();

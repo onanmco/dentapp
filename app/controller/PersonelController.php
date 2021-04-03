@@ -5,7 +5,6 @@ namespace app\controller;
 use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
-use app\model\ApiToken;
 use app\model\Meslek;
 use app\model\Personel;
 use app\utility\Auth;
@@ -80,25 +79,10 @@ class PersonelController extends Controller
         }
         if (empty($errors)) {
             $_POST[Fields::PASSWORD_HASH] = password_hash($_POST[Fields::PASSWORD], PASSWORD_DEFAULT);
-            $token = new Token();
-            $_POST[Fields::API_TOKEN] = $token->getValue();
             $staff = new Personel($_POST);
             $result = $staff->save();
             if ($result === false) {
                 throw new Exception(Messages::STAFF_COULD_NOT_BE_SAVED($staff->getEmail()));
-            }
-            $saved_staff = Personel::findByApiToken($token->getValue());
-            if ($saved_staff === false) {
-                throw new Exception(Messages::FAILED_TO_GET_STAFF_BY_TOKEN($staff->getEmail(), $staff->getApiToken()));
-            }
-            $api_token_record = new ApiToken([
-                Fields::STAFF_ID => $saved_staff->getId(),
-                Fields::API_TOKEN_HASH => $token->getHash()
-            ]);
-            $result = $api_token_record->save();
-            if ($result === false) {
-                $saved_staff->delete();
-                throw new Exception(Messages::FAILED_TO_INSERT_API_TOKEN_HASH($saved_staff->getEmail(), $saved_staff->getId()));
             }
             Popup::add(Responses::SUCCESS(Messages::REGISTER_SUCCESSFUL()));
             Router::redirectAfterPost('/');
