@@ -2,31 +2,35 @@
 
 namespace app\constant;
 
+use core\Error;
+
 class Fields
 {
-    const NAME = 'isim';
-    const SURNAME = 'soyisim';
-    const PHONE = 'telefon';
-    const TCKN = 'tckn';
-    const SEARCH_TERM = 'aranacak değer';
-    const STAFF_ID = 'personel_id';
-    const PATIENT_ID = 'hasta_id';
-    const START = 'baslangic';
-    const END = 'bitis';
-    const NOTES = 'notlar';
-    const NOTIFY = 'hatirlat';
-    const APPOINTMENT_TYPE_ID = 'randevu_turu_id';
-    const FULL_NAME = 'full_name';
-    const EMAIL = 'email';
-    const MESSAGE = 'message';
-    const COMPOSITE_SEARCH = 'arama terimi';
-    const PASSWORD = 'sifre';
-    const STAFF_GROUP_ID = 'meslek_id';
-    const PASSWORD_HASH = 'password_hash';
-    const API_TOKEN = 'api_token';
-    const API_TOKEN_HASH = 'api_token_hash';
-    const LAST_VISIT = 'last_visit';
-    const POPUPS = 'popups';
-    
+    public function __callStatic($name, $arguments)
+    {
+        $existing_class_name = ltrim(get_called_class(), '\\');
+        $class_name_without_namespace = ltrim(get_called_class(), '\\');
+        $last_bs_pos = strrpos(get_called_class(), '\\');
+        if ($last_bs_pos) {
+            $class_name_without_namespace = substr($class_name_without_namespace, $last_bs_pos + 1);
+        }
 
+        $pos = strrpos($existing_class_name, $class_name_without_namespace);
+        $class_name = 'en\\' . $class_name_without_namespace;
+        if ($pos !== false) {
+            $class_name = substr($existing_class_name, 0, $pos) . 'en\\' . substr($existing_class_name, $pos);
+        }
+        
+        try {
+            $value = constant($class_name . '::' . $name);
+        } catch (\Throwable $th) {
+            $value = null;
+        }
+
+        if (!$value) {
+            return '###ÇEVİRİ_HATASI###';
+        }
+
+        return $value;
+    }
 }

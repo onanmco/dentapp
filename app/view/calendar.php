@@ -160,10 +160,10 @@ $randevu_turleri = RandevuTuru::getAll();
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
     <script>
-        var name_regexp = <?php echo json_encode(Constraints::NAME_REGEXP(Fields::NAME), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        var name_regexp = <?php echo json_encode(Constraints::NAME_REGEXP(Fields::NAME()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         var personel_id = <?php echo $personel->getId(); ?>;
-        var composite_search_regexp = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_REGEXP(Fields::COMPOSITE_SEARCH), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        var composite_search_min_length = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_MIN_LEN(Fields::COMPOSITE_SEARCH)); ?>;
+        var composite_search_regexp = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_REGEXP(Fields::COMPOSITE_SEARCH()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        var composite_search_min_length = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_MIN_LEN(Fields::COMPOSITE_SEARCH())); ?>;
     </script>
     <script src="/assets/js/jquery.validate.js"></script>
     <script src="/assets/js/additional-methods.js"></script>

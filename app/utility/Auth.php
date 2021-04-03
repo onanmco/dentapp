@@ -13,10 +13,10 @@ class Auth
 {
     public static function getAuthStaff()
     {
-        if (!isset($_SESSION[Fields::STAFF_ID])) {
+        if (!isset($_SESSION[Fields::STAFF_ID()])) {
             return false;
         }
-        return Personel::findById($_SESSION[Fields::STAFF_ID]);
+        return Personel::findById($_SESSION[Fields::STAFF_ID()]);
     }
 
     public static function isLoggedIn()
@@ -27,7 +27,7 @@ class Auth
     public static function login($staff)
     {
         session_regenerate_id(true);
-        $_SESSION[Fields::STAFF_ID] = $staff->getId();
+        $_SESSION[Fields::STAFF_ID()] = $staff->getId();
 
         self::deleteApiToken();
 
@@ -36,12 +36,12 @@ class Auth
 
     public static function setLastVisit()
     {
-        $_SESSION[Fields::LAST_VISIT] = $_SERVER['REQUEST_URI'];
+        $_SESSION[Fields::LAST_VISIT()] = $_SERVER['REQUEST_URI'];
     }
 
     public static function getLastVisit()
     {
-        return (isset($_SESSION[Fields::LAST_VISIT])) ? $_SESSION[Fields::LAST_VISIT] : '/';
+        return (isset($_SESSION[Fields::LAST_VISIT()])) ? $_SESSION[Fields::LAST_VISIT()] : '/';
     }
 
     public static function loginRequired()

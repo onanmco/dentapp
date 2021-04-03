@@ -2,77 +2,32 @@
 
 namespace app\constant;
 
+use core\Error;
+
 abstract class Responses
 {
-    public static function UNKNOWN_ERROR($message = Constants::DEFAULT_RESPONSE_MESSAGE)
+    public function __callStatic($name, $arguments)
     {
+        $existing_class_name = ltrim(get_called_class(), '\\');
+        $class_name_without_namespace = ltrim(get_called_class(), '\\');
+        $last_bs_pos = strrpos(get_called_class(), '\\');
+        if ($last_bs_pos) {
+            $class_name_without_namespace = substr($class_name_without_namespace, $last_bs_pos + 1);
+        }
+
+        $pos = strrpos($existing_class_name, $class_name_without_namespace);
+        $class_name = 'en\\' . $class_name_without_namespace;
+        if ($pos !== false) {
+            $class_name = substr($existing_class_name, 0, $pos) . 'en\\' . substr($existing_class_name, $pos);
+        }
+        if (method_exists($class_name, $name)) {
+            return call_user_func_array([$class_name, $name], $arguments);
+        }
+
         return [
-            'title' => 'Sunucu Hatası',
-            'message' => $message,
+            'title' => '###ÇEVİRİ_HATASI###',
+            'message' => 'İçerik yüklenirken bir sorun oluştu.',
             'code' => 500
-        ];
-    }
-
-    public static function UNAUTHORIZED_ACCESS($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Erişim Kısıtlandı',
-            'message' => $message,
-            'code' => 401
-        ];
-    }
-
-    public static function BAD_REQUEST($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Hatalı İstek',
-            'message' => $message,
-            'code' => 400
-        ];
-    }
-
-    public static function PAGE_NOT_FOUND($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Sayfa Bulunamadı',
-            'message' => $message,
-            'code' => 404
-        ];
-    }
-
-    public static function SUCCESS($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Başarılı',
-            'message' => $message,
-            'code' => 200
-        ];
-    }
-
-    public static function SERVICE_UNAVAILABLE($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Servis Erişilebilir Değil',
-            'message' => $message,
-            'code' => 500
-        ];
-    }
-
-    public static function VALIDATION_ERROR($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Doğrulama Hatası',
-            'message' => $message,
-            'code' => 400,
-        ];
-    }
-
-    public static function MISSING_FIELD($message = Constants::DEFAULT_RESPONSE_MESSAGE)
-    {
-        return [
-            'title' => 'Eksik Alan',
-            'message' => $message,
-            'code' => 400,
         ];
     }
 }
