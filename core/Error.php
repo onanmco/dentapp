@@ -56,10 +56,10 @@ class Error
         try {
             if (Config::SHOW_ERRORS) {
                 echo "<h1>Fatal Error</h1>";
-                echo "<p>Uncaught exception: '" . get_class($exception) . "'</p>";
-                echo "<p>Message: '" . $exception->getMessage() . "'</p>";
+                echo "<p>Uncaught exception: " . get_class($exception) . "</p>";
+                echo "<p>Message: " . $exception->getMessage() . "</p>";
                 echo "<p>Stack trace:<pre>" . $exception->getTraceAsString() . "</pre></p>";
-                echo "<p>Thrown in: '" . $exception->getFile() . "' on line: '" . $exception->getLine() . "'</p>";
+                echo "<p>Thrown in: " . $exception->getFile() . " on line: " . $exception->getLine() . "</p>";
             } else {
                 $message = self::getMessage($exception);
                 self::writeLog($message);
@@ -83,10 +83,10 @@ class Error
      */
     public static function getMessage($exception)
     {
-        $message = "\nUncaught exception: '" . get_class($exception) . "'\n";
-        $message .= "Message: '" . $exception->getMessage() . "'\n";
+        $message = "\nUncaught exception: " . get_class($exception) . "\n";
+        $message .= "Message: " . $exception->getMessage() . "\n";
         $message .= "Stack trace: " . $exception->getTraceAsString() . "\n";
-        $message .= "Thrown in: '" . $exception->getFile() . "' on line: '" . $exception->getLine() . "'\n";
+        $message .= "Thrown in: " . $exception->getFile() . " on line: " . $exception->getLine() . "\n";
         return $message;
     }
 
