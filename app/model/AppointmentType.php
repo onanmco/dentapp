@@ -5,11 +5,11 @@ namespace app\model;
 use core\Model;
 use PDO;
 
-class Meslek extends Model
+class AppointmentType extends Model
 {
     private $id = '';
-    private $meslek = '';
-
+    private $appointment_type = '';
+    
     public function __construct($args = [])
     {
         $class_vars = get_class_vars(get_called_class());
@@ -25,33 +25,23 @@ class Meslek extends Model
         return $this->id;
     }
 
-    public function getMeslek()
+    public function getAppointmentType()
     {
-        return $this->meslek;
+        return $this->appointment_type;
     }
-    
+
     public function save()
     {
-        $sql = 'INSERT INTO meslekler(meslek) VALUES(:meslek)';
+        $sql = 'INSERT INTO appointment_types(appointment_type) VALUES(:appointment_type)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':meslek', $this->meslek, PDO::PARAM_STR);
+        $stmt->bindValue(':appointment_type', $this->appointment_type, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
-    public static function getAll()
+    public static function getById($id)
     {
-        $sql = 'SELECT * FROM meslekler';
-        $db = self::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
-    public static function findById($id)
-    {
-        $sql = 'SELECT * FROM meslekler WHERE id = :id';
+        $sql = 'SELECT * FROM appointment_types WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -60,8 +50,13 @@ class Meslek extends Model
         return $stmt->fetch();
     }
 
-    public static function isExist($id)
+    public static function getAll()
     {
-        return self::findById($id) !== false;
+        $sql = 'SELECT * FROM appointment_types ORDER BY id ASC';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

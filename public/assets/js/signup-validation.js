@@ -1,53 +1,63 @@
 $(document).ready(function() {
     $.validator.addMethod(
-        'validNameSet',
+        'firstNameRegexp',
         function(value, element, param) {
-            if (value.match(/^[a-zA-Z\s\.\'-]+$/g) == null) {
+            if (value.match(first_name_regexp) == null) {
                 return false;
             }
             return true;
         },
-        'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire içerebilir.'
+        first_name_regexp_msg
+    );
+    $.validator.addMethod(
+        'lastNameRegexp',
+        function(value, element, param) {
+            if (value.match(last_name_regexp) == null) {
+                return false;
+            }
+            return true;
+        },
+        last_name_regexp_msg
     );
     $.validator.addMethod(
         'validPasswordSet',
         function(value, element, param) {
-            if (value.match(/^[\@\!\^\+\%\/\(\)\=\?\_\*\-\<\>\#\$\½\{\[\]\}\\\|\w]+$/g) == null) {
+            if (value.match(password_regexp) == null) {
                 return false;
             }
             return true;
         },
-        'Şifre alanı yalnızca harf, sayı, özel karakterler, tire ve nokta içerebilir.'
+        password_regexp_msg
     );
     $.validator.addMethod(
         'atLeastOneUppercase',
         function(value, element, param) {
-            if (value.match(/[A-Z]+/g) == null) {
+            if (value.match(password_regexp_uppercase) == null) {
                 return false;
             }
             return true;
         },
-        'Şifre alanı en az bir adet büyük harf içermelidir.'
+        password_regexp_uppercase_msg
     );
     $.validator.addMethod(
         'atLeastOneDigit',
         function(value, element, param) {
-            if (value.match(/\d+/g) == null) {
+            if (value.match(password_regexp_digit) == null) {
                 return false;
             }
             return true;
         },
-        'Şifre en az bir adet rakam içermelidir.'
+        password_regexp_digit_msg
     );
     $.validator.addMethod(
         'tckn',
         function(value, element, param) {
-            if (value.match(/(^$)|(^\d{11}$)/g) == null) {
+            if (value.match(tckn_regexp) == null) {
                 return false;
             }
             return true;
         },
-        'TCKN alanı yalnızca rakam içerebilir.'
+        tckn_regexp_msg
     );
     $('#signup_form').validate({
         errorPlacement: function(error, element) {
@@ -61,13 +71,13 @@ $(document).ready(function() {
         },
         wrapper: 'span',
         rules: {
-            isim: {
+            first_name: {
                 required: true,
-                validNameSet: true
+                firstNameRegexp: true
             },
-            soyisim: {
+            last_name: {
                 required: true,
-                validNameSet: true
+                lastNameRegexp: true
             },
             tckn: {
                 tckn: true
@@ -76,30 +86,30 @@ $(document).ready(function() {
                 required: true,
                 email: true
             },
-            sifre: {
+            password: {
                 required: true,
-                minlength: 8,
-                maxlength: 20,
+                minlength: password_min_len,
+                maxlength: password_max_len,
                 validPasswordSet: true,
                 atLeastOneUppercase: true,
                 atLeastOneDigit: true
             }
         },
         messages: {
-            isim: {
-                required: "İsim alanı boş bırakılamaz."
+            first_name: {
+                required: first_name_cannot_be_empty
             },
-            soyisim: {
-                required: "Soyisim alanı boş bırakılamaz."
+            last_name: {
+                required: last_name_cannot_be_empty
             },
             email: {
-                required: "E-mail alanı boş bırakılamaz.",
-                email: "Lütfen geçerli bir e-mail adresi girin."
+                required: email_cannot_be_empty,
+                email: invalid_email
             },
-            sifre: {
-                required: "Şifre alanı boş bırakılamaz.",
-                minlength: "Şifre alanı en az 8 karakter içermelidir.",
-                maxlength: "Şifre alanı en fazla 20 karakter içerebilir."
+            password: {
+                required: password_cannot_be_empty,
+                minlength: password_min_len_msg,
+                maxlength: password_max_len_msg
             }
         }
     });

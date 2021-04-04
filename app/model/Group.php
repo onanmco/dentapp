@@ -5,11 +5,11 @@ namespace app\model;
 use core\Model;
 use PDO;
 
-class RandevuTuru extends Model
+class Group extends Model
 {
     private $id = '';
-    private $randevu_turu = '';
-    
+    private $group = '';
+
     public function __construct($args = [])
     {
         $class_vars = get_class_vars(get_called_class());
@@ -25,23 +25,33 @@ class RandevuTuru extends Model
         return $this->id;
     }
 
-    public function getRandevuTuru()
+    public function getGroup()
     {
-        return $this->randevu_turu;
+        return $this->group;
     }
-
+    
     public function save()
     {
-        $sql = 'INSERT INTO randevu_turleri(randevu_turu) VALUES(:randevu_turu)';
+        $sql = 'INSERT INTO groups(group) VALUES(:group)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':randevu_turu', $this->randevu_turu, PDO::PARAM_STR);
+        $stmt->bindValue(':group', $this->group, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
-    public static function getById($id)
+    public static function getAll()
     {
-        $sql = 'SELECT * FROM randevu_turleri WHERE id = :id';
+        $sql = 'SELECT * FROM groups';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public static function findById($id)
+    {
+        $sql = 'SELECT * FROM groups WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -50,13 +60,8 @@ class RandevuTuru extends Model
         return $stmt->fetch();
     }
 
-    public static function getAll()
+    public static function isExist($id)
     {
-        $sql = 'SELECT * FROM randevu_turleri ORDER BY id ASC';
-        $db = self::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
-        $stmt->execute();
-        return $stmt->fetchAll();
+        return self::findById($id) !== false;
     }
 }

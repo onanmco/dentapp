@@ -8,7 +8,7 @@ use PDO;
 class ApiToken extends Model
 {
     private $last_session_id = '';
-    private $personel_id = '';
+    private $user_id = '';
     private $api_token_hash = '';
 
     public function __construct($args = [])
@@ -21,12 +21,12 @@ class ApiToken extends Model
         }
     }
 
-    public function getPersonelId()
+    public function getUserId()
     {
-        return $this->personel_id;
+        return $this->user_id;
     }
 
-    public function getSessionId()
+    public function getLastSessionId()
     {
         return $this->last_session_id;
     }
@@ -38,7 +38,7 @@ class ApiToken extends Model
 
     public static function findBySessionId($last_session_id)
     {
-        $sql = 'SELECT * FROM api_tokenler WHERE last_session_id = :last_session_id';
+        $sql = 'SELECT * FROM api_tokens WHERE last_session_id = :last_session_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $last_session_id, PDO::PARAM_STR);
@@ -49,18 +49,18 @@ class ApiToken extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO api_tokenler(last_session_id, personel_id, api_token_hash) VALUES(:last_session_id, :personel_id, :api_token_hash)';
+        $sql = 'INSERT INTO api_tokens(last_session_id, user_id, api_token_hash) VALUES(:last_session_id, :user_id, :api_token_hash)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $this->last_session_id, PDO::PARAM_STR);
-        $stmt->bindValue(':personel_id', $this->personel_id, PDO::PARAM_INT);
+        $stmt->bindValue(':user_id', $this->user_id, PDO::PARAM_INT);
         $stmt->bindValue(':api_token_hash', $this->api_token_hash, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
     public function delete()
     {
-        $sql = 'DELETE FROM api_tokenler WHERE :last_session_id = last_session_id';
+        $sql = 'DELETE FROM api_tokens WHERE :last_session_id = last_session_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $this->last_session_id, PDO::PARAM_STR);

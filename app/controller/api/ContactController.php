@@ -3,7 +3,6 @@
 namespace app\controller\api;
 
 use app\constant\Constants;
-use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\utility\Mail;
@@ -38,14 +37,14 @@ class ContactController extends Controller
             exit;
         }
 
-        if (!isset($request_body[Fields::FULL_NAME])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::FULL_NAME));
+        if (!isset($request_body['full_name'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('full_name'));
         }
-        if (!isset($request_body[Fields::EMAIL])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::EMAIL));
+        if (!isset($request_body['email'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('email'));
         }
-        if (!isset($request_body[Fields::MESSAGE])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::MESSAGE));
+        if (!isset($request_body['message'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('message'));
         }
 
         if (!empty($errors)) {

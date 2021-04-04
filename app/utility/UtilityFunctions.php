@@ -2,8 +2,6 @@
 
 namespace app\utility;
 
-use core\Request;
-
 class UtilityFunctions
 {
     public static function turkish_lowercase($str)

@@ -15,17 +15,17 @@ $(document).ready(function() {
                 required: true,
                 email: true
             },
-            sifre: {
+            password: {
                 required: true,
             }
         },
         messages: {
             email: {
-                required: "E-mail alanı boş bırakılamaz.",
-                email: "Lütfen geçerli bir e-mail girin."
+                required: email_cannot_be_empty,
+                email: invalid_email
             },
-            sifre: {
-                required: "Şifre alanı boş bırakılamaz."
+            password: {
+                required: password_cannot_be_empty
             }
         }
     });

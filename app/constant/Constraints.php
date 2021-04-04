@@ -4,6 +4,15 @@ namespace app\constant;
 
 class Constraints
 {
+    public static function INTEGER_REGEXP($field)
+    {
+        $value = '/^\d+$/';
+        return [
+            'value' => $value,
+            'message' => Messages::SHOULD_BE_INTEGER($field)
+        ];
+    }
+
     public static function PASSWORD_MIN_LENGTH($field)
     {
         $value = 8;
@@ -129,6 +138,15 @@ class Constraints
         return [
             'value'   => $value,
             'message' => Messages::MIN_LEN($value, $field)
+        ];
+    }
+
+    public static function TCKN_USER_SIGNUP_REGEXP($field)
+    {
+        $value = '/(^$)|(^\d{11}$)/g';
+        return [
+            'value' => $value,
+            'message' => Messages::INVALID_TCKN_USER_SIGNUP($field)
         ];
     }
 }

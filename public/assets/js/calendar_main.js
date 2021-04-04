@@ -44,8 +44,8 @@ $('#modal .toggle').click(function (e) {
     $('#new_record').toggleClass('d-none');
     $('#search_results ul').html('');
     $('#search_bar').val('');
-    if ($('#search_bar').attr('data-selected_hasta_id')) {
-        $('#search_bar').removeAttr('data-selected_hasta_id');
+    if ($('#search_bar').attr('data-selected_patient_id')) {
+        $('#search_bar').removeAttr('data-selected_patient_id');
     }
 });
 
@@ -58,8 +58,8 @@ $('#modal').on('hidden.bs.modal', function (e) {
     $('#new_record').removeClass('d-none');
     $('#search_results ul').html('');
     $('#search_bar').val('');
-    if ($('#search_bar').attr('data-selected_hasta_id')) {
-        $('#search_bar').removeAttr('data-selected_hasta_id');
+    if ($('#search_bar').attr('data-selected_patient_id')) {
+        $('#search_bar').removeAttr('data-selected_patient_id');
     }
     setTimeout(() => {
         clear_popups();
@@ -67,8 +67,8 @@ $('#modal').on('hidden.bs.modal', function (e) {
 });
 
 $('#search_results').on('click', function (e) {
-    if ($(e.target).attr('data-hasta_id')) {
-        $('#search').attr('data-selected_hasta_id', $(e.target).attr('data-hasta_id'));
+    if ($(e.target).attr('data-patient_id')) {
+        $('#search').attr('data-selected_patient_id', $(e.target).attr('data-patient_id'));
         $('#search').val($(e.target).html());
         $('#search_results').addClass('d-none');
     }
@@ -76,7 +76,7 @@ $('#search_results').on('click', function (e) {
 
 var onDebouncedCompositeSearchTermChange = async function(term) {
     try {
-        var response = await fetch('/api/hasta/ara', {
+        var response = await fetch('/api/patient/search', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -88,23 +88,23 @@ var onDebouncedCompositeSearchTermChange = async function(term) {
         });
         response = await response.json();
     } catch (error) {
-        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+        show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
         return;
     }
     if (response.status === 'success') {
-        var hastalar = response['data']['sonuclar'];
-        if (hastalar.length == 0) {
+        var patients = response['data']['results'];
+        if (patients.length == 0) {
             var li = document.createElement('li');
             li.className = 'search_result';
             $('#search_results ul').html('');
             $(li).html('Sonuç bulunamadı');
             $('#search_results ul').append(li);
         } else {
-            hastalar.forEach(function (hasta) {
+            patients.forEach(function (patient) {
                 var li = document.createElement('li');
                 li.className = 'search_result';
-                $(li).html('İsim: ' + hasta.isim + ', Soyisim: ' + hasta.soyisim + ', TCKN: ' + hasta.tckn);
-                $(li).attr('data-hasta_id', '' + hasta.id);
+                $(li).html('İsim: ' + patient.first_name + ', Soyisim: ' + patient.last_name + ', TCKN: ' + patient.tckn);
+                $(li).attr('data-patient_id', '' + patient.id);
                 $('#search_results ul').append(li);
             });
         }
@@ -116,7 +116,7 @@ var onDebouncedCompositeSearchTermChange = async function(term) {
         });
         return;
     } else {
-        show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+        show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
         return;
     }
 };
@@ -125,7 +125,7 @@ debouncedCompositeSearchTerm.addListener(onDebouncedCompositeSearchTermChange);
 
 $('#search').on('input', async function (e) {
 
-    $('#search').removeAttr('data-selected_hasta_id');
+    $('#search').removeAttr('data-selected_patient_id');
     $('#search_results ul').html('');
 
     var pattern = newRegexp(composite_search_regexp.value);
@@ -150,150 +150,150 @@ $('#submit').on('click', async function (e) {
     var end_date = calc_end_date();
 
     if ($('#new_record').hasClass('d-none') === false) {
-        var hasta = {
-            isim: $('#isim').val(),
-            soyisim: $('#soyisim').val(),
-            telefon: $('#telefon').inputmask('unmaskedvalue'),
+        var patient = {
+            first_name: $('#first_name').val(),
+            last_name: $('#last_name').val(),
+            phone: $('#phone').inputmask('unmaskedvalue'),
             tckn: $('#tckn').inputmask('unmaskedvalue')
         }
 
         try {
-            var hasta_response = await fetch('/api/hasta/kayit', {
+            var patient_response = await fetch('/api/patient/register', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(hasta)
+                body: JSON.stringify(patient)
             });
-            hasta_response = await hasta_response.json();
+            patient_response = await patient_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
-        if (hasta_response.status === 'failure') {
-            var errors = hasta_response['data'];
+        if (patient_response.status === 'failure') {
+            var errors = patient_response['data'];
             errors.forEach(function (error) {
                 show_popup(error['title'], error['message'], error['code']);
             });
             return;
-        } else if (hasta_response.status !== 'success') {
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+        } else if (patient_response.status !== 'success') {
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
-        hasta = hasta_response['data']['kaydedilen_hasta'];
+        patient = patient_response['data']['saved_patient'];
 
         var event = {
-            title: hasta.isim + ' ' + hasta.soyisim,
+            title: patient.first_name + ' ' + patient.last_name,
             start: start_date,
             end: end_date
         }
 
-        var randevu = {
-            personel_id: personel_id,
-            hasta_id: hasta['id'],
-            baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
-            bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
-            notlar: $('#notlar').val(),
-            hatirlat: false,
-            randevu_turu_id: $('#randevu_turu_id').val()
+        var appointment = {
+            user_id: user_id,
+            patient_id: patient['id'],
+            start: js_timestamp_to_unix_timestamp(start_date.getTime()),
+            end: js_timestamp_to_unix_timestamp(end_date.getTime()),
+            notes: $('#notes').val(),
+            notify: false,
+            appointment_type_id: $('#appointment_type_id').val()
         }
 
-        if ($('#hatirlat').val() == 1) {
-            randevu['hatirlat'] = true;
+        if ($('#notify').val() == 1) {
+            appointment['notify'] = true;
         } else {
-            randevu['hatirlat'] = false;
+            appointment['notify'] = false;
         }
 
         try {
-            var randevu_response = await fetch('/api/randevu/olustur', {
+            var appointment_response = await fetch('/api/appointment/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(randevu)
+                body: JSON.stringify(appointment)
             });
-            randevu_response = await randevu_response.json();
+            appointment_response = await appointment_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
-            await fetch('/api/hasta/sil/' + hasta['id']);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
+            await fetch('/api/patient/delete/' + patient['id']);
             return;
         }
 
-        if (randevu_response.status === 'success') {
-            show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
+        if (appointment_response.status === 'success') {
+            show_popup(appointment_response['data']['title'], appointment_response['data']['message'], 200);
             $('#modal').modal('hide');
-        } else if (randevu_response.status === 'failure') {
-            await fetch('/api/hasta/sil/' + hasta['id']);
-            var errors = randevu_response['data'];
+        } else if (appointment_response.status === 'failure') {
+            await fetch('/api/patient/delete/' + patient['id']);
+            var errors = appointment_response['data'];
             errors.forEach(function (error) {
                 show_popup(error['title'], error['message'], error['code']);
             });
             return;
         } else {
-            await fetch('/api/hasta/sil/' + hasta['id']);
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+            await fetch('/api/patient/delete/' + patient['id']);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
 
     } else {
-        if (!$('#search').attr('data-selected_hasta_id')) {
-            show_popup('Kayıt Başarısız', 'Lütfen geçerli bir hasta seçimi yapın.', 400);
+        if (!$('#search').attr('data-selected_patient_id')) {
+            show_popup(please_select_patient.title, please_select_patient.message, please_select_patient.code);
             return;
         }
-        if (!(/^\d+$/).test('' + $('#search').attr('data-selected_hasta_id'))) {
-            show_popup('Kayıt Başarısız', 'Hasta ID sayısal bir değer olmalıdır.', 400);
+        if (!(invalid_patient_id_regexp).test('' + $('#search').attr('data-selected_patient_id'))) {
+            show_popup(invalid_patient_id_response.title, invalid_patient_id_response.message, invalid_patient_id_response.code);
             return;
         }
-        var randevu = {
-            personel_id: personel_id,
-            hasta_id: $('#search').attr('data-selected_hasta_id'),
-            baslangic: js_timestamp_to_unix_timestamp(start_date.getTime()),
-            bitis: js_timestamp_to_unix_timestamp(end_date.getTime()),
-            notlar: $('#notlar').val(),
-            hatirlat: false,
-            randevu_turu_id: $('#randevu_turu_id').val()
+        var appointment = {
+            user_id: user_id,
+            patient_id: $('#search').attr('data-selected_patient_id'),
+            start: js_timestamp_to_unix_timestamp(start_date.getTime()),
+            end: js_timestamp_to_unix_timestamp(end_date.getTime()),
+            notes: $('#notes').val(),
+            notify: false,
+            appointment_type_id: $('#appointment_type_id').val()
         }
 
-        if ($('#hatirlat').val() == 1) {
-            randevu['hatirlat'] = true;
+        if ($('#notify').val() == 1) {
+            appointment['notify'] = true;
         } else {
-            randevu['hatirlat'] = false;
+            appointment['notify'] = false;
         }
 
         try {
-            var randevu_response = await fetch('/api/randevu/olustur', {
+            var appointment_response = await fetch('/api/appointment/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(randevu)
+                body: JSON.stringify(appointment)
             });
-            randevu_response = await randevu_response.json();
+            appointment_response = await appointment_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
-        if (randevu_response.status === 'success') {
-            show_popup(randevu_response['data']['title'], randevu_response['data']['message'], 200);
+        if (appointment_response.status === 'success') {
+            show_popup(appointment_response['data']['title'], appointment_response['data']['message'], 200);
             $('#modal').modal('hide');
-        } else if (randevu_response.status === 'failure') {
-            var errors = randevu_response['data'];
+        } else if (appointment_response.status === 'failure') {
+            var errors = appointment_response['data'];
             errors.forEach(function (error) {
                 show_popup(error['title'], error['message'], error['code']);
             });
             return;
         } else {
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
-        $('search').removeAttr('data-selected_hasta_id');
+        $('search').removeAttr('data-selected_patient_id');
         $('#modal').modal('hide');
     }
 });

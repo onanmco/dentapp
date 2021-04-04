@@ -25,4 +25,6 @@ class Config
 
     const MAILGUN_BASE_URL = 'https://api.mailgun.net/v3/{DOMAIN}';
     const MAILGUN_API_KEY = '{API_KEY}';
+
+    const DEFAULT_LANGUAGE = 'tr';
 }

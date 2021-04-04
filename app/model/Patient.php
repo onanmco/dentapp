@@ -5,13 +5,13 @@ namespace app\model;
 use core\Model;
 use PDO;
 
-class Hasta extends Model
+class Patient extends Model
 
 {
     private $id = '';
-    private $isim = '';
-    private $soyisim = '';
-    private $telefon = '';
+    private $first_name = '';
+    private $last_name = '';
+    private $phone = '';
     private $tckn = '';
 
     public function __construct($args = [])
@@ -29,19 +29,19 @@ class Hasta extends Model
         return $this->id;
     }
 
-    public function getIsim()
+    public function getFirstName()
     {
-        return $this->isim;
+        return $this->first_name;
     }
 
-    public function getSoyisim()
+    public function getLastName()
     {
-        return $this->soyisim;
+        return $this->last_name;
     }
 
-    public function getTelefon()
+    public function getPhone()
     {
-        return $this->telefon;
+        return $this->phone;
     }
 
     public function getTckn()
@@ -51,7 +51,7 @@ class Hasta extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM hastalar WHERE id = :id';
+        $sql = 'SELECT * FROM patients WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -62,7 +62,7 @@ class Hasta extends Model
 
     public static function findByTckn($tckn)
     {
-        $sql = 'SELECT * FROM hastalar WHERE tckn = :tckn';
+        $sql = 'SELECT * FROM patients WHERE tckn = :tckn';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':tckn', $tckn, PDO::PARAM_STR);
@@ -71,26 +71,26 @@ class Hasta extends Model
         return $stmt->fetch();
     }
 
-    public static function isHastaAvailable($tckn)
+    public static function isPatientAvailable($tckn)
     {
         return self::findByTckn($tckn) === false;
     }
 
     public function save()
     {
-        $sql = 'INSERT INTO hastalar(isim, soyisim, telefon, tckn) VALUES(:isim, :soyisim, :telefon, :tckn)';
+        $sql = 'INSERT INTO patients(first_name, last_name, phone, tckn) VALUES(:first_name, :last_name, :phone, :tckn)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);
-        $stmt->bindValue(':soyisim', $this->soyisim, PDO::PARAM_STR);
-        $stmt->bindValue(':telefon', $this->telefon, PDO::PARAM_STR);
+        $stmt->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
+        $stmt->bindValue(':last_name', $this->last_name, PDO::PARAM_STR);
+        $stmt->bindValue(':phone', $this->phone, PDO::PARAM_STR);
         $stmt->bindValue(':tckn', $this->tckn, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
     public function delete()
     {
-        $sql = 'DELETE FROM hastalar WHERE id = :id';
+        $sql = 'DELETE FROM patients WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
@@ -101,18 +101,18 @@ class Hasta extends Model
     {
         return [
             'id' => $this->id,
-            'isim' => $this->isim,
-            'soyisim' => $this->soyisim,
-            'telefon' => $this->telefon,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'phone' => $this->phone,
             'tckn' => $this->tckn
         ];
     }
 
-    public static function findByIsimOrSoyisimOrTckn($string)
+    public static function findByNameOrTckn($string)
     {
         $sql = "SELECT * 
-                FROM hastalar 
-                WHERE isim LIKE :placeholder OR soyisim LIKE :placeholder OR tckn LIKE :placeholder";
+                FROM patients 
+                WHERE first_name LIKE :placeholder OR last_name LIKE :placeholder OR tckn LIKE :placeholder";
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':placeholder', '%' . $string . '%', PDO::PARAM_STR);
@@ -121,9 +121,9 @@ class Hasta extends Model
         return $stmt->fetchAll();
     }
 
-    public function isEqual($other_hasta) 
+    public function isEqual($other_patient) 
     {
-        return $this->id === $other_hasta->getId();
+        return $this->id === $other_patient->getId();
     }
 
 

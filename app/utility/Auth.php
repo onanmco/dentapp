@@ -2,46 +2,47 @@
 
 namespace app\utility;
 
-use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\ApiToken;
-use app\model\Personel;
+use app\model\Language;
+use app\model\User;
+use config\Config;
 use core\Router;
 
 class Auth
 {
-    public static function getAuthStaff()
+    public static function getAuthUser()
     {
-        if (!isset($_SESSION[Fields::STAFF_ID])) {
+        if (!isset($_SESSION['user_id'])) {
             return false;
         }
-        return Personel::findById($_SESSION[Fields::STAFF_ID]);
+        return  User::findById($_SESSION['user_id']);
     }
 
     public static function isLoggedIn()
     {
-        return self::getAuthStaff() !== false;
+        return self::getAuthUser() !== false;
     }
 
-    public static function login($staff)
+    public static function login($user)
     {
         session_regenerate_id(true);
-        $_SESSION[Fields::STAFF_ID] = $staff->getId();
+        $_SESSION['user_id'] = $user->getId();
 
         self::deleteApiToken();
 
-        self::setApiToken($staff->getId());
+        self::setApiToken($user->getId());
     }
 
     public static function setLastVisit()
     {
-        $_SESSION[Fields::LAST_VISIT] = $_SERVER['REQUEST_URI'];
+        $_SESSION['last_visit'] = $_SERVER['REQUEST_URI'];
     }
 
     public static function getLastVisit()
     {
-        return (isset($_SESSION[Fields::LAST_VISIT])) ? $_SESSION[Fields::LAST_VISIT] : '/';
+        return (isset($_SESSION['last_visit'])) ? $_SESSION['last_visit'] : '/';
     }
 
     public static function loginRequired()
@@ -49,7 +50,7 @@ class Auth
         if (!self::isLoggedIn()) {
             Popup::add(Responses::UNAUTHORIZED_ACCESS(Messages::UNAUTHORIZED_ACCESS()));
             self::setLastVisit($_SERVER['REQUEST_URI']);
-            Router::redirectAfterPost('/personel/giris');
+            Router::redirectAfterPost('/user/login');
         }
     }
 
@@ -80,7 +81,7 @@ class Auth
 
         $api_token_record = new ApiToken([
             'last_session_id' => $new_session_id,
-            'personel_id' => $user_id,
+            'user_id' => $user_id,
             'api_token_hash' => $api_token->getHash()
         ]);
 
@@ -97,5 +98,22 @@ class Auth
                 $existing_api_token_record->delete();
             }
         }
+    }
+
+    public static function getUserLanguage()
+    {
+        $user = self::getAuthUser();
+
+        if ($user === false) {
+            return Config::DEFAULT_LANGUAGE;
+        }
+
+        $language = Language::findById($user->getLanguagePreference());
+
+        if ($language === false) {
+            return Config::DEFAULT_LANGUAGE;
+        }
+
+        return $language->getLanguage();
     }
 }

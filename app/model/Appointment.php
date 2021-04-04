@@ -5,16 +5,16 @@ namespace app\model;
 use core\Model;
 use PDO;
 
-class Randevu extends Model
+class Appointment extends Model
 {
     private $id = '';
-    private $personel_id = '';
-    private $hasta_id = '';
-    private $baslangic = '';
-    private $bitis = '';
-    private $notlar = '';
-    private $hatirlat = false;
-    private $randevu_turu_id = '';
+    private $user_id = '';
+    private $patient_id = '';
+    private $start = '';
+    private $end = '';
+    private $notes = '';
+    private $notify = false;
+    private $appointment_type_id = '';
 
     public function __construct($args = [])
     {
@@ -28,23 +28,23 @@ class Randevu extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO randevular (personel_id, hasta_id, baslangic, bitis, notlar, hatirlat, randevu_turu_id) 
-                VALUES (:personel_id, :hasta_id, :baslangic, :bitis, :notlar, :hatirlat, :randevu_turu_id)';
+        $sql = 'INSERT INTO appointments (user_id, patient_id, start, end, notes, notify, appointment_type_id) 
+                VALUES (:user_id, :patient_id, :start, :end, :notes, :notify, :appointment_type_id)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':personel_id', $this->personel_id, PDO::PARAM_INT);
-        $stmt->bindValue(':hasta_id', $this->hasta_id, PDO::PARAM_INT);
-        $stmt->bindValue(':baslangic', $this->baslangic, PDO::PARAM_STR);
-        $stmt->bindValue(':bitis', $this->bitis, PDO::PARAM_STR);
-        $stmt->bindValue(':notlar', $this->notlar, PDO::PARAM_STR);
-        $stmt->bindValue(':hatirlat', $this->hatirlat, PDO::PARAM_BOOL);
-        $stmt->bindValue(':randevu_turu_id', $this->randevu_turu_id, PDO::PARAM_INT);
+        $stmt->bindValue(':user_id', $this->user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':patient_id', $this->patient_id, PDO::PARAM_INT);
+        $stmt->bindValue(':start', $this->start, PDO::PARAM_STR);
+        $stmt->bindValue(':end', $this->end, PDO::PARAM_STR);
+        $stmt->bindValue(':notes', $this->notes, PDO::PARAM_STR);
+        $stmt->bindValue(':notify', $this->notify, PDO::PARAM_BOOL);
+        $stmt->bindValue(':appointment_type_id', $this->appointment_type_id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     public static function getById($id)
     {
-        $sql = 'SELECT * FROM randevular WHERE id = :id';
+        $sql = 'SELECT * FROM appointments WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -55,7 +55,7 @@ class Randevu extends Model
 
     public static function getByRange($start_datetime, $end_datetime)
     {
-        $sql = 'SELECT * FROM randevular WHERE baslangic = :start_datetime AND bitis = :end_datetime';
+        $sql = 'SELECT * FROM appointments WHERE start = :start_datetime AND end = :end_datetime';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
@@ -68,9 +68,9 @@ class Randevu extends Model
     public static function getAllBetween($start_datetime, $end_datetime)
     {
         $sql = 'SELECT * 
-                FROM randevular 
-                WHERE baslangic >= :start_datetime AND baslangic < :end_datetime 
-                ORDER BY baslangic ASC';
+                FROM appointments 
+                WHERE start >= :start_datetime AND start < :end_datetime 
+                ORDER BY start ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
@@ -80,15 +80,15 @@ class Randevu extends Model
         return $stmt->fetchAll();
     }
 
-    public static function getOverlappingCount($start_datetime, $end_datetime)
+    public static function getOverlappingCount($new_start_datetime, $new_end_datetime)
     {
         $sql = 'SELECT COUNT(*) 
-                FROM randevular 
-                WHERE :start_datetime < bitis AND :end_datetime > baslangic';
+                FROM appointments 
+                WHERE start < :new_end_datetime AND end > :new_start_datetime';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
-        $stmt->bindValue(':end_datetime', $end_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':new_start_datetime', $new_start_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':new_end_datetime', $new_end_datetime, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_NUM);
         $stmt->execute();
         return $stmt->fetch()[0];
@@ -98,13 +98,13 @@ class Randevu extends Model
     {
         return [
             'id' => $this->id,
-            'personel_id' => $this->personel_id,
-            'hasta_id' => $this->hasta_id,
-            'baslangic' => $this->baslangic,
-            'bitis' => $this->bitis,
-            'notlar' => $this->notlar,
-            'hatirlat' => $this->hatirlat,
-            'randevu_turu_id' => $this->randevu_turu_id
+            'user_id' => $this->user_id,
+            'patient_id' => $this->patient_id,
+            'start' => $this->start,
+            'end' => $this->end,
+            'notes' => $this->notes,
+            'notify' => $this->notify,
+            'appointment_type_id' => $this->appointment_type_id
         ];
     }
 }
