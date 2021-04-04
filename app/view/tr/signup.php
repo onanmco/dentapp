@@ -15,7 +15,7 @@ $errors = (isset($errors)) ? $errors : [];
 $lang = Auth::getUserLanguage();
 ?>
 <!doctype html>
-<html lang="<?php echo $lang; ?>">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">
@@ -25,11 +25,7 @@ $lang = Auth::getUserLanguage();
     <link rel="stylesheet" href="/assets/css/popup.css">
     <link rel="stylesheet" href="/assets/css/signup.css">
     <link rel="stylesheet" href="/assets/css/home.css">
-    <title>
-        <?php
-        echo Constants::SIGNUP_PAGE_TITLE();
-        ?>
-    </title>
+    <title>Personel Kayıt</title>
 </head>
 
 <body>
@@ -44,10 +40,16 @@ $lang = Auth::getUserLanguage();
                         <i id="help_drawer_close_icon" class="fas fa-times-circle text-danger"></i>
                     </div>
                 </div>
-                <p class="m-0 small text-muted"><?php echo Constants::SIGNUP_PAGE_HELP_DRAWER_TITLE(); ?></p>
+                <p class="m-0 small text-muted">Personel Giriş Ekranı Yardım Penceresi</p>
             </div>
             <div class="card-body p-0 pl-3 pr-3 small text-muted pt-2">
-                <?php echo Constants::SIGNUP_PAGE_HELP_DRAWER_CONTENT(); ?>
+                <p>Personel girişleri <strong>e-mail adresi</strong> üzerinden yapılır. Bu yüzden lütfen geçerli bir e-mail adresi girdiğinizden emin olun.</p>
+                <p>E-mail adresinde <strong>Türkçe karakterler kullanmayın.</strong></p>
+                <p>Hesap güvenliği açısından, <strong>şifre en az 8, en fazla 20 karakterden oluşmalıdır.</strong> Ayrıca şifre <strong>en az 1 adet büyük harf ve en az bir adet rakam içermelidir.</strong></p>
+                <p>Şifrede <strong>Türkçe karakterler kullanmayın.</strong></p>
+                <p>Yabancı personel ihtimaline karşılık, TCKN alanı boş bırakılabilir. Ancak eğer giriş yapılırsa sadece 11 haneli geçerli bir TCKN girdiğinizden emin olun.</p>
+                <p>Maaş alanı boş bırakılabilir. Ancak eğer giriş yapılırsa <strong>ondalıklı değerler için virgül yerine nokta kullanın.</strong></p>
+                <p>Meslek alanı kaydetmiş olduğunuz personelin yetkilerini otomatik olarak belirleyecektir. Bu yüzden <strong>kaydedeceğiniz personelin doğru meslek grubunu seçtiğinizden emin olun.</strong></p>
             </div>
         </div>
     </div>
@@ -62,9 +64,7 @@ $lang = Auth::getUserLanguage();
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
                     </div>
                 </div>
-                <p class="m-0 small text-muted">
-                    <?php echo Constants::SIGNUP_PAGE_SUBTITLE(); ?>
-                </p>
+                <p class="m-0 small text-muted">Personel Kayıt Ekranı</p>
             </div>
             <div class="card-body p-0 pl-3 pr-3">
                 <?php
@@ -160,9 +160,7 @@ $lang = Auth::getUserLanguage();
                         </div>
                     </div>
                     <div class="row m-0 mt-2">
-                        <button type="submit" class="btn btn-info btn-block btn-sm mb-2">
-                            <?php echo Constants::SIGNUP_PAGE_SAVE(); ?>
-                        </button>
+                        <button type="submit" class="btn btn-info btn-block btn-sm mb-2">Personel Kaydet</button>
                     </div>
                 </form>
             </div>
@@ -170,7 +168,12 @@ $lang = Auth::getUserLanguage();
                 <p class="m-0 small text-muted">
                     <?php echo Constants::ALL_RIGHTS_RESERVED(); ?>
                 </p>
-                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                <p class="m-0 small text-muted">
+                    <?php echo Config::CLIENT_APP_NAME; ?> &copy 
+                    <?php echo date('Y'); ?> | destek için <a href="mailto:
+                    <?php echo Config::CLIENT_EMAIL ?>">
+                    <?php echo Config::CLIENT_EMAIL ?></a> | 
+                    <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
@@ -216,24 +219,24 @@ $lang = Auth::getUserLanguage();
 
         var tckn_regexp = newRegexp(<?php echo json_encode(Constraints::TCKN_USER_SIGNUP_REGEXP(Fields::TCKN())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>);
         var tckn_regexp_msg = <?php echo json_encode(Constraints::TCKN_USER_SIGNUP_REGEXP(Fields::TCKN())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::PASSWORD()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_regexp = newRegexp(<?php echo json_encode(Constraints::PASSWORD_REGEXP(Fields::PASSWORD())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>);
         var password_regexp_msg = <?php echo json_encode(Constraints::PASSWORD_REGEXP(Fields::PASSWORD())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_min_len = <?php echo json_encode(Constraints::PASSWORD_MIN_LENGTH(Fields::PASSWORD())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         var password_min_len_msg = <?php echo json_encode(Constraints::PASSWORD_MIN_LENGTH(Fields::PASSWORD())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_max_len = <?php echo json_encode(Constraints::PASSWORD_MAX_LEN(Fields::PASSWORD())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         var password_max_len_msg = <?php echo json_encode(Constraints::PASSWORD_MAX_LEN(Fields::PASSWORD())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_regexp_uppercase = newRegexp(<?php echo json_encode(Constraints::PASSWORD_REGEXP_UPPERCASE(Fields::PASSWORD())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>);
         var password_regexp_uppercase_msg = <?php echo json_encode(Constraints::PASSWORD_REGEXP_UPPERCASE(Fields::PASSWORD())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var password_regexp_digit = newRegexp(<?php echo json_encode(Constraints::PASSWORD_REGEXP_DIGIT(Fields::PASSWORD())['value'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>);
         var password_regexp_digit_msg = <?php echo json_encode(Constraints::PASSWORD_REGEXP_DIGIT(Fields::PASSWORD())['message'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        
+
         var email_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::EMAIL()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         var invalid_email = <?php echo json_encode(Messages::INVALID_EMAIL(Fields::EMAIL()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
     </script>

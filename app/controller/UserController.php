@@ -86,7 +86,7 @@ class UserController extends Controller
             $errors[] = Messages::EMAIL_ALREADY_USED();
         }
         if (empty($errors)) {
-            $_POST[Fields::PASSWORD_HASH()] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $_POST['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $user = new User($_POST);
             $result = $user->save();
             if ($result === false) {

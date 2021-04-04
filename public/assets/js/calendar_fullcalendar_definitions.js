@@ -32,8 +32,8 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     firstDay: 1,
     dayHeaderFormat: {
         weekday: 'short',
-        month: 'numeric',
-        day: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
         omitCommas: true
     },
     slotDuration: '00:15:00',

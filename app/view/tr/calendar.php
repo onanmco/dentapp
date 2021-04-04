@@ -25,7 +25,7 @@ $appointment_types = AppointmentType::getAll();
     <link rel="stylesheet" href="/assets/css/fullcalendar.css">
     <link rel="stylesheet" href="/assets/css/calendar.css">
 
-    <title>Randevu</title>
+    <title>Randevu Ekranı</title>
 </head>
 
 <body>

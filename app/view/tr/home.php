@@ -2,6 +2,7 @@
 
 use app\constant\Constants;
 use app\utility\Auth;
+use config\Config;
 
 $auth_user = Auth::getAuthUser();
 $language = Auth::getUserLanguage();
@@ -16,7 +17,7 @@ $language = Auth::getUserLanguage();
     <link rel="stylesheet" href="/assets/css/all.css">
     <link rel="stylesheet" href="/assets/css/popup.css">
     <link rel="stylesheet" href="/assets/css/home.css">
-    <title><?php echo Constants::HOME_PAGE_TITLE(); ?></title>
+    <title>Anasayfa</title>
 </head>
 
 <body>
@@ -24,12 +25,15 @@ $language = Auth::getUserLanguage();
         <div class="col-10 col-md-8 col-lg-6 text-center">
             <?php 
             if (Auth::isLoggedIn()) {
-                $welcome_msg = Constants::HOME_PAGE_WELCOME();
                 $full_name = htmlspecialchars($auth_user->getFirstName()) . ' ' . htmlspecialchars($auth_user->getLastName());
-                echo "<h3> $welcome_msg $full_name</h3>";
-                echo Constants::HOME_PAGE_LOGOUT_TEXT();
+                $welcome_msg = 'Hoş Geldiniz, ' . $full_name;
+                echo "<h3>$welcome_msg</h3>";
+                echo '<p>Çıkış yapmak için <a href="user/logout">buraya</a> tıklayın.</p>';
             } else {
-                echo Constants::HOME_PAGE_VISITOR_TEXT();
+                echo '<h3>Hoşgeldiniz !</h3>';
+                echo '<p class="mb-0">İşlemlerinize devam edebilmek için lütfen giriş yapın.</p>';
+                echo '<p class="mb-0">Giriş ekranına gitmek için <a href="/user/login">buraya</a> tıklayın.</p>';
+                echo '<p class="mb-0">Hesabınızla ilgili sorunlar için <a href="mailto:' . Config::CLIENT_EMAIL . '">' . Config::CLIENT_EMAIL . '</a> adresinden bizlere ulaşabilirsiniz.</p>';
             }
             ?>
         </div>

@@ -2,6 +2,7 @@
 
 namespace core;
 
+use app\utility\Auth;
 use Exception;
 
 abstract class View
@@ -18,7 +19,10 @@ abstract class View
      */
     public static function render($file, $args = [])
     {
-        $file = '../app/view/' . $file;
+        $language = Auth::getUserLanguage();
+        // $file = '../app/view/' . $file;
+
+        $file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $file;
 
         if (is_readable($file)) {
             extract($args);
