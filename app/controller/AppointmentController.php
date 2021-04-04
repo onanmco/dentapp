@@ -4,9 +4,9 @@ namespace app\controller;
 
 use core\View;
 
-class RandevuController extends LoginRequiredController
+class AppointmentController extends LoginRequiredController
 {
-    public function takvimAction()
+    public function calendarAction()
     {
         View::render('calendar.php');
     }

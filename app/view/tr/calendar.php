@@ -13,7 +13,7 @@ $appointment_types = AppointmentType::getAll();
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">
@@ -25,7 +25,7 @@ $appointment_types = AppointmentType::getAll();
     <link rel="stylesheet" href="/assets/css/fullcalendar.css">
     <link rel="stylesheet" href="/assets/css/calendar.css">
 
-    <title>Randevu</title>
+    <title>Randevu Ekranı</title>
 </head>
 
 <body>

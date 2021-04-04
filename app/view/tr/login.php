@@ -1,6 +1,5 @@
 <?php
 
-use app\constant\Constants;
 use app\constant\Fields;
 use app\constant\Messages;
 use app\model\User;
@@ -12,7 +11,7 @@ $remember = (isset($remember) && $remember) ? 'checked' : '';
 $errors = (isset($errors)) ? $errors : [];
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">
@@ -22,7 +21,7 @@ $errors = (isset($errors)) ? $errors : [];
     <link rel="stylesheet" href="/assets/css/popup.css">
     <link rel="stylesheet" href="/assets/css/signup.css">
     <link rel="stylesheet" href="/assets/css/home.css">
-    <title><?php echo Constants::LOGIN_PAGE_TITLE(); ?></title>
+    <title>Personel Giriş</title>
 </head>
 
 <body>
@@ -37,9 +36,7 @@ $errors = (isset($errors)) ? $errors : [];
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
                     </div>
                 </div>
-                <p class="m-0 small text-muted">
-                    <?php echo Constants::LOGIN_PAGE_SUBTITLE(); ?>
-                </p>
+                <p class="m-0 small text-muted">İşlemlerinize devam etmek için lütfen giriş yapın.</p>
             </div>
             <div class="card-body p-0 pl-3 pr-3">
                 <form action="/user/auth" method="POST" id="login_form">
@@ -83,17 +80,18 @@ $errors = (isset($errors)) ? $errors : [];
                         <label class="form-check-label text-muted" for="remember_me">Beni Hatırla</label>
                     </div> -->
                     <div class="row m-0 mt-2">
-                        <button class="btn btn-info btn-block btn-sm mb-2">
-                            <?php echo Constants::LOGIN_PAGE_LOGIN(); ?>
-                        </button>
+                        <button class="btn btn-info btn-block btn-sm mb-2">Giriş Yap</button>
                     </div>
                 </form>
             </div>
             <div class="card-footer p-2 pl-3 bg-white">
+                <p class="m-0 small text-muted">Tüm Hakları Saklıdır.></p>
                 <p class="m-0 small text-muted">
-                    <?php echo Constants::ALL_RIGHTS_RESERVED(); ?>
-                </p>
-                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                    <?php echo Config::CLIENT_APP_NAME; ?> &copy 
+                    <?php echo date('Y'); ?> | destek için <a href="mailto:
+                    <?php echo Config::CLIENT_EMAIL ?>">
+                    <?php echo Config::CLIENT_EMAIL ?></a> | 
+                    <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
