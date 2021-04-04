@@ -36,5 +36,5 @@ var time_options = {
 }
 $('#start_hour').inputmask(time_options);
 $('#end_hour').inputmask(time_options);
-$('#telefon').inputmask(phone_options);
+$('#phone').inputmask(phone_options);
 $('#tckn').inputmask(tckn_options);

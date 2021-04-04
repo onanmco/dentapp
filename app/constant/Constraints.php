@@ -131,4 +131,13 @@ class Constraints
             'message' => Messages::MIN_LEN($value, $field)
         ];
     }
+
+    public static function TCKN_USER_SIGNUP_REGEXP($field)
+    {
+        $value = '/(^$)|(^\d{11}$)/g';
+        return [
+            'value' => $value,
+            'message' => Messages::INVALID_TCKN_USER_SIGNUP($field)
+        ];
+    }
 }

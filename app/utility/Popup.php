@@ -26,19 +26,19 @@ class Popup
     }
 
     public static function getAll() {
-        if (isset($_SESSION[Fields::POPUPS()])) {
-            $popups = $_SESSION[Fields::POPUPS()];
-            unset ($_SESSION[Fields::POPUPS()]);
+        if (isset($_SESSION['popups'])) {
+            $popups = $_SESSION['popups'];
+            unset ($_SESSION['popups']);
             return $popups;
         }
         return [];
     }
 
     public static function add($args = []) {
-        if (!isset($_SESSION[Fields::POPUPS()])) {
-            $_SESSION[Fields::POPUPS()] = [];
+        if (!isset($_SESSION['popups'])) {
+            $_SESSION['popups'] = [];
         }
-        $_SESSION[Fields::POPUPS()][] = new Popup($args);
+        $_SESSION['popups'][] = new Popup($args);
     } 
 
     public static function printAll()

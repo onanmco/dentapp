@@ -2,6 +2,7 @@
 
 namespace app\constant;
 
+use app\utility\Auth;
 use core\Error;
 
 class Fields
@@ -16,9 +17,10 @@ class Fields
         }
 
         $pos = strrpos($existing_class_name, $class_name_without_namespace);
-        $class_name = 'en\\' . $class_name_without_namespace;
+        $language = Auth::getUserLanguage();
+        $class_name = $language . '\\' . $class_name_without_namespace;
         if ($pos !== false) {
-            $class_name = substr($existing_class_name, 0, $pos) . 'en\\' . substr($existing_class_name, $pos);
+            $class_name = substr($existing_class_name, 0, $pos) . $language . '\\' . substr($existing_class_name, $pos);
         }
         
         try {

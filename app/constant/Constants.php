@@ -14,9 +14,9 @@ class Constants
         }
 
         $pos = strrpos($existing_class_name, $class_name_without_namespace);
-        $class_name = 'en\\' . $class_name_without_namespace;
+        $class_name = 'tr\\' . $class_name_without_namespace;
         if ($pos !== false) {
-            $class_name = substr($existing_class_name, 0, $pos) . 'en\\' . substr($existing_class_name, $pos);
+            $class_name = substr($existing_class_name, 0, $pos) . 'tr\\' . substr($existing_class_name, $pos);
         }
 
         try {
