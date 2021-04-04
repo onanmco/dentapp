@@ -1,14 +1,12 @@
 <?php
 
-use app\constant\Constants;
 use app\utility\Auth;
 use config\Config;
 
 $auth_user = Auth::getAuthUser();
-$language = Auth::getUserLanguage();
 ?>
 <!doctype html>
-<html lang="<?php echo $language; ?>">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">

@@ -13,7 +13,7 @@ $appointment_types = AppointmentType::getAll();
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">

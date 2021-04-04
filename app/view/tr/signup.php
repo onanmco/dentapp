@@ -12,7 +12,6 @@ use config\Config;
 
 $user = (isset($user)) ? $user : new User();
 $errors = (isset($errors)) ? $errors : [];
-$lang = Auth::getUserLanguage();
 ?>
 <!doctype html>
 <html lang="tr">
