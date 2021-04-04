@@ -69,12 +69,12 @@
     border: none !important;
 }
 
-.search_result[data-hasta_id]:hover {
+.search_result[data-patient_id]:hover {
     cursor: pointer;
     background-color: lightgrey !important;
 }
 
-#telefon, #tckn {
+#phone, #tckn {
     letter-spacing: 0.1em;
 }
 

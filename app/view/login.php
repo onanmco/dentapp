@@ -1,9 +1,13 @@
 <?php
 
-use app\model\Personel;
+use app\constant\Constants;
+use app\constant\Fields;
+use app\constant\Messages;
+use app\model\User;
+use app\utility\UtilityFunctions;
 use config\Config;
 
-$personel = (isset($personel)) ? $personel : new Personel();
+$user = (isset($user)) ? $user : new User();
 $remember = (isset($remember) && $remember) ? 'checked' : '';
 $errors = (isset($errors)) ? $errors : [];
 ?>
@@ -18,7 +22,7 @@ $errors = (isset($errors)) ? $errors : [];
     <link rel="stylesheet" href="/assets/css/popup.css">
     <link rel="stylesheet" href="/assets/css/signup.css">
     <link rel="stylesheet" href="/assets/css/home.css">
-    <title>Personel Giriş</title>
+    <title><?php echo Constants::LOGIN_PAGE_TITLE(); ?></title>
 </head>
 
 <body>
@@ -33,10 +37,12 @@ $errors = (isset($errors)) ? $errors : [];
                         <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
                     </div>
                 </div>
-                <p class="m-0 small text-muted">İşlemlerinize devam etmek için lütfen giriş yapın.</p>
+                <p class="m-0 small text-muted">
+                    <?php echo Constants::LOGIN_PAGE_SUBTITLE(); ?>
+                </p>
             </div>
             <div class="card-body p-0 pl-3 pr-3">
-                <form action="/personel/auth" method="POST" id="login_form">
+                <form action="/user/auth" method="POST" id="login_form">
                     <?php
                     if (!empty($errors)) {
                         echo '<h3 class="text-danger">Hatalar:</h3>';
@@ -48,18 +54,22 @@ $errors = (isset($errors)) ? $errors : [];
                     }
                     ?>
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
-                        <label for="email" class="m-0 text-muted font-weight-bold">E-mail:</label>
+                        <label for="email" class="m-0 text-muted font-weight-bold">
+                            <?php echo UtilityFunctions::turkish_uc_first(Fields::EMAIL()) . ':'; ?>
+                        </label>
                         <div class="w-80">
                             <div class="input-group input-group-sm">
-                                <input type="email" name="email" id="email" class="form-control form-control-sm" value="<?php echo htmlspecialchars($personel->getEmail()) ?>">
+                                <input type="email" name="email" id="email" class="form-control form-control-sm" value="<?php echo htmlspecialchars($user->getEmail()) ?>">
                             </div>
                         </div>
                     </div>
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
-                        <label for="sifre" class="m-0 text-muted font-weight-bold">Şifre: </label>
+                        <label for="password" class="m-0 text-muted font-weight-bold">
+                            <?php echo UtilityFunctions::turkish_uc_first(Fields::PASSWORD()) . ':'; ?>
+                        </label>
                         <div class="w-80">
                             <div class="input-group input-group-sm password_input_group">
-                                <input type="password" name="sifre" id="sifre" class="form-control form-control-sm">
+                                <input type="password" name="password" id="password" class="form-control form-control-sm">
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary">
                                         <i class="fas fa-eye-slash"></i>
@@ -73,19 +83,24 @@ $errors = (isset($errors)) ? $errors : [];
                         <label class="form-check-label text-muted" for="remember_me">Beni Hatırla</label>
                     </div> -->
                     <div class="row m-0 mt-2">
-                        <button class="btn btn-info btn-block btn-sm mb-2">Giriş Yap</button>
+                        <button class="btn btn-info btn-block btn-sm mb-2">
+                            <?php echo Constants::LOGIN_PAGE_LOGIN(); ?>
+                        </button>
                     </div>
                 </form>
             </div>
             <div class="card-footer p-2 pl-3 bg-white">
-                <p class="m-0 small text-muted">Tüm Hakları Saklıdır.</p>
-                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | Destek için <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
+                <p class="m-0 small text-muted">
+                    <?php echo Constants::ALL_RIGHTS_RESERVED(); ?>
+                </p>
+                <p class="m-0 small text-muted"><?php echo Config::CLIENT_APP_NAME; ?> &copy <?php echo date('Y'); ?> | <a href="mailto:<?php echo Config::CLIENT_EMAIL ?>"><?php echo Config::CLIENT_EMAIL ?></a> | <?php echo Config::CLIENT_PHONE ?></p>
             </div>
         </div>
     </div>
     <script src="/assets/js/jquery-3.2.1.slim.min.js"></script>
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/utility-functions.js"></script>
     <script src="/assets/js/jquery.validate.js"></script>
     <script src="/assets/js/additional-methods.js"></script>
     <script src="/assets/js/popup.js"></script>
@@ -95,6 +110,11 @@ $errors = (isset($errors)) ? $errors : [];
         Array.prototype.forEach.call(password_input_groups, function(element) {
             provide_show_hide_password(element);
         });
+    </script>
+    <script>
+        var email_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::EMAIL()), JSON_UNESCAPED_UNICODE); ?>;
+        var invalid_email = <?php echo json_encode(Messages::INVALID_EMAIL(Fields::EMAIL()), JSON_UNESCAPED_UNICODE); ?>;
+        var password_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::PASSWORD()), JSON_UNESCAPED_UNICODE); ?>;
     </script>
     <script src="/assets/js/login-validation.js"></script>
     <script>

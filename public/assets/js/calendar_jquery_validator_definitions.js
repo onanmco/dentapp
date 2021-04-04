@@ -51,11 +51,11 @@ var validator = $('#modal_form').validate({
             is_not_overlap: true,
             is_not_past: true,
         },
-        soyisim: {
+        last_name: {
             required: true,
             is_valid_name_charset: true,
         },
-        isim: {
+        first_name: {
             required: true,
             is_valid_name_charset: true,
         },
@@ -63,7 +63,7 @@ var validator = $('#modal_form').validate({
             required: true,
             is_valid_tckn: true
         },
-        telefon: {
+        phone: {
             is_valid_phone: true
         }
 
@@ -75,11 +75,11 @@ var validator = $('#modal_form').validate({
         end_hour: {
             is_valid_hour: 'Lütfen bitiş saatini girin.'
         },
-        isim: {
+        first_name: {
             required: 'İsim alanı boş bırakılamaz.',
             is_valid_name_charset: 'İsim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
         },
-        soyisim: {
+        last_name: {
             required: 'Soyisim alanı boş bırakılamaz.',
             is_valid_name_charset: 'Soyisim alanı yalnızca harf, boşluk, nokta, kesme işareti ve tire karakterleri içerebilir.'
         },
@@ -87,7 +87,7 @@ var validator = $('#modal_form').validate({
             required: 'TCKN alanı boş bırakılamaz.',
             is_valid_tckn: 'Lütfen geçerli bir TCKN girin.'
         },
-        telefon: {
+        phone: {
             is_valid_phone: 'Lütfen geçerli bir telefon girin.'
         }
     },

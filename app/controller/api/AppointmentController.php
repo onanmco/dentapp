@@ -2,20 +2,19 @@
 
 namespace app\controller\api;
 
-use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
-use app\model\Hasta;
-use app\model\Personel;
-use app\model\Randevu;
+use app\model\Appointment;
+use app\model\Patient;
+use app\model\User;
 use app\utility\CommonValidator;
 use core\Controller;
 use core\Request;
 use core\Response;
 
-class RandevuController extends Controller
+class AppointmentController extends Controller
 {
-    public function olusturAction()
+    public function createAction()
     {
         $errors = [];
         // Check if request method is correct
@@ -38,86 +37,86 @@ class RandevuController extends Controller
             Response::json([$error], $error['code']);
             exit;
         }
-        if (!isset($request_body[Fields::STAFF_ID])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::STAFF_ID));
+        if (!isset($request_body['user_id'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('user_id'));
         }
-        if (!isset($request_body[Fields::PATIENT_ID])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::PATIENT_ID));
+        if (!isset($request_body['patient_id'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('patient_id'));
         }
-        if (!isset($request_body[Fields::START])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::START));
+        if (!isset($request_body['start'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('start'));
         }
-        if (!isset($request_body[Fields::END])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::END));
+        if (!isset($request_body['end'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('end'));
         }
-        if (!isset($request_body[Fields::NOTES])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::NOTES));
+        if (!isset($request_body['notes'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('notes'));
         }
-        if (!isset($request_body[Fields::NOTIFY])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::NOTIFY));
+        if (!isset($request_body['notify'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('notify'));
         }        
-        if (!isset($request_body[Fields::APPOINTMENT_TYPE_ID])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD(Fields::APPOINTMENT_TYPE_ID));
+        if (!isset($request_body['appointment_type_id'])) {
+            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('appointment_type_id'));
         }
         if (!empty($errors)) {
             Response::json($errors, Responses::MISSING_FIELD()['code']);
             exit;
         }
         //validation
-        $field_name = Fields::STAFF_ID;
-        $staff_id_validation = CommonValidator::isValidId($request_body[$field_name], $field_name);
-        if ($staff_id_validation !== true) {
-            foreach ($staff_id_validation as $error_msg) {
+        $field_name = 'user_id';
+        $user_id_validation = CommonValidator::isValidId($request_body[$field_name], $field_name);
+        if ($user_id_validation !== true) {
+            foreach ($user_id_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        if (!Personel::findById($request_body[$field_name])) {
-            $staff_id = $request_body[Fields::STAFF_ID];
-            $errors[] = Responses::VALIDATION_ERROR(Messages::STAFF_ID_CANNOT_FOUND($staff_id));
+        if (!User::findById($request_body[$field_name])) {
+            $user_id = $request_body['user_id'];
+            $errors[] = Responses::VALIDATION_ERROR(Messages::USER_ID_CANNOT_FOUND($user_id));
         }
-        $patient_id_validation = CommonValidator::isValidId($request_body[Fields::PATIENT_ID], Fields::PATIENT_ID);
+        $patient_id_validation = CommonValidator::isValidId($request_body['patient_id'], 'patient_id');
         if ($patient_id_validation !== true) {
             foreach ($patient_id_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        if (!Hasta::findById($request_body[Fields::PATIENT_ID])) {
-            $patient_id = $request_body[Fields::PATIENT_ID];
+        if (!Patient::findById($request_body['patient_id'])) {
+            $patient_id = $request_body['patient_id'];
             $errors[] = Responses::VALIDATION_ERROR(Messages::PATIENT_ID_CANNOT_FOUND($patient_id));
         }
 
-        $start_validation = CommonValidator::isValidUnixTimestamp($request_body[Fields::START], Fields::START);
+        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], 'start');
         if ($start_validation !== true) {
             foreach ($start_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $end_validation = CommonValidator::isValidUnixTimestamp($request_body[Fields::END], Fields::END);
+        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], 'end');
         if ($end_validation !== true) {
             foreach ($end_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        if ($request_body[Fields::START] >= $request_body[Fields::END]) {
+        if ($request_body['start'] >= $request_body['end']) {
             $errors[] = Responses::VALIDATION_ERROR(Messages::INVALID_START_END_HOURS());
         }
-        if ($request_body[Fields::START] < time()) {
+        if ($request_body['start'] < time()) {
             $errors[] = Responses::VALIDATION_ERROR(Messages::APPOINTMENT_TO_PAST());
         }
-        $request_body[Fields::START] = date('Y-m-d H:i:s', $request_body[Fields::START]);
-        $request_body[Fields::END] = date('Y-m-d H:i:s', $request_body[Fields::END]);
-        if (Randevu::getOverlappingCount($request_body[Fields::START], $request_body[Fields::END]) > 0) {
+        $request_body['start'] = date('Y-m-d H:i:s', $request_body['start']);
+        $request_body['end'] = date('Y-m-d H:i:s', $request_body['end']);
+        if (Appointment::getOverlappingCount($request_body['start'], $request_body['end']) > 0) {
             $errors[] = Responses::VALIDATION_ERROR(Messages::OVERLAPPING_APPOINTMENT());
         }
-        if (!is_string($request_body['notlar'])) {
-            $field_name = Fields::NOTES;
+        if (!is_string($request_body['notes'])) {
+            $field_name = 'notes';
             $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_STRING($field_name));
         }
-        if (!is_bool($request_body['hatirlat'])) {
-            $field_name = Fields::NOTES;
+        if (!is_bool($request_body['notify'])) {
+            $field_name = 'notes';
             $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_BOOLEAN($field_name));
         }
-        $appointment_type_id_validation = CommonValidator::isValidId($request_body[Fields::APPOINTMENT_TYPE_ID], Fields::APPOINTMENT_TYPE_ID);
+        $appointment_type_id_validation = CommonValidator::isValidId($request_body['appointment_type_id'], 'appointment_type_id');
         if ($appointment_type_id_validation !== true) {
             foreach ($appointment_type_id_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
@@ -128,18 +127,18 @@ class RandevuController extends Controller
             exit;
         }
         // registration
-        $randevu = new Randevu($request_body);
-        if (!$randevu->save()) {
+        $appointment = new Appointment($request_body);
+        if (!$appointment->save()) {
             $error = Responses::UNKNOWN_ERROR(Messages::DB_WRITE_ERROR());
             Response::json([$error], Responses::UNKNOWN_ERROR()['code']);
         }
-        $saved_randevu = Randevu::getByRange($request_body[Fields::START], $request_body[Fields::END]);
-        if (!$saved_randevu) {
+        $saved_appointment = Appointment::getByRange($request_body['start'], $request_body['end']);
+        if (!$saved_appointment) {
             $error = Responses::UNKNOWN_ERROR(Messages::DB_READ_ERROR());
             Response::json([$error], Responses::UNKNOWN_ERROR()['code']);
         }
         $data = Responses::SUCCESS(Messages::APPOINTMENT_SAVED());
-        $data['kaydedilen_randevu'] = $saved_randevu->serialize();
+        $data['saved_appointment'] = $saved_appointment->serialize();
         Response::json($data, $data['code']);
         exit;
     }

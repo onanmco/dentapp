@@ -5,15 +5,16 @@ namespace app\model;
 use core\Model;
 use PDO;
 
-class Personel extends Model
+class User extends Model
 {
     private $id = '';
-    private $isim = '';
-    private $soyisim = '';
+    private $first_name = '';
+    private $last_name = '';
     private $tckn = '';
     private $email = '';
     private $password_hash = '';
-    private $meslek_id = '';
+    private $group_id = '';
+    private $language_preference = '';
 
     public function __construct($args = [])
     {
@@ -30,14 +31,14 @@ class Personel extends Model
         return $this->id;
     }
 
-    public function getIsim()
+    public function getFirstName()
     {
-        return $this->isim;
+        return $this->first_name;
     }
 
-    public function getSoyisim()
+    public function getLastName()
     {
-        return $this->soyisim;
+        return $this->last_name;
     }
 
     public function getTckn()
@@ -55,13 +56,18 @@ class Personel extends Model
         return $this->password_hash;
     }
 
-    public function getMeslekId()
+    public function getGroupId()
     {
-        return $this->meslek_id;
+        return $this->group_id;
+    }
+
+    public function getLanguagePreference()
+    {
+        return $this->language_preference;
     }
 
     public static function getAll(){
-        $sql = 'SELECT * FROM personeller ORDER BY id DESC';
+        $sql = 'SELECT * FROM users ORDER BY id DESC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -71,7 +77,7 @@ class Personel extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM personeller WHERE id = :id';
+        $sql = 'SELECT * FROM users WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -82,7 +88,7 @@ class Personel extends Model
 
     public static function findByEmail($email)
     {
-        $sql = 'SELECT * FROM personeller WHERE email = :email';
+        $sql = 'SELECT * FROM users WHERE email = :email';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
@@ -91,12 +97,12 @@ class Personel extends Model
         return $stmt->fetch();
     }
 
-    public static function findByName($isim)
+    public static function findByFirstName($first_name)
     {
-        $sql = 'SELECT * FROM personeller WHERE isim = :isim';
+        $sql = 'SELECT * FROM users WHERE first_name = :first_name';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':isim', $isim, PDO::PARAM_STR);
+        $stmt->bindValue(':first_name', $first_name, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
         $stmt->execute();
         return $stmt->fetch();
@@ -104,21 +110,22 @@ class Personel extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO personeller(isim, soyisim, tckn, email, password_hash, meslek_id) VALUES(:isim, :soyisim, :tckn, :email, :password_hash, :meslek_id)';
+        $sql = 'INSERT INTO users(first_name, last_name, tckn, email, password_hash, group_id, language_preference) VALUES(:first_name, :last_name, :tckn, :email, :password_hash, :group_id, :language_preference)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':isim', $this->isim, PDO::PARAM_STR);
-        $stmt->bindValue(':soyisim', $this->soyisim, PDO::PARAM_STR);
+        $stmt->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
+        $stmt->bindValue(':last_name', $this->last_name, PDO::PARAM_STR);
         $stmt->bindValue(':tckn', $this->tckn, PDO::PARAM_STR);
         $stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
         $stmt->bindValue(':password_hash', $this->password_hash, PDO::PARAM_STR);
-        $stmt->bindValue(':meslek_id', $this->meslek_id, PDO::PARAM_INT);
+        $stmt->bindValue(':group_id', $this->group_id, PDO::PARAM_INT);
+        $stmt->bindValue(':language_preference', $this->language_preference, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     public static function getLastInserted()
     {
-        $sql = 'SELECT * FROM personeller WHERE id = (SELECT MAX(id) FROM personeller)';
+        $sql = 'SELECT * FROM users WHERE id = (SELECT MAX(id) FROM users)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -133,19 +140,19 @@ class Personel extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM personeller WHERE id = :id';
+        $sql = 'DELETE FROM users WHERE id = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
-    public static function findAllByMeslekId($meslek_id)
+    public static function findAllByGroupId($group_id)
     {
-        $sql = 'SELECT * FROM personeller WHERE meslek_id = :meslek_id';
+        $sql = 'SELECT * FROM users WHERE group_id = :group_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':meslek_id', $meslek_id, PDO::PARAM_INT);
+        $stmt->bindValue(':group_id', $group_id, PDO::PARAM_INT);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
         $stmt->execute();
         return $stmt->fetchAll();
