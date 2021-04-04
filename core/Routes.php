@@ -29,15 +29,15 @@ class Routes
             [
                 'path'   => 'kayit',
                 'params' => [
-                    'controller' => 'personel',
-                    'action'     => 'kayit'
+                    'controller' => 'user',
+                    'action'     => 'signup'
                 ]
             ],
             [
                 'path'   => 'giris',
                 'params' => [
-                    'controller' => 'personel',
-                    'action'     => 'giris'
+                    'controller' => 'user',
+                    'action'     => 'login'
                 ]
             ],
             [
@@ -45,6 +45,13 @@ class Routes
                 'params' => [
                     'controller' => 'contact',
                     'action'     => 'index'
+                ]
+            ],
+            [
+                'path'   => 'randevu',
+                'params' => [
+                    'controller' => 'appointment',
+                    'action'     => 'calendar'
                 ]
             ],
             [
