@@ -80,15 +80,15 @@ class Appointment extends Model
         return $stmt->fetchAll();
     }
 
-    public static function getOverlappingCount($start_datetime, $end_datetime)
+    public static function getOverlappingCount($new_start_datetime, $new_end_datetime)
     {
         $sql = 'SELECT COUNT(*) 
                 FROM appointments 
-                WHERE :start_datetime < end AND :end_datetime > start';
+                WHERE start < :new_end_datetime AND end > :new_start_datetime';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
-        $stmt->bindValue(':end_datetime', $end_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':new_start_datetime', $new_start_datetime, PDO::PARAM_STR);
+        $stmt->bindValue(':new_end_datetime', $new_end_datetime, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_NUM);
         $stmt->execute();
         return $stmt->fetch()[0];

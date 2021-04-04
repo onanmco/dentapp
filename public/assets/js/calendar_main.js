@@ -88,7 +88,7 @@ var onDebouncedCompositeSearchTermChange = async function(term) {
         });
         response = await response.json();
     } catch (error) {
-        show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+        show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
         return;
     }
     if (response.status === 'success') {
@@ -116,7 +116,7 @@ var onDebouncedCompositeSearchTermChange = async function(term) {
         });
         return;
     } else {
-        show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+        show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
         return;
     }
 };
@@ -168,7 +168,7 @@ $('#submit').on('click', async function (e) {
             });
             patient_response = await patient_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
         if (patient_response.status === 'failure') {
@@ -178,7 +178,7 @@ $('#submit').on('click', async function (e) {
             });
             return;
         } else if (patient_response.status !== 'success') {
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
@@ -217,7 +217,7 @@ $('#submit').on('click', async function (e) {
             });
             appointment_response = await appointment_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             await fetch('/api/patient/delete/' + patient['id']);
             return;
         }
@@ -234,18 +234,18 @@ $('#submit').on('click', async function (e) {
             return;
         } else {
             await fetch('/api/patient/delete/' + patient['id']);
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
 
     } else {
         if (!$('#search').attr('data-selected_patient_id')) {
-            show_popup('Kayıt Başarısız', 'Lütfen geçerli bir hasta seçimi yapın.', 400);
+            show_popup(please_select_patient.title, please_select_patient.message, please_select_patient.code);
             return;
         }
-        if (!(/^\d+$/).test('' + $('#search').attr('data-selected_patient_id'))) {
-            show_popup('Kayıt Başarısız', 'Hasta ID sayısal bir değer olmalıdır.', 400);
+        if (!(invalid_patient_id_regexp).test('' + $('#search').attr('data-selected_patient_id'))) {
+            show_popup(invalid_patient_id_response.title, invalid_patient_id_response.message, invalid_patient_id_response.code);
             return;
         }
         var appointment = {
@@ -275,7 +275,7 @@ $('#submit').on('click', async function (e) {
             });
             appointment_response = await appointment_response.json();
         } catch (error) {
-            show_popup('Sunucu Hatası', 'Bilinmeyen bir ağ hatası oluştu. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 
@@ -289,7 +289,7 @@ $('#submit').on('click', async function (e) {
             });
             return;
         } else {
-            show_popup('Sunucu Hatası', 'Response status\'u düzgün bir şekilde okunamadı. Lütfen destek ekibimizle iletişim kurun.', 500);
+            show_popup(unknown_error.title, unknown_error.message, unknown_error.code);
             return;
         }
 

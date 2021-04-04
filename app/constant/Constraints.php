@@ -4,6 +4,15 @@ namespace app\constant;
 
 class Constraints
 {
+    public static function INTEGER_REGEXP($field)
+    {
+        $value = '/^\d+$/';
+        return [
+            'value' => $value,
+            'message' => Messages::SHOULD_BE_INTEGER($field)
+        ];
+    }
+
     public static function PASSWORD_MIN_LENGTH($field)
     {
         $value = 8;

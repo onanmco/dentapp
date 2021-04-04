@@ -228,4 +228,14 @@ class Messages
     {
         return "$field alanı yalnızca rakam içerebilir.";
     }
+
+    public static function PLEASE_SELECT_PATIENT()
+    {
+        return "Lütfen geçerli bir hasta seçimi yapın.";
+    }
+
+    public static function SHOULD_BE_INTEGER($field)
+    {
+        return "$field alanı yalnızca tamsayı değerler içerebilir.";
+    }
 }

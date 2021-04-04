@@ -1,6 +1,9 @@
 <?php
 
 use app\constant\Constraints;
+use app\constant\Fields;
+use app\constant\Messages;
+use app\constant\Responses;
 use app\model\AppointmentType;
 use app\utility\Auth;
 use config\Config;
@@ -158,11 +161,23 @@ $appointment_types = AppointmentType::getAll();
     <script src="/assets/js/jquery-3.2.1.slim.min.js"></script>
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/utility-functions.js"></script>
     <script>
         var name_regexp = <?php echo json_encode(Constraints::NAME_REGEXP('first_name'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+
         var user_id = <?php echo $user->getId(); ?>;
+
         var composite_search_regexp = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_REGEXP('arama terimi'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         var composite_search_min_length = <?php echo json_encode(Constraints::COMPOSITE_SEARCH_MIN_LEN('arama terimi')); ?>;
+
+        var unknown_error = <?php echo json_encode(Responses::UNKNOWN_ERROR(Messages::UNKNOWN_ERROR()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
+        var please_select_patient = <?php echo json_encode(Responses::VALIDATION_ERROR(Messages::PLEASE_SELECT_PATIENT()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+
+        var invalid_patient_id_rule = <?php echo json_encode(Constraints::INTEGER_REGEXP(Fields::PATIENT_ID()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        var invalid_patient_id_regexp = newRegexp(invalid_patient_id_rule.value);
+
+        var invalid_patient_id_response = <?php echo json_encode(Responses::VALIDATION_ERROR(Constraints::INTEGER_REGEXP(Fields::PATIENT_ID())['message']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
     <script src="/assets/js/jquery.validate.js"></script>
     <script src="/assets/js/additional-methods.js"></script>
@@ -170,7 +185,6 @@ $appointment_types = AppointmentType::getAll();
     <script src="/assets/js/fullcalendar.js"></script>
     <script src="/assets/js/fullcalendar_locales.js"></script>
     <script src="/assets/js/jquery.inputmask.js"></script>
-    <script src="/assets/js/utility-functions.js"></script>
     <script src="/assets/js/calendar_inputmask_definitions.js"></script>
     <script src="/assets/js/calendar_fullcalendar_definitions.js"></script>
     <script src="/assets/js/calendar_main.js"></script>

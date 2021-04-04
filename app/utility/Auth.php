@@ -108,12 +108,12 @@ class Auth
             return Config::DEFAULT_LANGUAGE;
         }
 
-        $language = Language::findById($user->getDilTercihi());
+        $language = Language::findById($user->getLanguagePreference());
 
         if ($language === false) {
             return Config::DEFAULT_LANGUAGE;
         }
 
-        return $language->getDil();
+        return $language->getLanguage();
     }
 }
