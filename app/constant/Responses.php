@@ -6,7 +6,7 @@ use core\Error;
 
 abstract class Responses
 {
-    public function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments)
     {
         $existing_class_name = ltrim(get_called_class(), '\\');
         $class_name_without_namespace = ltrim(get_called_class(), '\\');
