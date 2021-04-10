@@ -238,4 +238,19 @@ class Messages
     {
         return "$field alanı yalnızca tamsayı değerler içerebilir.";
     }
+
+    public static function SHOULD_BE_NUMERIC($field)
+    {
+        return "$field alanı yalnızca sayısal değerler içerebilir.";
+    }
+
+    public static function SHOULD_BE_IN_BETWEEN($min, $max, $field)
+    {
+        return "$field alanı $min ile $max arasında değerler içerebilir.";
+    }
+
+    public static function INVALID_IP_ADDR($field)
+    {
+        return "$field alanı için geçerli bir ip adresi girin.";
+    }
 }
