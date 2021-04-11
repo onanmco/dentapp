@@ -93,6 +93,7 @@ class UserController extends Controller
                 throw new Exception(Messages::USER_COULD_NOT_BE_SAVED($user->getEmail()));
             }
             Popup::add(Responses::SUCCESS(Messages::REGISTER_SUCCESSFUL()));
+            unset($user);
             Router::redirectAfterPost('/');
         } else {
             View::render('signup.php', ['user' => $existing_user, 'errors' => $errors]);
