@@ -58,7 +58,9 @@ class Auth
     {
         if (isset($_COOKIE['last_session_id'])) {
             $existing_api_token_record = ApiToken::findBySessionId($_COOKIE['last_session_id']);
-            $existing_api_token_record->delete();
+            if ($existing_api_token_record !== false) {
+                $existing_api_token_record->delete();
+            }
         }
         $_SESSION = [];
         if (ini_get("session.use_cookies")) {
