@@ -37,26 +37,31 @@ class AppointmentController extends Controller
             Response::json([$error], $error['code']);
             exit;
         }
-        if (!isset($request_body['user_id'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('user_id'));
+        $required_fields = [
+            'user_id',
+            'patient_id',
+            'start',
+            'end',
+            'notes',
+            'notify',
+            'appointment_type_id'
+        ];
+        foreach ($required_fields as $key) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+            }
         }
-        if (!isset($request_body['patient_id'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('patient_id'));
-        }
-        if (!isset($request_body['start'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('start'));
-        }
-        if (!isset($request_body['end'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('end'));
-        }
-        if (!isset($request_body['notes'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('notes'));
-        }
-        if (!isset($request_body['notify'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('notify'));
-        }        
-        if (!isset($request_body['appointment_type_id'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('appointment_type_id'));
+        foreach ($request_body as $k => $v) {
+            $is_exist = false;
+            foreach ($required_fields as $v_i) {
+                if ($k === $v_i) {
+                    $is_exist = true;
+                    break;
+                }
+            }
+            if ($is_exist === false) {
+                $errors[] = Responses::VALIDATION_ERROR(Messages::INVALID_FIELD($k));
+            }
         }
         if (!empty($errors)) {
             Response::json($errors, Responses::MISSING_FIELD()['code']);

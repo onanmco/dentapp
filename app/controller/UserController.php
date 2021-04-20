@@ -2,7 +2,6 @@
 
 namespace app\controller;
 
-use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\Group;
@@ -13,6 +12,7 @@ use app\utility\CommonValidator;
 use app\utility\Popup;
 use config\Config;
 use core\Controller;
+use core\Request;
 use core\Router;
 use core\View;
 use Exception;
@@ -26,6 +26,20 @@ class UserController extends Controller
 
     public function registerAction()
     {
+        if (Request::method() !== 'post') {
+            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            throw new Exception($error['message'], $error['code']);
+        }
+
+        $required_fields = ['first_name', 'last_name', 'email', 'password', 'group_id'];
+        
+        $missing_fields = array_diff($required_fields, array_keys($_POST));
+
+        if (!empty($missing_fields)) {
+            $error = Responses::BAD_REQUEST(Messages::MISSING_FIELDS($missing_fields));
+            throw new Exception($error['message'], $error['code']);
+        }
+        
         $errors = [];
 
         if (!isset($_POST['language_preference'])) {
@@ -35,8 +49,6 @@ class UserController extends Controller
         }
 
         $existing_user = new User($_POST);
-
-        $required_fields = ['first_name', 'last_name', 'email', 'password', 'group_id'];
 
         foreach ($required_fields as $field_name) {
             if (empty($_POST[$field_name])) {
