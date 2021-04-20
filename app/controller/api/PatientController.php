@@ -44,17 +44,15 @@ class PatientController extends Controller
             Response::json([$error], $error['code']);
             exit;
         }
-        if (!isset($request_body['first_name'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('first_name'));
+        $required_fields = ['first_name', 'last_name', 'phone', 'tckn'];
+        foreach ($required_fields as $key) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+            }
         }
-        if (!isset($request_body['last_name'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('last_name'));
-        }
-        if (!isset($request_body['phone'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('phone'));
-        }
-        if (!isset($request_body['tckn'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('tckn'));
+        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        foreach ($invalid_keys as $v) {
+            $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
         if (!empty($errors)) {
             Response::json($errors, Responses::VALIDATION_ERROR()['code']);

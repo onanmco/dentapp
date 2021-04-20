@@ -37,14 +37,17 @@ class ContactController extends Controller
             exit;
         }
 
-        if (!isset($request_body['full_name'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('full_name'));
+        $required_fields = ['full_name', 'email', 'message'];
+
+        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        foreach ($invalid_keys as $v) {
+            $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
-        if (!isset($request_body['email'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('email'));
-        }
-        if (!isset($request_body['message'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('message'));
+
+        foreach ($required_fields as $key) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+            }
         }
 
         if (!empty($errors)) {

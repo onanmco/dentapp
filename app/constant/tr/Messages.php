@@ -253,4 +253,15 @@ class Messages
     {
         return "$field alanı için geçerli bir ip adresi girin.";
     }
+
+    public static function MISSING_FIELDS($fields = [])
+    {
+        $str = implode(", ", $fields) . (count($fields) > 1 ? ' alanları' : ' alanı');
+        return "$str eksik.";
+    }
+
+    public static function INVALID_FIELD($field)
+    {
+        return "$field alanı geçersiz.";
+    }
 }
