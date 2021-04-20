@@ -52,7 +52,7 @@ class PatientController extends Controller
         }
         $invalid_keys = array_diff(array_keys($request_body), $required_fields);
         foreach ($invalid_keys as $v) {
-            $errors[] = Responses::VALIDATION_ERROR(Messages::INVALID_FIELD($v));
+            $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
         if (!empty($errors)) {
             Response::json($errors, Responses::VALIDATION_ERROR()['code']);
