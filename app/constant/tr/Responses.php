@@ -75,4 +75,13 @@ abstract class Responses
             'code' => 400,
         ];
     }
+
+    public static function INVALID_FIELD($message = Constants::DEFAULT_RESPONSE_MESSAGE)
+    {
+        return [
+            'title' => 'Geçersiz Alan',
+            'message' => $message,
+            'code' => 400,
+        ];
+    }
 }
