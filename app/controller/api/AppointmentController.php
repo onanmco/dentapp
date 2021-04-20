@@ -51,17 +51,9 @@ class AppointmentController extends Controller
                 $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
             }
         }
-        foreach ($request_body as $k => $v) {
-            $is_exist = false;
-            foreach ($required_fields as $v_i) {
-                if ($k === $v_i) {
-                    $is_exist = true;
-                    break;
-                }
-            }
-            if ($is_exist === false) {
-                $errors[] = Responses::VALIDATION_ERROR(Messages::INVALID_FIELD($k));
-            }
+        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        foreach ($invalid_keys as $v) {
+            $errors[] = Responses::VALIDATION_ERROR(Messages::INVALID_FIELD($v));
         }
         if (!empty($errors)) {
             Response::json($errors, Responses::MISSING_FIELD()['code']);
