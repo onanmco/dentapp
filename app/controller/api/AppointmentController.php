@@ -19,7 +19,7 @@ class AppointmentController extends Controller
         $errors = [];
         // Check if request method is correct
         if (Request::method() !== 'post') {
-            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            $error = Responses::METHOD_NOT_ALLOWED(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -134,7 +134,7 @@ class AppointmentController extends Controller
             $error = Responses::UNKNOWN_ERROR(Messages::DB_READ_ERROR());
             Response::json([$error], Responses::UNKNOWN_ERROR()['code']);
         }
-        $data = Responses::SUCCESS(Messages::APPOINTMENT_SAVED());
+        $data = Responses::OK(Messages::APPOINTMENT_SAVED());
         $data['saved_appointment'] = $saved_appointment->serialize();
         Response::json($data, $data['code']);
         exit;
