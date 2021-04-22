@@ -1,0 +1,131 @@
+<?php
+
+use app\constant\Fields;
+use app\constant\Messages;
+use app\model\User;
+use app\utility\UtilityFunctions;
+use config\Config;
+
+$user = (isset($user)) ? $user : new User();
+$remember = (isset($remember) && $remember) ? 'checked' : '';
+$errors = (isset($errors)) ? $errors : [];
+?>
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/all.css">
+    <link rel="stylesheet" href="/assets/css/popup.css">
+    <link rel="stylesheet" href="/assets/css/signup.css">
+    <link rel="stylesheet" href="/assets/css/home.css">
+    <title>Personel Giriş</title>
+</head>
+
+<body>
+    <div class="row d-flex justify-content-center m-0 w-100">
+        <div class="card col-10 col-sm-8 col-md-7 col-lg-5 p-0 mt-5">
+            <div class="card-header p-2 pl-3 pr-3 bg-white">
+                <div class="row align-items-center justify-content-start">
+                    <div class="col-6">
+                        <h3><?php echo Config::CLIENT_APP_NAME; ?></h3>
+                    </div>
+                    <div class="col-6 text-right">
+                        <i id="help_drawer_icon" class="fas fa-question-circle text-info"></i>
+                    </div>
+                </div>
+                <p class="m-0 small text-muted">Please login to continue.</p>
+            </div>
+            <div class="card-body p-0 pl-3 pr-3">
+                <form action="/user/auth" method="POST" id="login_form">
+                    <?php
+                    if (!empty($errors)) {
+                        echo '<h3 class="text-danger">Errors:</h3>';
+                        echo '<ul>';
+                        foreach ($errors as $error) {
+                            echo '<li class="small text-muted">' . htmlspecialchars($error) . '</li>';
+                        }
+                        echo '</ul>';
+                    }
+                    ?>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="email" class="m-0 text-muted font-weight-bold">
+                            <?php echo UtilityFunctions::turkish_uc_first(Fields::EMAIL()) . ':'; ?>
+                        </label>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm">
+                                <input type="email" name="email" id="email" class="form-control form-control-sm" value="<?php echo htmlspecialchars($user->getEmail()) ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
+                        <label for="password" class="m-0 text-muted font-weight-bold">
+                            <?php echo UtilityFunctions::turkish_uc_first(Fields::PASSWORD()) . ':'; ?>
+                        </label>
+                        <div class="w-80">
+                            <div class="input-group input-group-sm password_input_group">
+                                <input type="password" name="password" id="password" class="form-control form-control-sm">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-check mt-2">
+                        <input type="checkbox" class="form-check-input" id="remember_me">
+                        <label class="form-check-label text-muted" for="remember_me">Beni Hatırla</label>
+                    </div> -->
+                    <div class="row m-0 mt-2">
+                        <button class="btn btn-info btn-block btn-sm mb-2">Login</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer p-2 pl-3 bg-white">
+                <p class="m-0 small text-muted">All rigts reserved.></p>
+                <p class="m-0 small text-muted">
+                    <?php echo Config::CLIENT_APP_NAME; ?> &copy 
+                    <?php echo date('Y'); ?> | for support <a href="mailto:
+                    <?php echo Config::CLIENT_EMAIL ?>">
+                    <?php echo Config::CLIENT_EMAIL ?></a> | 
+                    <?php echo Config::CLIENT_PHONE ?></p>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/utility-functions.js"></script>
+    <script src="/assets/js/jquery.validate.js"></script>
+    <script src="/assets/js/additional-methods.js"></script>
+    <script src="/assets/js/popup.js"></script>
+    <script src="/assets/js/password-show-hide.js"></script>
+    <script>
+        password_input_groups = document.getElementsByClassName('password_input_group');
+        Array.prototype.forEach.call(password_input_groups, function(element) {
+            provide_show_hide_password(element);
+        });
+    </script>
+    <script>
+        var email_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::EMAIL()), JSON_UNESCAPED_UNICODE); ?>;
+        var invalid_email = <?php echo json_encode(Messages::INVALID_EMAIL(Fields::EMAIL()), JSON_UNESCAPED_UNICODE); ?>;
+        var password_cannot_be_empty = <?php echo json_encode(Messages::CANNOT_BE_EMPTY(Fields::PASSWORD()), JSON_UNESCAPED_UNICODE); ?>;
+    </script>
+    <script src="/assets/js/login-validation.js"></script>
+    <script>
+        <?php app\utility\Popup::printAll() ?>
+    </script>
+    <script>
+        var help_drawer_icon = document.getElementById('help_drawer_icon');
+        if (help_drawer_icon) {
+            help_drawer_icon.addEventListener('click', function() {
+                console.log('clicked');
+            });
+        }
+    </script>
+</body>
+
+</html>
