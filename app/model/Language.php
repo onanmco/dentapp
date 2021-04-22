@@ -51,4 +51,21 @@ class Language extends Model
         $stmt->execute();
         return $stmt->fetch();
     }
+
+    public static function getAll()
+    {
+        $sql = 'SELECT language FROM languages';
+        $db = self::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        if ($stmt->rowCount() === 0) {
+            return [];
+        }
+        $results = [];
+        while ($row = $stmt->fetch()) {
+            $results[] = $row['language'];
+        }
+        return $results;
+    }
 }

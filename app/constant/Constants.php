@@ -2,6 +2,10 @@
 
 namespace app\constant;
 
+use app\model\Language;
+use app\utility\Auth;
+use core\Error;
+
 class Constants
 {
     public static function __callStatic($name, $arguments)
@@ -14,9 +18,11 @@ class Constants
         }
 
         $pos = strrpos($existing_class_name, $class_name_without_namespace);
-        $class_name = 'tr\\' . $class_name_without_namespace;
+        $language = Auth::getUserLanguage();
+
+        $class_name = "$language\\" . $class_name_without_namespace;
         if ($pos !== false) {
-            $class_name = substr($existing_class_name, 0, $pos) . 'tr\\' . substr($existing_class_name, $pos);
+            $class_name = substr($existing_class_name, 0, $pos) . "$language\\" . substr($existing_class_name, $pos);
         }
 
         try {
@@ -26,6 +32,8 @@ class Constants
         }
 
         if (!$value) {
+            $message = "An error occurred when trying to translate: $class_name::$name\n";
+            Error::writeLog($message);
             return '###ÇEVİRİ_HATASI###';
         }
 
