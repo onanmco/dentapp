@@ -2,6 +2,8 @@
 
 namespace app\constant;
 
+use app\model\Language;
+use app\utility\Auth;
 use core\Error;
 
 abstract class Responses
@@ -16,14 +18,17 @@ abstract class Responses
         }
 
         $pos = strrpos($existing_class_name, $class_name_without_namespace);
-        $class_name = 'tr\\' . $class_name_without_namespace;
+        $language = Auth::getUserLanguage();
+
+        $class_name = "$language\\" . $class_name_without_namespace;
         if ($pos !== false) {
-            $class_name = substr($existing_class_name, 0, $pos) . 'tr\\' . substr($existing_class_name, $pos);
+            $class_name = substr($existing_class_name, 0, $pos) . "$language\\" . substr($existing_class_name, $pos);
         }
         if (method_exists($class_name, $name)) {
             return call_user_func_array([$class_name, $name], $arguments);
         }
-
+        $message = "An error occurred when trying to translate: $class_name::$name\n";
+        Error::writeLog($message);
         return [
             'title' => '###ÇEVİRİ_HATASI###',
             'message' => 'İçerik yüklenirken bir sorun oluştu.',
