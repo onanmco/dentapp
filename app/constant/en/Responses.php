@@ -1,13 +1,13 @@
 <?php
 
-namespace app\constant\tr;
+namespace app\constant\en;
 
 abstract class Responses
 {
     public static function UNKNOWN_ERROR($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Sunucu Hatası',
+            'title' => 'Internal Server Error',
             'message' => $message,
             'code' => 500
         ];
@@ -16,7 +16,7 @@ abstract class Responses
     public static function UNAUTHORIZED_ACCESS($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Erişim Kısıtlandı',
+            'title' => 'Unauthorized Access',
             'message' => $message,
             'code' => 401
         ];
@@ -25,7 +25,7 @@ abstract class Responses
     public static function BAD_REQUEST($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Hatalı İstek',
+            'title' => 'Bad Request',
             'message' => $message,
             'code' => 400
         ];
@@ -34,7 +34,7 @@ abstract class Responses
     public static function PAGE_NOT_FOUND($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Sayfa Bulunamadı',
+            'title' => 'Page Not Found',
             'message' => $message,
             'code' => 404
         ];
@@ -43,7 +43,7 @@ abstract class Responses
     public static function OK($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Başarılı',
+            'title' => 'Success',
             'message' => $message,
             'code' => 200
         ];
@@ -52,7 +52,7 @@ abstract class Responses
     public static function SERVICE_UNAVAILABLE($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Servis Erişilebilir Değil',
+            'title' => 'Service Unavailable',
             'message' => $message,
             'code' => 500
         ];
@@ -61,7 +61,7 @@ abstract class Responses
     public static function VALIDATION_ERROR($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Doğrulama Hatası',
+            'title' => 'Validation Error',
             'message' => $message,
             'code' => 400,
         ];
@@ -70,7 +70,7 @@ abstract class Responses
     public static function MISSING_FIELD($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Eksik Alan',
+            'title' => 'Missing Field',
             'message' => $message,
             'code' => 400,
         ];
@@ -79,7 +79,7 @@ abstract class Responses
     public static function INVALID_FIELD($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Geçersiz Alan',
+            'title' => 'Invalid Field',
             'message' => $message,
             'code' => 400,
         ];
@@ -88,7 +88,7 @@ abstract class Responses
     public static function METHOD_NOT_ALLOWED($message = Constants::DEFAULT_RESPONSE_MESSAGE)
     {
         return [
-            'title' => 'Geçersiz Method',
+            'title' => 'Method Not Allowed',
             'message' => $message,
             'code' => 405,
         ];

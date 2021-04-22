@@ -27,7 +27,8 @@ class UserController extends Controller
     public function registerAction()
     {
         if (Request::method() !== 'post') {
-            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            $message = \app\constant\en\Messages::POST_METHOD();
+            $error = \app\constant\en\Responses::METHOD_NOT_ALLOWED($message);
             throw new Exception($error['message'], $error['code']);
         }
 
@@ -36,7 +37,8 @@ class UserController extends Controller
         $missing_fields = array_diff($required_fields, array_keys($_POST));
 
         if (!empty($missing_fields)) {
-            $error = Responses::BAD_REQUEST(Messages::MISSING_FIELDS($missing_fields));
+            $message = \app\constant\en\Messages::MISSING_FIELDS($missing_fields);
+            $error = \app\constant\en\Responses::BAD_REQUEST($message);
             throw new Exception($error['message'], $error['code']);
         }
         
@@ -102,9 +104,10 @@ class UserController extends Controller
             $user = new User($_POST);
             $result = $user->save();
             if ($result === false) {
-                throw new Exception(Messages::USER_COULD_NOT_BE_SAVED($user->getEmail()));
+                $message = \app\constant\en\Messages::USER_COULD_NOT_BE_SAVED($user->getEmail());
+                throw new Exception($message);
             }
-            Popup::add(Responses::SUCCESS(Messages::REGISTER_SUCCESSFUL()));
+            Popup::add(Responses::OK(Messages::REGISTER_SUCCESSFUL()));
             unset($user);
             Router::redirectAfterPost('/');
         } else {
@@ -151,7 +154,7 @@ class UserController extends Controller
             exit;
         }
         Auth::login($existing_user);
-        Popup::add(Responses::SUCCESS(Messages::LOGIN_SUCCESSFUL()));
+        Popup::add(Responses::OK(Messages::LOGIN_SUCCESSFUL()));
         Router::redirectAfterPost(Auth::getLastVisit());
     }
 
@@ -163,7 +166,7 @@ class UserController extends Controller
     
     public function byeAction()
     {
-        Popup::add(Responses::SUCCESS(Messages::LOGOUT_SUCCESSFUL()));
+        Popup::add(Responses::OK(Messages::LOGOUT_SUCCESSFUL()));
         Router::redirectAfterPost('/');
     }
 }

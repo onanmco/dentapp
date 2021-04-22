@@ -26,7 +26,7 @@ class PatientController extends Controller
         $errors = [];
         // Check if request method is correct
         if (Request::method() !== 'post') {
-            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            $error = Responses::METHOD_NOT_ALLOWED(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -106,7 +106,7 @@ class PatientController extends Controller
             exit;
         }
         // return the saved record
-        $data = Responses::SUCCESS(Messages::PATIENT_REGISTERED_SUCCESSFULLY());
+        $data = Responses::OK(Messages::PATIENT_REGISTERED_SUCCESSFULLY());
         $data['saved_patient'] = $saved_patient->serialize();
         Response::json($data, $data['code']);
         exit;
@@ -117,7 +117,7 @@ class PatientController extends Controller
         $errors = [];
         // Check if request method is correct
         if (Request::method() !== 'post') {
-            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            $error = Responses::METHOD_NOT_ALLOWED(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -182,9 +182,9 @@ class PatientController extends Controller
             }
         }
         
-        $data = Responses::SUCCESS(Messages::SEARCH_COMPLETED());
+        $data = Responses::OK(Messages::SEARCH_COMPLETED());
         $data['results'] = $existing_records;
-        Response::json($data, Responses::SUCCESS()['code']);
+        Response::json($data, Responses::OK()['code']);
         exit;
     }
 }

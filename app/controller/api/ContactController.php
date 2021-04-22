@@ -18,7 +18,7 @@ class ContactController extends Controller
         $errors = [];
 
         if (Request::method() !== 'post') {
-            $error = Responses::BAD_REQUEST(Messages::POST_METHOD());
+            $error = Responses::METHOD_NOT_ALLOWED(Messages::POST_METHOD());
             Response::json([$error], $error['code']);
             exit;
         }
@@ -83,7 +83,7 @@ class ContactController extends Controller
             exit;
         }
 
-        $payload = Responses::SUCCESS(Messages::MAIL_SENT_SUCCESSFULLY());
+        $payload = Responses::OK(Messages::MAIL_SENT_SUCCESSFULLY());
 
         Response::json($payload, $payload['code']);
         exit;
