@@ -107,15 +107,34 @@ class Auth
         $user = self::getAuthUser();
 
         if ($user === false) {
-            return Config::DEFAULT_LANGUAGE;
+            $language = Config::DEFAULT_LANGUAGE;
+
+            if (isset($_COOKIE['language_preference'])) {
+                $language = $_COOKIE['language_preference'];
+            }
+
+            return $language;
         }
 
-        $language = Language::findById($user->getLanguagePreference());
+        $language_row = Language::findById($user->getLanguagePreference());
 
-        if ($language === false) {
-            return Config::DEFAULT_LANGUAGE;
+        if ($language_row === false) {
+            $language = Config::DEFAULT_LANGUAGE;
+
+            if (isset($_COOKIE['language_preference'])) {
+                $language = $_COOKIE['language_preference'];
+            }
+
+            return $language;
         }
 
-        return $language->getLanguage();
+        if (isset($_COOKIE['language_preference'])) {
+            unset($_COOKIE['language_preference']);
+            setcookie("langauge_preference", null, time() - 3600, "/");
+        }
+
+        setcookie("language_preference", $language_row->getLanguage(), time() + Datetime::DAY * 30, "/");
+
+        return $language_row->getLanguage();
     }
 }
