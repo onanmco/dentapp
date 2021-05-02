@@ -139,4 +139,91 @@ class AppointmentController extends Controller
         Response::json($data, $data['code']);
         exit;
     }
+
+    public function getAllByRangeAction()
+    {
+        $errors = [];
+        // Check if request method is correct
+        if (Request::method() !== 'post') {
+            $error = Responses::METHOD_NOT_ALLOWED(Messages::POST_METHOD());
+            Response::json([$error], $error['code']);
+            exit;
+        }
+        // Parse request body
+        $request_body = false;
+        try {
+            $request_body = json_decode(file_get_contents("php://input"), true);
+        } catch (\Throwable $th) {
+            $error = Responses::BAD_REQUEST(Messages::APPLICATION_JSON());
+            Response::json([$error], $error['code']);
+            exit;
+        }
+        if ($request_body == false) {
+            $error = Responses::BAD_REQUEST(Messages::JSON_DECODING_ERROR());
+            Response::json([$error], $error['code']);
+            exit;
+        }
+
+        $required_fields = ['start', 'end'];
+
+        foreach ($required_fields as $key) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+            }
+        }
+
+        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+
+        foreach ($invalid_keys as $v) {
+            $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
+        }
+
+        if (!empty($errors)) {
+            Response::json($errors, Responses::MISSING_FIELD()['code']);
+            exit;
+        }
+
+        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], 'start');
+        
+        if ($start_validation !== true) {
+            foreach ($start_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
+        }
+        
+        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], 'end');
+        
+        if ($start_validation !== true) {
+            foreach ($start_validation as $error_msg) {
+                $errors[] = $error_msg;
+            }
+        }
+
+        if (!empty($errors)) {
+            Response::json($errors, Responses::VALIDATION_ERROR()['code']);
+            exit;
+        }
+
+
+        $start = date('Y-m-d H:i:s', $request_body['start']);
+        $end = date('Y-m-d H:i:s', $request_body['end']);
+        
+        $all_appointments = Appointment::getAllBetween($start, $end);
+
+        $serialized_list = [];
+
+        foreach ($all_appointments as $appointment) {
+            $appointment_arr = $appointment->serialize();
+            $patient = Patient::findById($appointment_arr['patient_id']);
+            $appointment_arr['title'] = $patient->getFullName();
+            $appointment_arr['start'] = strtotime($appointment_arr['start']) * 1000;
+            $appointment_arr['end'] = strtotime($appointment_arr['end']) * 1000;
+            $serialized_list[] = $appointment_arr;
+        }
+
+        $payload = Responses::OK(Messages::APPOINTMENTS_FETCHED());
+        $payload['appointment_list'] = $serialized_list;
+        Response::json($payload, $payload['code']);
+
+    }
 }

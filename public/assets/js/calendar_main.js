@@ -297,3 +297,27 @@ $('#submit').on('click', async function (e) {
         $('#modal').modal('hide');
     }
 });
+
+async function init () {
+    var list = await fetch('/api/appointment/get-all-by-range', {
+        method: "POST",
+        body: JSON.stringify({
+            start: js_timestamp_to_unix_timestamp(calendar.view.activeStart.getTime()),
+            end: js_timestamp_to_unix_timestamp(calendar.view.activeEnd.getTime()),
+        })
+    });
+
+    list = await list.json();
+    var status = list.status || false;
+    if (status === 'success') {
+        calendar.render();
+        calendar.updateSize();
+        calendar.removeAllEvents();
+        list.data.appointment_list.forEach(function (appointment) {
+            calendar.addEvent(appointment);
+            console.log(appointment);
+        });
+
+    }
+}
+init();
