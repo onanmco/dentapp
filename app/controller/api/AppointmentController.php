@@ -136,6 +136,8 @@ class AppointmentController extends Controller
         }
         $data = Responses::OK(Messages::APPOINTMENT_SAVED());
         $data['saved_appointment'] = $saved_appointment->serialize();
+        $patient = Patient::findById($data['saved_appointment']['patient_id']);
+        $data['saved_appointment']['title'] = $patient->getFullName();
         Response::json($data, $data['code']);
         exit;
     }

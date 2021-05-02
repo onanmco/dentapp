@@ -184,12 +184,6 @@ $('#submit').on('click', async function (e) {
 
         patient = patient_response['data']['saved_patient'];
 
-        var event = {
-            title: patient.first_name + ' ' + patient.last_name,
-            start: start_date,
-            end: end_date
-        }
-
         var appointment = {
             user_id: user_id,
             patient_id: patient['id'],
@@ -223,6 +217,10 @@ $('#submit').on('click', async function (e) {
         }
 
         if (appointment_response.status === 'success') {
+            appointment['title'] = appointment_response['data']['saved_appointment']['title'];
+            appointment['start'] = Number(appointment['start']) * 1000;
+            appointment['end'] = Number(appointment['end']) * 1000;
+            calendar.addEvent(appointment);
             show_popup(appointment_response['data']['title'], appointment_response['data']['message'], 200);
             $('#modal').modal('hide');
         } else if (appointment_response.status === 'failure') {
@@ -280,6 +278,10 @@ $('#submit').on('click', async function (e) {
         }
 
         if (appointment_response.status === 'success') {
+            appointment['title'] = appointment_response['data']['saved_appointment']['title'];
+            appointment['start'] = Number(appointment['start']) * 1000;
+            appointment['end'] = Number(appointment['end']) * 1000;
+            calendar.addEvent(appointment);
             show_popup(appointment_response['data']['title'], appointment_response['data']['message'], 200);
             $('#modal').modal('hide');
         } else if (appointment_response.status === 'failure') {
@@ -315,7 +317,6 @@ async function init () {
         calendar.removeAllEvents();
         list.data.appointment_list.forEach(function (appointment) {
             calendar.addEvent(appointment);
-            console.log(appointment);
         });
 
     }
