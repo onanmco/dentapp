@@ -266,4 +266,9 @@ class Messages
     {
         return "$field field is invalid.";
     }
+
+    public static function INVALID_CSRF_TOKEN()
+    {
+        return "Invalid CSRF token.";
+    }
 }
