@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `appointment_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `appointment_type` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `randevu_turu` (`appointment_type`)
+  UNIQUE KEY `appointment_type` (`appointment_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO `appointment_types` (`id`, `appointment_type`) VALUES (1, 'acil');
@@ -66,6 +66,17 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
   UNIQUE KEY `last_session_id` (`last_session_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `api_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `csrf_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `last_session_id` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `csrf_token_hash` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `last_session_id` (`last_session_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `csrf_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `appointments` (
