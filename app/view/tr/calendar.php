@@ -185,10 +185,10 @@ $appointment_types = AppointmentType::getAll();
     <script src="/assets/js/fullcalendar.js"></script>
     <script src="/assets/js/fullcalendar_locales.js"></script>
     <script src="/assets/js/jquery.inputmask.js"></script>
+    <script src="/assets/js/calendar_utility_functions.js"></script>
     <script src="/assets/js/calendar_inputmask_definitions.js"></script>
     <script src="/assets/js/calendar_fullcalendar_definitions.js"></script>
     <script src="/assets/js/calendar_main.js"></script>
-    <script src="/assets/js/calendar_utility_functions.js"></script>
     <script src="/assets/js/calendar_jquery_validator_definitions.js"></script>
 </body>
 
