@@ -7,11 +7,11 @@
  *   $ php <script_name>.php <number_of_patients>
  */
 
-namespace script;
+namespace script\fake_data;
 
 use app\model\Patient;
 
-require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
+require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'AutoLoader.php';
 
 function fetchName()
 {
