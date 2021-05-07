@@ -32,6 +32,13 @@ class UserController extends Controller
             throw new Exception($error['message'], $error['code']);
         }
 
+        if (Auth::isValidCsrfToken() === false) {
+            $message = \app\constant\en\Messages::INVALID_CSRF_TOKEN();
+            $error = \app\constant\en\Responses::UNAUTHORIZED_ACCESS($message);
+            Auth::setLastVisit('/user/signup');
+            throw new Exception($error['message'], $error['code']);
+        }
+
         $required_fields = ['first_name', 'last_name', 'email', 'password', 'group_id'];
         
         $missing_fields = array_diff($required_fields, array_keys($_POST));
