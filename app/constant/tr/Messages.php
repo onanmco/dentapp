@@ -264,4 +264,9 @@ class Messages
     {
         return "$field alanı geçersiz.";
     }
+
+    public static function INVALID_CSRF_TOKEN()
+    {
+        return "CSRF anahtarı geçersiz.";
+    }
 }
