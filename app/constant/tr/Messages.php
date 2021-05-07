@@ -265,6 +265,11 @@ class Messages
         return "$field alanı geçersiz.";
     }
 
+    public static function INVALID_CSRF_TOKEN()
+    {
+        return "CSRF anahtarı geçersiz.";
+    }
+
     public static function INVALID_UNIX_TIMESTAMP($field)
     {
         return "$field alanı UNIX timestamp formatında olmalıdır.";

@@ -267,6 +267,11 @@ class Messages
         return "$field field is invalid.";
     }
 
+    public static function INVALID_CSRF_TOKEN()
+    {
+        return "Invalid CSRF token.";
+    }
+
     public static function INVALID_UNIX_TIMESTAMP($field)
     {
         return "$field must be a valid UNIX timestamp.";
