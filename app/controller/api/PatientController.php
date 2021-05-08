@@ -3,6 +3,7 @@
 namespace app\controller\api;
 
 use app\constant\Constraints;
+use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\Patient;
@@ -44,13 +45,18 @@ class PatientController extends Controller
             Response::json([$error], $error['code']);
             exit;
         }
-        $required_fields = ['first_name', 'last_name', 'phone', 'tckn'];
-        foreach ($required_fields as $key) {
+        $required_fields = [
+            'first_name' => Fields::FIRST_NAME(),
+            'last_name' => Fields::LAST_NAME(),
+            'phone' => Fields::PHONE(),
+            'tckn' => Fields::TCKN(),
+        ];
+        foreach ($required_fields as $key => $value) {
             if (!isset($request_body[$key])) {
-                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($value));
             }
         }
-        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        $invalid_keys = array_diff(array_keys($request_body), array_keys($required_fields));
         foreach ($invalid_keys as $v) {
             $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
@@ -59,25 +65,25 @@ class PatientController extends Controller
             exit;
         }
         // validation
-        $first_name_validation = CommonValidator::isValidName($request_body['first_name'], 'first_name');
+        $first_name_validation = CommonValidator::isValidName($request_body['first_name'], Fields::FIRST_NAME());
         if ($first_name_validation !== true) {
             foreach ($first_name_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $last_name_validation = CommonValidator::isValidName($request_body['last_name'], 'last_name');
+        $last_name_validation = CommonValidator::isValidName($request_body['last_name'], Fields::LAST_NAME());
         if ($last_name_validation !== true) {
             foreach ($last_name_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $phone_validation = CommonValidator::isValidPhone($request_body['phone'], 'phone');
+        $phone_validation = CommonValidator::isValidPhone($request_body['phone'], Fields::PHONE());
         if ($phone_validation !== true) {
             foreach ($phone_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $tckn_validation = CommonValidator::isValidTckn($request_body['tckn'], 'tckn');
+        $tckn_validation = CommonValidator::isValidTckn($request_body['tckn'], Fields::TCKN());
         if ($tckn_validation !== true) {
             foreach ($tckn_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
@@ -134,15 +140,24 @@ class PatientController extends Controller
             $error = Responses::BAD_REQUEST(Messages::JSON_DECODING_ERROR());
             Response::json([$error], $error['code']);
             exit;
+        }        
+        $required_fields = [
+            'value' => Fields::SEARCH_TERM()
+        ];
+        foreach ($required_fields as $key => $value) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($value));
+            }
         }
-        if (!isset($request_body['value'])) {
-            $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD('aranacak değer'));
+        $invalid_keys = array_diff(array_keys($request_body), array_keys($required_fields));
+        foreach ($invalid_keys as $v) {
+            $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
         if (!empty($errors)) {
-            Response::json($errors, Responses::MISSING_FIELD()['code']);
+            Response::json($errors, Responses::VALIDATION_ERROR()['code']);
             exit;
         }
-        $rule = Constraints::COMPOSITE_SEARCH_REGEXP('arama terimi');
+        $rule = Constraints::COMPOSITE_SEARCH_REGEXP(Fields::COMPOSITE_SEARCH());
         if (!preg_match($rule['value'], $request_body['value'])) {
             $errors[] = Responses::VALIDATION_ERROR($rule['message']);
         }
@@ -151,7 +166,7 @@ class PatientController extends Controller
             Response::json($errors, 400);
             exit;
         }
-        $rule = Constraints::COMPOSITE_SEARCH_MIN_LEN('arama terimi');
+        $rule = Constraints::COMPOSITE_SEARCH_MIN_LEN(Fields::COMPOSITE_SEARCH());
         if (strlen($request_body['value']) < $rule['value']) {
             $errors[] = Responses::VALIDATION_ERROR($rule['message']);
         }
