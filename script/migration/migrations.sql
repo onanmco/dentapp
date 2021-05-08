@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `meslek` (`group`)
+  UNIQUE KEY `group` (`group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO `groups` (`id`, `group`) VALUES (1, 'hekim');
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `languages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `language` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `dil` (`language`)
+  UNIQUE KEY `language` (`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO `languages` (`id`, `language`) VALUES (1, 'tr');
