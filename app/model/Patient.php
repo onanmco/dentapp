@@ -39,6 +39,11 @@ class Patient extends Model
         return $this->last_name;
     }
 
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     public function getPhone()
     {
         return $this->phone;

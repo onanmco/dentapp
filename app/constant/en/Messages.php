@@ -271,4 +271,14 @@ class Messages
     {
         return "Invalid CSRF token.";
     }
+
+    public static function INVALID_UNIX_TIMESTAMP($field)
+    {
+        return "$field must be a valid UNIX timestamp.";
+    }
+
+    public static function APPOINTMENTS_FETCHED()
+    {
+        return "Appointments have been fetched successfully.";
+    }
 }

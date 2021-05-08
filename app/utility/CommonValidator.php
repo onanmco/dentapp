@@ -81,7 +81,7 @@ abstract class CommonValidator
         if (!(((string) (int) $value === $value) 
         && ((int) $value <= PHP_INT_MAX) 
         && ((int) $value >= ~PHP_INT_MAX))) {
-            $errors[] = $field . ' alanı UNIX timestamp formatında olmalıdır.';
+            $errors[] = Messages::INVALID_UNIX_TIMESTAMP($field);
         }
         return (empty($errors)) ? true : $errors;
     }

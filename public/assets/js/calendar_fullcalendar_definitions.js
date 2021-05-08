@@ -54,13 +54,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         meridiem: false,
         hour12: false
     },
-    events: [{
-        title: 'Örnek Hasta',
-        start: '2021-01-05T04:00:00',
-        end: '2021-01-05T05:00:00',
-        color: 'crimson',
-
-    },],
+    events: [],
     select: function (info) {
         var day_names = ['pazar', 'pazartesi', 'salı', 'çarşamba', 'perşembe', 'cuma', 'cumartesi'];
         var html = '<strong>Seçilen Tarih: </strong> ' + info.start.toLocaleString().substring(0, 10) + ' ' + uc_first(day_names[info.start.getDay()]);
@@ -79,5 +73,5 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         $('#modal').modal('show');
     }
 });
-calendar.render();
-calendar.updateSize();
+// calendar.render();
+// calendar.updateSize();
