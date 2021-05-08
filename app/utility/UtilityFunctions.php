@@ -22,8 +22,8 @@ class UtilityFunctions
 
     public static function turkish_uc_first($str)
     {
-        $first_letter = substr($str, 0, 1);
-        $rest = substr($str, 1);
+        $first_letter = mb_substr($str, 0, 1);
+        $rest = mb_substr($str, 1);
         return self::turkish_uppercase($first_letter) . $rest;
     }
 }

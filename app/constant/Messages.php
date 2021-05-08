@@ -14,7 +14,7 @@ class Messages
         $class_name_without_namespace = ltrim(get_called_class(), '\\');
         $last_bs_pos = strrpos(get_called_class(), '\\');
         if ($last_bs_pos) {
-            $class_name_without_namespace = substr($class_name_without_namespace, $last_bs_pos + 1);
+            $class_name_without_namespace = mb_substr($class_name_without_namespace, $last_bs_pos + 1);
         }
         
         $pos = strrpos($existing_class_name, $class_name_without_namespace);
@@ -22,7 +22,7 @@ class Messages
 
         $class_name = "$language\\" . $class_name_without_namespace; 
         if ($pos !== false) {
-            $class_name = substr($existing_class_name, 0, $pos) . "$language\\" . substr($existing_class_name, $pos);
+            $class_name = mb_substr($existing_class_name, 0, $pos) . "$language\\" . mb_substr($existing_class_name, $pos);
         }
         if (method_exists($class_name, $name)) {
             return call_user_func_array([$class_name, $name], $arguments);
