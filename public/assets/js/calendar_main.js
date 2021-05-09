@@ -299,5 +299,4 @@ $('#submit').on('click', async function (e) {
         $('#modal').modal('hide');
     }
 });
-
 calendar.render();
