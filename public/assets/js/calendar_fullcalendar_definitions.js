@@ -23,7 +23,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         prev: 'fa-angle-left',
         next: 'fa-angle-right'
     },
-    // height: "70vh",
     titleFormat: {
         year: 'numeric',
         month: 'long',
