@@ -2,7 +2,16 @@ var calendarEl = document.getElementById('calendar');
 var calendar = new FullCalendar.Calendar(calendarEl, {
     locale: 'tr',
     timeZone: 'local',
-    views: {},
+    views: { // view-specific options applied here
+        dayGridMonth: {
+            dayHeaderFormat: {
+                weekday: 'short',
+                // month: '2-digit',
+                // day: '2-digit',
+                omitCommas: true
+            },
+          }
+    },
     initialView: 'timeGridWeek',
     headerToolbar: {
         start: 'prev,next,today',
