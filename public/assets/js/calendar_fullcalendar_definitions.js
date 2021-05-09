@@ -23,7 +23,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         prev: 'fa-angle-left',
         next: 'fa-angle-right'
     },
-    height: "70vh",
     titleFormat: {
         year: 'numeric',
         month: 'long',
@@ -45,7 +44,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         day: '2-digit',
         omitCommas: true
     },
-    slotDuration: '00:15:00',
+    slotDuration: '00:30:00',
     slotLabelInterval: '01:00',
     slotLabelFormat: {
         hour: '2-digit',
@@ -90,8 +89,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
                     end: js_timestamp_to_unix_timestamp(calendar.view.activeEnd.getTime()),
                 })
             });
-    
-            console.log(list);
         
             list = await list.json();
             var status = list.status || false;
@@ -105,5 +102,16 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
             }
         }
         fetch_appointments();
+    },
+    viewDidMount: function (view) {
+        var content_height = document.querySelector('#calendar table tr').offsetHeight;
+        if (calendar.view.type === 'timeGridWeek') {
+            content_height += document.querySelector('.fc-timegrid-slot-lane').offsetHeight * 20;
+            calendar.setOption('contentHeight', content_height);
+        } 
+        else {
+            content_height += document.querySelector('.fc-daygrid-day').offsetHeight * 7;
+            calendar.setOption('contentHeight', content_height);
+        }
     }
 });
