@@ -2,6 +2,7 @@
 
 namespace app\controller;
 
+use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\Group;
@@ -39,9 +40,15 @@ class UserController extends Controller
             throw new Exception($error['message'], $error['code']);
         }
 
-        $required_fields = ['first_name', 'last_name', 'email', 'password', 'group_id'];
+        $required_fields = [
+            'first_name' => Fields::FIRST_NAME(),
+            'last_name' => Fields::LAST_NAME(),
+            'email' => Fields::EMAIL(),
+            'password' => Fields::PASSWORD(),
+            'group_id' => Fields::USER_GROUP_ID(),
+        ];
         
-        $missing_fields = array_diff($required_fields, array_keys($_POST));
+        $missing_fields = array_diff(array_keys($required_fields), array_keys($_POST));
 
         if (!empty($missing_fields)) {
             $message = \app\constant\en\Messages::MISSING_FIELDS($missing_fields);
@@ -59,9 +66,9 @@ class UserController extends Controller
 
         $existing_user = new User($_POST);
 
-        foreach ($required_fields as $field_name) {
+        foreach (array_keys($required_fields) as $field_name) {
             if (empty($_POST[$field_name])) {
-                $errors[] = Messages::CANNOT_BE_EMPTY($field_name);
+                $errors[] = Messages::CANNOT_BE_EMPTY($required_fields[$field_name]);
             }
         }
 
@@ -73,32 +80,32 @@ class UserController extends Controller
             exit;
         }
 
-        $name_validation = CommonValidator::isValidName($_POST['first_name'], 'first_name');
+        $name_validation = CommonValidator::isValidName($_POST['first_name'], $required_fields['first_name']);
         if ($name_validation !== true) {
             foreach ($name_validation as $error_msg) {
                 $errors[] = $error_msg;
             }
         }
-        $surname_validation = CommonValidator::isValidName($_POST['last_name'], 'last_name');
+        $surname_validation = CommonValidator::isValidName($_POST['last_name'], $required_fields['last_name']);
         if ($surname_validation !== true) {
             foreach ($surname_validation as $error_msg) {
                 $errors[] = $error_msg;
             }
         }
-        $email_validation = CommonValidator::isValidEmail($_POST['email'], 'email');
+        $email_validation = CommonValidator::isValidEmail($_POST['email'], $required_fields['email']);
         if ($email_validation !== true) {
             foreach ($email_validation as $error_msg) {
                 $errors[] = $error_msg;
             }
         }
-        $password_validation = CommonValidator::isValidPassword($_POST['password'], 'password');
+        $password_validation = CommonValidator::isValidPassword($_POST['password'], $required_fields['password']);
         if ($password_validation !== true) {
             foreach ($password_validation as $error_msg) {
                 $errors[] = $error_msg;
             }
         }
         if (!preg_match('/(^$)|(^\d{11}$)/', $_POST['tckn'])) {
-            $errors[] = Messages::TCKN_REGEXP('tckn');
+            $errors[] = Messages::TCKN_REGEXP(Fields::TCKN());
         }
         if (!Group::isExist($_POST['group_id'])) {
             $errors[] = Messages::USER_GROUP_ID_NOT_EXIST();
@@ -129,14 +136,32 @@ class UserController extends Controller
 
     public function authAction()
     {
+        if (Request::method() !== 'post') {
+            $message = \app\constant\en\Messages::POST_METHOD();
+            $error = \app\constant\en\Responses::METHOD_NOT_ALLOWED($message);
+            throw new Exception($error['message'], $error['code']);
+        }
+
+        $required_fields = [
+            'email' => Fields::EMAIL(),
+            'password' => Fields::PASSWORD()
+        ];
+
+        $missing_fields = array_diff(array_keys($required_fields), array_keys($_POST));
+
+        if (!empty($missing_fields)) {
+            $message = \app\constant\en\Messages::MISSING_FIELDS($missing_fields);
+            $error = \app\constant\en\Responses::BAD_REQUEST($message);
+            throw new Exception($error['message'], $error['code']);
+        }
+
         $errors = [];
 
         $requested_user = new User($_POST);
-        $required_fields = ['email', 'password'];
 
-        foreach ($required_fields as $field_name) {
+        foreach (array_keys($required_fields) as $field_name) {
             if (empty($_POST[$field_name])) {
-                $errors[] = Messages::CANNOT_BE_EMPTY($field_name);
+                $errors[] = Messages::CANNOT_BE_EMPTY($required_fields[$field_name]);
             }
         }
 

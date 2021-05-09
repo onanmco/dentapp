@@ -3,6 +3,7 @@
 namespace app\controller\api;
 
 use app\constant\Constants;
+use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\utility\Mail;
@@ -37,19 +38,21 @@ class ContactController extends Controller
             exit;
         }
 
-        $required_fields = ['full_name', 'email', 'message'];
+        $required_fields = [
+            'full_name' => Fields::FULL_NAME(),
+            'email' => Fields::EMAIL(),
+            'message' => Fields::MESSAGE()
+        ];
 
-        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        foreach ($required_fields as $key => $value) {
+            if (!isset($request_body[$key])) {
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($value));
+            }
+        }
+        $invalid_keys = array_diff(array_keys($request_body), array_keys($required_fields));
         foreach ($invalid_keys as $v) {
             $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
-
-        foreach ($required_fields as $key) {
-            if (!isset($request_body[$key])) {
-                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
-            }
-        }
-
         if (!empty($errors)) {
             Response::json($errors, Responses::VALIDATION_ERROR()['code']);
             exit;
@@ -63,7 +66,7 @@ class ContactController extends Controller
         $payload = [
             'from'    => Config::CLIENT_EMAIL_OUTGOING,
             'to'      => Config::CLIENT_EMAIL_INCOMING,
-            'subject' => Constants::CONTACT_EMAIL_TITLE,
+            'subject' => Constants::CONTACT_EMAIL_TITLE(),
             'content' => $content
         ];
 

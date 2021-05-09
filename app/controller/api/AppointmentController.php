@@ -2,6 +2,7 @@
 
 namespace app\controller\api;
 
+use app\constant\Fields;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\Appointment;
@@ -38,20 +39,20 @@ class AppointmentController extends Controller
             exit;
         }
         $required_fields = [
-            'user_id',
-            'patient_id',
-            'start',
-            'end',
-            'notes',
-            'notify',
-            'appointment_type_id'
+            'user_id' => Fields::USER_ID(),
+            'patient_id' => Fields::PATIENT_ID(),
+            'start' => Fields::START(),
+            'end' => Fields::END(),
+            'notes' => Fields::NOTES(),
+            'notify' => Fields::NOTIFY(),
+            'appointment_type_id' => Fields::APPOINTMENT_TYPE_ID()
         ];
-        foreach ($required_fields as $key) {
+        foreach (array_keys($required_fields) as $key) {
             if (!isset($request_body[$key])) {
-                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($required_fields[$key]));
             }
         }
-        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        $invalid_keys = array_diff(array_keys($request_body), array_keys($required_fields));
         foreach ($invalid_keys as $v) {
             $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
         }
@@ -71,7 +72,7 @@ class AppointmentController extends Controller
             $user_id = $request_body['user_id'];
             $errors[] = Responses::VALIDATION_ERROR(Messages::USER_ID_CANNOT_FOUND($user_id));
         }
-        $patient_id_validation = CommonValidator::isValidId($request_body['patient_id'], 'patient_id');
+        $patient_id_validation = CommonValidator::isValidId($request_body['patient_id'], Fields::PATIENT_ID());
         if ($patient_id_validation !== true) {
             foreach ($patient_id_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
@@ -82,13 +83,13 @@ class AppointmentController extends Controller
             $errors[] = Responses::VALIDATION_ERROR(Messages::PATIENT_ID_CANNOT_FOUND($patient_id));
         }
 
-        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], 'start');
+        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], Fields::START());
         if ($start_validation !== true) {
             foreach ($start_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
             }
         }
-        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], 'end');
+        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], Fields::END());
         if ($end_validation !== true) {
             foreach ($end_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
@@ -106,14 +107,12 @@ class AppointmentController extends Controller
             $errors[] = Responses::VALIDATION_ERROR(Messages::OVERLAPPING_APPOINTMENT());
         }
         if (!is_string($request_body['notes'])) {
-            $field_name = 'notes';
-            $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_STRING($field_name));
+            $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_STRING(Fields::NOTES()));
         }
         if (!is_bool($request_body['notify'])) {
-            $field_name = 'notes';
-            $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_BOOLEAN($field_name));
+            $errors[] = Responses::VALIDATION_ERROR(Messages::SHOULD_BE_BOOLEAN(Fields::NOTIFY()));
         }
-        $appointment_type_id_validation = CommonValidator::isValidId($request_body['appointment_type_id'], 'appointment_type_id');
+        $appointment_type_id_validation = CommonValidator::isValidId($request_body['appointment_type_id'], Fields::APPOINTMENT_TYPE_ID());
         if ($appointment_type_id_validation !== true) {
             foreach ($appointment_type_id_validation as $error_msg) {
                 $errors[] = Responses::VALIDATION_ERROR($error_msg);
@@ -166,15 +165,18 @@ class AppointmentController extends Controller
             exit;
         }
 
-        $required_fields = ['start', 'end'];
+        $required_fields = [
+            'start' => Fields::START(),
+            'end' => Fields::END()
+        ];
 
-        foreach ($required_fields as $key) {
+        foreach (array_keys($required_fields) as $key) {
             if (!isset($request_body[$key])) {
-                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($key));
+                $errors[] = Responses::MISSING_FIELD(Messages::MISSING_FIELD($required_fields[$key]));
             }
         }
 
-        $invalid_keys = array_diff(array_keys($request_body), $required_fields);
+        $invalid_keys = array_diff(array_keys($request_body), array_keys($required_fields));
 
         foreach ($invalid_keys as $v) {
             $errors[] = Responses::INVALID_FIELD(Messages::INVALID_FIELD($v));
@@ -185,7 +187,7 @@ class AppointmentController extends Controller
             exit;
         }
 
-        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], 'start');
+        $start_validation = CommonValidator::isValidUnixTimestamp($request_body['start'], Fields::START());
         
         if ($start_validation !== true) {
             foreach ($start_validation as $error_msg) {
@@ -193,7 +195,7 @@ class AppointmentController extends Controller
             }
         }
         
-        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], 'end');
+        $end_validation = CommonValidator::isValidUnixTimestamp($request_body['end'], Fields::END());
         
         if ($start_validation !== true) {
             foreach ($start_validation as $error_msg) {
