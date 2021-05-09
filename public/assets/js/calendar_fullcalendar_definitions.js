@@ -2,7 +2,16 @@ var calendarEl = document.getElementById('calendar');
 var calendar = new FullCalendar.Calendar(calendarEl, {
     locale: 'tr',
     timeZone: 'local',
-    views: {},
+    views: { // view-specific options applied here
+        dayGridMonth: {
+            dayHeaderFormat: {
+                weekday: 'short',
+                // month: '2-digit',
+                // day: '2-digit',
+                omitCommas: true
+            },
+          }
+    },
     initialView: 'timeGridWeek',
     headerToolbar: {
         start: 'prev,next,today',
@@ -71,7 +80,30 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         $('#start_hour').val(start_hour + ':' + start_min);
         $('#end_hour').val(end_hour + ':' + end_min);
         $('#modal').modal('show');
+    },
+    datesSet: function (info) {
+        var fetch_appointments = async function () {
+            var list = await fetch('/api/appointment/get-all-by-range', {
+                method: "POST",
+                body: JSON.stringify({
+                    start: js_timestamp_to_unix_timestamp(calendar.view.activeStart.getTime()),
+                    end: js_timestamp_to_unix_timestamp(calendar.view.activeEnd.getTime()),
+                })
+            });
+    
+            console.log(list);
+        
+            list = await list.json();
+            var status = list.status || false;
+            if (status === 'success') {
+                calendar.render();
+                calendar.updateSize();
+                calendar.removeAllEvents();
+                list.data.appointment_list.forEach(function (appointment) {
+                    calendar.addEvent(appointment);
+                });    
+            }
+        }
+        fetch_appointments();
     }
 });
-// calendar.render();
-// calendar.updateSize();
