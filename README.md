@@ -1,5 +1,5 @@
 # DentApp
-Dentapp is an open source, ongoing development project that provides a web portal for dentists to manage their clinical. Some of the services that they are provided or going to be provided can be listed such as:
+Dentapp is an open source, ongoing development project that provides a web portal for dentists to manage their clinical procedures. Some of the services that they are provided or going to be provided can be listed such as:
 - Onboarding new patients.
 - Setting and managing appointments
 - Applying treatments
