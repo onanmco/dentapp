@@ -67,7 +67,7 @@ class User extends Model
     }
 
     public static function getAll(){
-        $sql = 'SELECT * FROM users ORDER BY id DESC';
+        $sql = 'SELECT * FROM `users` ORDER BY `id` DESC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -77,7 +77,7 @@ class User extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM users WHERE id = :id';
+        $sql = 'SELECT * FROM `users` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -88,7 +88,7 @@ class User extends Model
 
     public static function findByEmail($email)
     {
-        $sql = 'SELECT * FROM users WHERE email = :email';
+        $sql = 'SELECT * FROM `users` WHERE `email` = :email';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
@@ -99,7 +99,7 @@ class User extends Model
 
     public static function findByFirstName($first_name)
     {
-        $sql = 'SELECT * FROM users WHERE first_name = :first_name';
+        $sql = 'SELECT * FROM `users` WHERE `first_name` = :first_name';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':first_name', $first_name, PDO::PARAM_STR);
@@ -110,7 +110,7 @@ class User extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO users(first_name, last_name, tckn, email, password_hash, group_id, language_preference) VALUES(:first_name, :last_name, :tckn, :email, :password_hash, :group_id, :language_preference)';
+        $sql = 'INSERT INTO `users`(`first_name`, `last_name`, `tckn`, `email`, `password_hash`, `group_id`, `language_preference`) VALUES(:first_name, :last_name, :tckn, :email, :password_hash, :group_id, :language_preference)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
@@ -125,7 +125,7 @@ class User extends Model
 
     public static function getLastInserted()
     {
-        $sql = 'SELECT * FROM users WHERE id = (SELECT MAX(id) FROM users)';
+        $sql = 'SELECT * FROM `users` WHERE `id` = (SELECT MAX(`id`) FROM `users`)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -140,7 +140,7 @@ class User extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM users WHERE id = :id';
+        $sql = 'DELETE FROM `users` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
@@ -149,7 +149,7 @@ class User extends Model
 
     public static function findAllByGroupId($group_id)
     {
-        $sql = 'SELECT * FROM users WHERE group_id = :group_id';
+        $sql = 'SELECT * FROM `users` WHERE `group_id` = :group_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':group_id', $group_id, PDO::PARAM_INT);

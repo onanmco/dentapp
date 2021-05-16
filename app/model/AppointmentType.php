@@ -32,7 +32,7 @@ class AppointmentType extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO appointment_types(appointment_type) VALUES(:appointment_type)';
+        $sql = 'INSERT INTO `appointment_types`(`appointment_type`) VALUES(:appointment_type)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':appointment_type', $this->appointment_type, PDO::PARAM_STR);
@@ -41,7 +41,7 @@ class AppointmentType extends Model
 
     public static function getById($id)
     {
-        $sql = 'SELECT * FROM appointment_types WHERE id = :id';
+        $sql = 'SELECT * FROM `appointment_types` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -52,7 +52,7 @@ class AppointmentType extends Model
 
     public static function getAll()
     {
-        $sql = 'SELECT * FROM appointment_types ORDER BY id ASC';
+        $sql = 'SELECT * FROM `appointment_types` ORDER BY `id` ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
