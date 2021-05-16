@@ -20,7 +20,7 @@ class RememberedLogin extends Model
 
     public static function findByToken($token)
     {
-        $sql = 'SELECT * FROM remembered_logins WHERE token_hash = :token_hash';
+        $sql = 'SELECT * FROM `remembered_logins` WHERE `token_hash` = :token_hash';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':token_hash', $token->getHash(), PDO::PARAM_STR);
@@ -41,7 +41,7 @@ class RememberedLogin extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM remembered_logins WHERE token_hash = :token_hash';
+        $sql = 'DELETE FROM `remembered_logins` WHERE `token_hash` = :token_hash';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':token_hash', $this->token_hash, PDO::PARAM_STR);

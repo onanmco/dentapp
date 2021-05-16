@@ -32,7 +32,7 @@ class Group extends Model
     
     public function save()
     {
-        $sql = 'INSERT INTO groups(group) VALUES(:group)';
+        $sql = 'INSERT INTO `groups`(`group`) VALUES(:group)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':group', $this->group, PDO::PARAM_STR);
@@ -41,7 +41,7 @@ class Group extends Model
 
     public static function getAll()
     {
-        $sql = 'SELECT * FROM groups';
+        $sql = 'SELECT * FROM `groups`';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
@@ -51,7 +51,7 @@ class Group extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM groups WHERE id = :id';
+        $sql = 'SELECT * FROM `groups` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
