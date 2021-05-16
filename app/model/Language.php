@@ -32,7 +32,7 @@ class Language extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM languages WHERE id = :id';
+        $sql = 'SELECT * FROM `languages` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -43,7 +43,7 @@ class Language extends Model
 
     public static function findByLanguage($language)
     {
-        $sql = 'SELECT * FROM languages WHERE language = :language';
+        $sql = 'SELECT * FROM `languages` WHERE `language` = :language';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':language', $language, PDO::PARAM_STR);
@@ -54,7 +54,7 @@ class Language extends Model
 
     public static function getAll()
     {
-        $sql = 'SELECT language FROM languages';
+        $sql = 'SELECT `language` FROM `languages`';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);

@@ -38,7 +38,7 @@ class ApiToken extends Model
 
     public static function findBySessionId($last_session_id)
     {
-        $sql = 'SELECT * FROM api_tokens WHERE last_session_id = :last_session_id';
+        $sql = 'SELECT * FROM `api_tokens` WHERE `last_session_id` = :last_session_id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $last_session_id, PDO::PARAM_STR);
@@ -49,7 +49,7 @@ class ApiToken extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO api_tokens(last_session_id, user_id, api_token_hash) VALUES(:last_session_id, :user_id, :api_token_hash)';
+        $sql = 'INSERT INTO `api_tokens`(`last_session_id`, `user_id`, `api_token_hash`) VALUES(:last_session_id, :user_id, :api_token_hash)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $this->last_session_id, PDO::PARAM_STR);
@@ -60,7 +60,7 @@ class ApiToken extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM api_tokens WHERE :last_session_id = last_session_id';
+        $sql = 'DELETE FROM `api_tokens` WHERE :last_session_id = `last_session_id`';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':last_session_id', $this->last_session_id, PDO::PARAM_STR);
