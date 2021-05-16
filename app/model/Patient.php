@@ -56,7 +56,7 @@ class Patient extends Model
 
     public static function findById($id)
     {
-        $sql = 'SELECT * FROM patients WHERE id = :id';
+        $sql = 'SELECT * FROM `patients` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -67,7 +67,7 @@ class Patient extends Model
 
     public static function findByTckn($tckn)
     {
-        $sql = 'SELECT * FROM patients WHERE tckn = :tckn';
+        $sql = 'SELECT * FROM `patients` WHERE `tckn` = :tckn';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':tckn', $tckn, PDO::PARAM_STR);
@@ -83,7 +83,7 @@ class Patient extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO patients(first_name, last_name, phone, tckn) VALUES(:first_name, :last_name, :phone, :tckn)';
+        $sql = 'INSERT INTO `patients`(`first_name`, `last_name`, `phone`, `tckn`) VALUES(:first_name, :last_name, :phone, :tckn)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
@@ -95,7 +95,7 @@ class Patient extends Model
 
     public function delete()
     {
-        $sql = 'DELETE FROM patients WHERE id = :id';
+        $sql = 'DELETE FROM `patients` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
@@ -116,8 +116,8 @@ class Patient extends Model
     public static function findByNameOrTckn($string)
     {
         $sql = "SELECT * 
-                FROM patients 
-                WHERE first_name LIKE :placeholder OR last_name LIKE :placeholder OR tckn LIKE :placeholder";
+                FROM `patients` 
+                WHERE `first_name` LIKE :placeholder OR `last_name` LIKE :placeholder OR `tckn` LIKE :placeholder";
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':placeholder', '%' . $string . '%', PDO::PARAM_STR);

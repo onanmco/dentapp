@@ -28,7 +28,7 @@ class Appointment extends Model
 
     public function save()
     {
-        $sql = 'INSERT INTO appointments (user_id, patient_id, start, end, notes, notify, appointment_type_id) 
+        $sql = 'INSERT INTO `appointments` (`user_id`, `patient_id`, `start`, `end`, `notes`, `notify`, `appointment_type_id`) 
                 VALUES (:user_id, :patient_id, :start, :end, :notes, :notify, :appointment_type_id)';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
@@ -44,7 +44,7 @@ class Appointment extends Model
 
     public static function getById($id)
     {
-        $sql = 'SELECT * FROM appointments WHERE id = :id';
+        $sql = 'SELECT * FROM `appointments` WHERE `id` = :id';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -55,7 +55,7 @@ class Appointment extends Model
 
     public static function getByRange($start_datetime, $end_datetime)
     {
-        $sql = 'SELECT * FROM appointments WHERE start = :start_datetime AND end = :end_datetime';
+        $sql = 'SELECT * FROM `appointments` WHERE `start` = :start_datetime AND `end` = :end_datetime';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
@@ -68,9 +68,9 @@ class Appointment extends Model
     public static function getAllBetween($start_datetime, $end_datetime)
     {
         $sql = 'SELECT * 
-                FROM appointments 
-                WHERE start >= :start_datetime AND start < :end_datetime 
-                ORDER BY start ASC';
+                FROM `appointments` 
+                WHERE `start` >= :start_datetime AND `start` < :end_datetime 
+                ORDER BY `start` ASC';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':start_datetime', $start_datetime, PDO::PARAM_STR);
@@ -83,8 +83,8 @@ class Appointment extends Model
     public static function getOverlappingCount($new_start_datetime, $new_end_datetime)
     {
         $sql = 'SELECT COUNT(*) 
-                FROM appointments 
-                WHERE start < :new_end_datetime AND end > :new_start_datetime';
+                FROM `appointments` 
+                WHERE `start` < :new_end_datetime AND `end` > :new_start_datetime';
         $db = self::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':new_start_datetime', $new_start_datetime, PDO::PARAM_STR);
