@@ -7,7 +7,7 @@
  *   $ php <script_name>.php <number_of_patients>
  */
 
-namespace script\fake_data;
+namespace script\seeders;
 
 use app\model\Patient;
 
