@@ -10,6 +10,7 @@ use app\model\Language;
 use app\model\User;
 use app\utility\Auth;
 use app\utility\CommonValidator;
+use app\utility\CSRFToken;
 use app\utility\Popup;
 use config\Config;
 use core\Controller;
@@ -33,12 +34,7 @@ class UserController extends Controller
             throw new Exception($error['message'], $error['code']);
         }
 
-        if (Auth::isValidCsrfToken() === false) {
-            $message = \app\constant\en\Messages::INVALID_CSRF_TOKEN();
-            $error = \app\constant\en\Responses::UNAUTHORIZED_ACCESS($message);
-            Auth::setLastVisit('/user/signup');
-            throw new Exception($error['message'], $error['code']);
-        }
+        CSRFToken::check();
 
         $required_fields = [
             'first_name' => Fields::FIRST_NAME(),
