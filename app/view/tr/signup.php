@@ -7,6 +7,7 @@ use app\constant\Messages;
 use app\model\Group;
 use app\model\User;
 use app\utility\Auth;
+use app\utility\CSRFToken;
 use app\utility\UtilityFunctions;
 use config\Config;
 
@@ -77,6 +78,7 @@ $errors = (isset($errors)) ? $errors : [];
                 }
                 ?>
                 <form action="/user/register" method="POST" id="signup_form">
+                    <?php CSRFToken::generate(); ?>
                     <div class="form-group row m-0 mt-2 flex-nowrap align-items-baseline justify-content-between">
                         <label for="first_name" class="m-0 text-muted font-weight-bold">
                             <?php echo UtilityFunctions::turkish_uc_first(Fields::FIRST_NAME()) . ':'; ?>

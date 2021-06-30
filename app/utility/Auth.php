@@ -5,7 +5,6 @@ namespace app\utility;
 use app\constant\Messages;
 use app\constant\Responses;
 use app\model\ApiToken;
-use app\model\CsrfToken;
 use app\model\Language;
 use app\model\User;
 use config\Config;
@@ -33,12 +32,10 @@ class Auth
         $_SESSION['user_id'] = $user->getId();
 
         self::deleteApiToken();
-        self::deleteCsrfToken();
 
         self::setLastSessionId();
 
         self::setApiToken($user->getId());
-        self::setCsrfToken($user->getId());
     }
 
     public static function setLastSessionId()
@@ -53,38 +50,6 @@ class Auth
         setcookie('last_session_id', $session_id, time() + Datetime::WEEK, '/');
     }
 
-    public static function deleteCsrfToken()
-    {
-        if (isset($_COOKIE['last_session_id'])) {
-            $existing_csrf_token_record = CsrfToken::getByLastSessionId($_COOKIE['last_session_id']);
-            if ($existing_csrf_token_record !== false) {
-                $existing_csrf_token_record->delete();
-            }
-
-            if (isset($_SESSION['csrf_token'])) {
-                unset($_SESSION['csrf_token']);
-            }
-        }        
-    }
-
-    public static function setCsrfToken($user_id)
-    {
-        self::deleteCsrfToken();
-
-        $token = new Token();
-
-        $last_session_id = session_id();
-
-        $csrf_token_record = new CsrfToken([
-            'last_session_id' => $last_session_id,
-            'user_id' => $user_id,
-            'csrf_token_hash' => $token->getHash()
-        ]);
-
-        $csrf_token_record->save();
-
-        $_SESSION['csrf_token'] = $token->getValue();
-    }
 
     public static function setApiToken($user_id)
     {
@@ -147,7 +112,6 @@ class Auth
     public static function logout()
     {
         self::deleteApiToken();
-        self::deleteCsrfToken(); 
         $_SESSION = [];
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
@@ -195,19 +159,4 @@ class Auth
         return $language_row->getLanguage();
     }
 
-    public static function isValidCsrfToken()
-    {
-        if (!isset($_SESSION['csrf_token'])) {
-            return false;
-        }
-        $existing_csrf_token_record = CsrfToken::getByLastSessionId(session_id());
-        if ($existing_csrf_token_record === false) {
-            return false;
-        }
-        $token = new Token($_SESSION['csrf_token']);
-        if ($token->getHash() !== $existing_csrf_token_record->getCsrfTokenHash()) {
-            return false;
-        }
-        return true;
-    }
 }

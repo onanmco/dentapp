@@ -5,7 +5,7 @@ namespace config;
 class Config
 {
     const DATABASE = [
-        'HOST' => 'localhost',
+        'HOST' => 'database',
         'PORT' => '3306',
         'NAME' => 'mvc',
         'USER' => 'mvcuser',

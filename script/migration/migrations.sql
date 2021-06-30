@@ -68,17 +68,6 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
   CONSTRAINT `api_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `csrf_tokens` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `last_session_id` varchar(255) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `csrf_token_hash` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `last_session_id` (`last_session_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `csrf_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `appointments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
