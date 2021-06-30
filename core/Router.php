@@ -164,7 +164,7 @@ class Router
         $route = preg_replace('/:+/', ':', $route);
         $route = preg_replace('/\s/', '', $route);
         foreach ($route as $key => $value) {
-            if (preg_match('/^<([a-z-]+)(:[^>]*)>$/', $value, $matches)) {
+            if (preg_match('/^<([a-z-]+)(:.*)>$/', $value, $matches)) {
                 $route[$key] = $this->convertNamedGroupWithPattern($matches);
                 continue;
             } else if (preg_match('/^<([a-z-]+)>$/', $value, $matches)) {
